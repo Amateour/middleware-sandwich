@@ -1,0 +1,8 @@
+{
+  "name": "middleware-sandwich",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Amateour/middleware-sandwich.git",
+  "author": "Brayan Salgado <binariado@gmail.com>",
+  "license": "MIT"
+}
