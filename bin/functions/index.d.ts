@@ -23,20 +23,25 @@ export type exec = (options: routerProps) => Promise<{
  *
  * @param options
  */
-export type transform = (options: routerProps) => Promise<any>
+export type transform = (options: routerProps) => Promise<any>;
 
-export type parser_schemes = (value_of: boolean, req_body: object, scheme: compareType) => Promise<{
+/**
+ * 
+ */
+export type ParserSchemesResponse = {
   schemes: any,
   args: any,
   errors: any
-}>
+}
+
+export type parser_schemes = (value_of: boolean, req_body: any, scheme: compareType) => Promise<ParserSchemesResponse>
 
 /**
  * 
  */
  export interface add_arguments {
   readonly arg: any;
-  readonly parser_schemes: Function;
+  readonly parser_schemes: (value_of?: boolean, scheme?: any) => Promise<ParserSchemesResponse>;
   f: any;
   request: any;
 }
@@ -47,6 +52,10 @@ export type parser_schemes = (value_of: boolean, req_body: object, scheme: compa
  * @class {Sandwiches}
  */
 export interface Sandwiches extends Types {
+    scheme: compareType | null;
+    value_of: boolean;
+
+    parser_schemes(body: any): Promise<ParserSchemesResponse>
 
     /**
      *

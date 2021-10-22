@@ -81,6 +81,25 @@ const parser_schemes: SWCH.parser_schemes = async (value_of, req_body, scheme) =
  */
 export class Sandwiches extends Types implements SWCH.Sandwiches {
 
+    scheme;
+    value_of;
+
+    constructor(value_of = true, scheme = null) {
+        super(); 
+        this.scheme = scheme;
+        this.value_of = value_of;
+    }
+
+    /**
+     * 
+     */
+    async parser_schemes(body)
+    {
+        return await parser_schemes(
+            this.value_of, body, this.scheme
+        )
+    }
+
     /**
      *
      * @param options
@@ -146,23 +165,27 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
      *
      * @param scheme
      */
-    Req = (scheme) => class add_arguments implements SWCH.add_arguments {
-        arg;
-        parser_schemes;
-        f;
-        request;
-
-        constructor(req) {
-            this.arg = scheme;
-            this.parser_schemes = async function (value_of = true, scheme)
-            {
-                return await parser_schemes(
-                    value_of, {...req.body, ...req.query}, scheme ?? this.arg
-                )
+    Req = (scheme) => {
+        return class add_arguments implements SWCH.add_arguments {
+            arg;
+            parser_schemes;
+            f;
+            request;
+    
+            constructor(req) {
+                this.arg = scheme;
+                this.parser_schemes = async function (value_of = true, scheme)
+                {
+                    return parser_schemes(
+                        value_of,
+                        {...req.body, ...req.query},
+                        scheme ?? this.arg
+                    );
+                }
             }
+    
         }
-
     }
 }
 
-export const Sandwich = new Sandwiches()
+export const Sandwich = new Sandwiches();
