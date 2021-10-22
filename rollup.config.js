@@ -6,7 +6,7 @@ import resolve from 'rollup-plugin-node-resolve'
 import pkg from './package.json'
 
 export default {
-  input: './index.js',
+  input: './index.ts',
   output: [
     {
       file: pkg.main,

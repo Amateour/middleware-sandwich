@@ -38,13 +38,13 @@ export interface ClassMessage {
     /**
      * 
      */
-    response: (res: any, statusCode: number, message: any) => any
+    response(res: any, statusCode: number, message: any): void
     /**
      * 
      */
-    errors: (res: any, mess: any)  => any,
+    errors(res: any, mess: any): void,
     /**
      * 
      */
-    success: (res: any, mess: any)  => any
+    success(res: any, mess: any): void
 }

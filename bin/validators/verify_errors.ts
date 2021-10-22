@@ -1,7 +1,6 @@
 import * as SWCH from '../functions';
 import {Exception} from "../utils/message";
-
-const _ = require('lodash');
+import _ from '../libs/lodash';
 
 /**
  * validate errors and send message
@@ -10,7 +9,7 @@ const _ = require('lodash');
  */
 export const verify_errors: SWCH.verify_errors = async (errors) => {
 
-    const resp_err = _(errors)
+    const resp_err = _.all(errors)
         .map((value, key) => new Object({[key]: value.errors}))
         .filter((value) => _.find(value, (err) => err.length))
         .valueOf();

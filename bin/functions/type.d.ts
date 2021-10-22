@@ -4,7 +4,7 @@ export interface multiMiddlewareType {
     middleware: Array<Function> | Function,
     methods?: Array<string> | string
 }
-export declare type middlewaresType = Function[] | Function | multiMiddlewareType | Array<multiMiddlewareType>;
+export declare type middlewaresType = Function[] | Function | multiMiddlewareType | multiMiddlewareType[];
 export declare type middlewareType = Function[] | Function;
 export declare type resType = any;
 export declare type reqType = any;

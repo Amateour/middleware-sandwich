@@ -21,7 +21,7 @@ export class ClassException implements SWCH.ClassException {
      *
      * @param data {object}
      */
-    server_error = (data) => {
+    server_error = (data: SWCH.ErrorsRequest.Data) => {
         const {message, errors} = get_data_errors(data);
         throw {"statusCode": 500, "message": message, errors};
     }
@@ -31,7 +31,7 @@ export class ClassException implements SWCH.ClassException {
      *
      * @param data {object}
      */
-    bad_request = (data) => {
+    bad_request = (data: SWCH.ErrorsRequest.Data) => {
         const {message, errors} = get_data_errors(data);
         throw {"statusCode": 400, "message": message, errors};
     }
@@ -53,7 +53,7 @@ class ClassMessage implements SWCH.ClassMessage {
      * @param {number} statusCode number status
      * @param {object | string} message message response
      */
-    response = (res, statusCode, message) => {
+    response(res: any, statusCode: number, message: any) {
 
         /**
          * stacked error information
@@ -77,7 +77,7 @@ class ClassMessage implements SWCH.ClassMessage {
      * @param {object} res 
      * @param {object | string} mess 
      */
-    errors = (res, mess) => {
+    errors(res: any, mess: any) {
         this.response(res, 500, mess)
     }
 
@@ -87,7 +87,7 @@ class ClassMessage implements SWCH.ClassMessage {
      * @param {object} res 
      * @param {object | string} mess 
      */
-    success = (res, mess) => {
+    success(res: any, mess: any) {
         this.response(res, 200, mess)
     }
 
@@ -97,7 +97,7 @@ class ClassMessage implements SWCH.ClassMessage {
      * @param {object} res 
      * @param {object | string} mess 
      */
-    create = (res, mess) => {
+    create(res: any, mess: any) {
       this.response(res, 201, mess)
     }
 }

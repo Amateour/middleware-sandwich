@@ -34,14 +34,14 @@ export type ParserSchemesResponse = {
   errors: any
 }
 
-export type parser_schemes = (value_of: boolean, req_body: any, scheme: compareType) => Promise<ParserSchemesResponse>
+export type parser_schemes = (value_of: boolean, scheme: compareType | null, req_body?: any,) => Promise<ParserSchemesResponse>
 
 /**
  * 
  */
  export interface add_arguments {
   readonly arg: any;
-  readonly parser_schemes: (value_of?: boolean, scheme?: any) => Promise<ParserSchemesResponse>;
+  readonly parser_schemes: parser_schemes;
   f: any;
   request: any;
 }
@@ -52,7 +52,7 @@ export type parser_schemes = (value_of: boolean, req_body: any, scheme: compareT
  * @class {Sandwiches}
  */
 export interface Sandwiches extends Types {
-    scheme: compareType | null;
+    scheme: compareType | null | any;
     value_of: boolean;
 
     parser_schemes(body: any): Promise<ParserSchemesResponse>

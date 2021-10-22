@@ -54,7 +54,7 @@ const transform: SWCH.transform = (options) => {
     })
 }
 
-const parser_schemes: SWCH.parser_schemes = async (value_of, req_body, scheme) => {
+const parser_schemes: SWCH.parser_schemes = async (value_of, scheme, req_body) => {
     const
     /**
      *
@@ -81,8 +81,8 @@ const parser_schemes: SWCH.parser_schemes = async (value_of, req_body, scheme) =
  */
 export class Sandwiches extends Types implements SWCH.Sandwiches {
 
-    scheme;
-    value_of;
+    scheme: SWCH.compareType | null;
+    value_of: boolean;
 
     constructor(value_of = true, scheme = null) {
         super(); 
@@ -93,10 +93,10 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
     /**
      * 
      */
-    async parser_schemes(body)
+    async parser_schemes(body: any)
     {
         return await parser_schemes(
-            this.value_of, body, this.scheme
+            this.value_of, this.scheme, body
         )
     }
 
@@ -104,7 +104,7 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
      *
      * @param options
      */
-    _(options) {
+    _(options: SWCH.routerProps) {
         return transform(options)
     }
 
@@ -113,8 +113,8 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
      * @param classRequest
      * @param middlewares
      */
-    handler(classRequest, middlewares) {
-        return async (req, res) => {
+    handler(classRequest: any, middlewares?: SWCH.middlewaresType) {
+        return async (req: any, res: any) => {
             try {
                 const $classRequest = new classRequest(req, res);
                 const {arg, get, post, put, delete: deleted} = $classRequest;
@@ -165,21 +165,21 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
      *
      * @param scheme
      */
-    Req = (scheme) => {
+    Req = (scheme: SWCH.compareType) => {
         return class add_arguments implements SWCH.add_arguments {
-            arg;
-            parser_schemes;
-            f;
-            request;
+            readonly arg;
+            readonly parser_schemes: SWCH.parser_schemes;
+            f: any;
+            request: any;
     
-            constructor(req) {
+            constructor(req: any) {
                 this.arg = scheme;
                 this.parser_schemes = async function (value_of = true, scheme)
                 {
                     return parser_schemes(
                         value_of,
-                        {...req.body, ...req.query},
-                        scheme ?? this.arg
+                        scheme ?? this.arg,
+                        {...req.body, ...req.query}
                     );
                 }
             }

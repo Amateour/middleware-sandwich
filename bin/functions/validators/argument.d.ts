@@ -135,4 +135,4 @@ export type get_value = (req_body: object, schemes: object, key: string | number
  * @param req_body request body {email: "example@sandwich.com"}
  * @param schemes schemes of validation { email: {type: Sandwich.String, strict: true} }
  */
-export type argument = (value_of: boolean, req_body: object, schemes: object) => Promise<argumentProps>
+export type argument = (value_of: boolean, req_body: object, schemes: SWCH.compareType | null) => Promise<argumentProps>
