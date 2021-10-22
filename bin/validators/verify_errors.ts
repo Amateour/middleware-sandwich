@@ -1,4 +1,5 @@
-import {Exception} from "./message";
+import * as SWCH from '../functions';
+import {Exception} from "../utils/message";
 
 const _ = require('lodash');
 
@@ -7,7 +8,7 @@ const _ = require('lodash');
  *
  * @param errors
  */
-export  const verify_errors = async (errors) => {
+export const verify_errors: SWCH.verify_errors = async (errors) => {
 
     const resp_err = _(errors)
         .map((value, key) => new Object({[key]: value.errors}))

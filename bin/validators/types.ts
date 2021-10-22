@@ -1,5 +1,6 @@
+import * as SWCH from '../functions'; 
 
-export const Type = {
+export const Type: SWCH.Type = {
     String: String,
     Number: Number,
     Array: Array,
@@ -7,7 +8,7 @@ export const Type = {
     Object: Object,
 }
 
-export class Types {
+export class Types implements SWCH.Types {
     String = Type.String
     Number = Type.Number
     Array = Type.Array

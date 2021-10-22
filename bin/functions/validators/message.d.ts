@@ -1,7 +1,7 @@
-import {MessageArgument} from "../type";
+import types from "../type";
 
 /**
  *  
- * @interface MessageArgument
+ * @interface messageArgument
  */
-export type argument = MessageArgument;
+export type messageArgument = types.MessageArgument;

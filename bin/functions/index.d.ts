@@ -3,7 +3,7 @@ export * from './utils/help';
 export * from './utils/message';
 export * from './type';
 
-import {routerProps, middlewaresType} from "./type";
+import {routerProps, middlewaresType, compareType} from "./type";
 import {Types} from "./validators/types";
 
 /**
@@ -11,7 +11,7 @@ import {Types} from "./validators/types";
  * @param options
  * @return {Promise<object>}
  */
-export type exec_ = (options: routerProps) => Promise<{
+export type exec = (options: routerProps) => Promise<{
   f: Function,
   success: boolean,
   method: string,
@@ -25,7 +25,7 @@ export type exec_ = (options: routerProps) => Promise<{
  */
 export type transform = (options: routerProps) => Promise<any>
 
-export type parser_schemes = (value_of: boolean, req_body: object, scheme: any) => Promise<{
+export type parser_schemes = (value_of: boolean, req_body: object, scheme: compareType) => Promise<{
   schemes: any,
   args: any,
   errors: any
@@ -34,8 +34,8 @@ export type parser_schemes = (value_of: boolean, req_body: object, scheme: any) 
 /**
  * 
  */
-interface add_arg {
-  readonly arg;
+ export interface add_arguments {
+  readonly arg: any;
   readonly parser_schemes: Function;
   f: any;
   request: any;
@@ -52,19 +52,19 @@ export interface Sandwiches extends Types {
      *
      * @param options
      */
-    _(options: routerProps): transform
+    _(options: routerProps): Promise<transform>
 
     /**
      *
      * @param classRequest
      * @param middlewares
      */
-    handler(classRequest: any, middlewares?: middlewaresType): Promise<any>
+    handler(classRequest: any, middlewares?: middlewaresType): unknown
     /**
      *
      * @param scheme
      */
-    Req: (scheme?: object) => add_arg
+    Req(scheme?: compareType): any
 }
 
 export declare type Sandwich = Sandwiches 

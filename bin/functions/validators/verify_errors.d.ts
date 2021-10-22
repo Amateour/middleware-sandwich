@@ -3,4 +3,4 @@
  *
  * @param errors
  */
-export type verify_errors = (errors: object) => Array<any>
+export type verify_errors = (errors: object) => Promise<any[]>

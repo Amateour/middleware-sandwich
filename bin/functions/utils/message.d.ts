@@ -9,7 +9,7 @@ import {ErrorsRequest} from "../type";
  * }
  * 
  */
- export type get_data_errors = (data: ErrorsRequest.Data) => object
+ export type get_data_errors = (data: ErrorsRequest.Data) => ErrorsRequest.Data
 
  /**
  * 

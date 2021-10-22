@@ -1,3 +1,4 @@
+import * as SWCH from './functions';
 import {push_against, toUpper} from './utils/help';
 import {Message} from './utils/message';
 import {argument, method, middleware, verify_errors, Types} from './validators/validator';
@@ -7,7 +8,7 @@ import {argument, method, middleware, verify_errors, Types} from './validators/v
  * @param options
  * @return {Promise<object>}
  */
-export const exec_ = async (options) => {
+export const exec: SWCH.exec = async (options) => {
     let req_method = '';
 
     if (typeof options.req.method == 'string') {
@@ -45,15 +46,15 @@ export const exec_ = async (options) => {
  *
  * @param options
  */
-const transform = (options) => {
+const transform: SWCH.transform = (options) => {
     return new Promise((resolve) => {
-        exec_(options)
+        exec(options)
             .then((resp) => resolve(resp) )
             .catch(err => Message.errors(options.res, err));
     })
 }
 
-const parser_schemes = async (value_of, req_body, scheme) => {
+const parser_schemes: SWCH.parser_schemes = async (value_of, req_body, scheme) => {
     const
     /**
      *
@@ -78,7 +79,7 @@ const parser_schemes = async (value_of, req_body, scheme) => {
  *
  * @class {Sandwiches}
  */
-export class Sandwiches extends Types{
+export class Sandwiches extends Types implements SWCH.Sandwiches {
 
     /**
      *
@@ -145,7 +146,7 @@ export class Sandwiches extends Types{
      *
      * @param scheme
      */
-    Req = (scheme) => class add_arg {
+    Req = (scheme) => class add_arguments implements SWCH.add_arguments {
         arg;
         parser_schemes;
         f;

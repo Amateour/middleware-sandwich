@@ -1,6 +1,6 @@
-import {MessageArgument} from "./types";
+import * as SWCH from '../functions';
 
-export const argument = {
+export const messageArgument: SWCH.messageArgument = {
     validation: (props) => ({
         message: `${props.key}_${props.key_validation}`
     }),

@@ -1,13 +1,14 @@
-export const isArray = (elm) => elm instanceof Array;
-export const isObject = (elm) => elm instanceof Object;
-export const isString = (elm) => typeof elm === "string";
-export const isNumber = (elm) => typeof elm === "number";
+import * as SWCH from '../functions'; 
+export const isArray: SWCH.isArray = (elm) => elm instanceof Array;
+export const isObject: SWCH.isObject = (elm) => elm instanceof Object;
+export const isString: SWCH.isString = (elm) => typeof elm === "string";
+export const isNumber: SWCH.isNumber = (elm) => typeof elm === "number";
 
 /**
  * 
  * @constant validate
  */
-export const validate = {
+export const validate: SWCH.validate = {
     Array: isArray,
     String: isString,
     Number: isNumber,
@@ -21,7 +22,7 @@ const _ = require('lodash');
  * @param middlewares
  * @param method
  */
-export const get_middlewares = async (middlewares, method) => {
+export const get_middlewares: SWCH.get_middlewares = async (middlewares, method) => {
     try {
         let flatten = false;
          if (!(typeof middlewares === 'object')) return middlewares;
@@ -54,7 +55,7 @@ export const get_middlewares = async (middlewares, method) => {
  * @param {object} arr 
  * @returns 
  */
-export const toUpper = (arr) => {
+export const toUpper: SWCH.toUpper = (arr) => {
     return _(arr).filter((val) => val).map(_.toUpper).valueOf();
 }
 
@@ -64,7 +65,7 @@ export const toUpper = (arr) => {
  * @param {object} req 
  * @param {object} res 
  */
-export const push_against = async (push, req, res) => {
+export const push_against: SWCH.push_against = async (push, req, res) => {
     const method = push.request.method;
     switch (method) {
         case 'POST': await push.post(req, res)

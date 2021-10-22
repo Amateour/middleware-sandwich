@@ -2,8 +2,11 @@
   "name": "middleware-sandwich",
   "version": "1.0.0",
   "description": "",
-  "main": "bin/index.js",
+  "main": "build/index.js",
+  "module": "build/index.es.js",
+  "jsnext:main": "build/index.es.js",
   "scripts": {
+    "build": "rollup -c",
     "test": "jest"
   },
   "husky": {
@@ -11,16 +14,31 @@
       "pre-commit": "npm test"
     }
   },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
   "repository": "git@github.com:Amateour/middleware-sandwich.git",
   "author": "Brayan Salgado <binariado@gmail.com>",
   "license": "GPL 3.0",
   "keywords": [],
+  "files": [
+    "build"
+  ],
   "devDependencies": {
     "@babel/preset-env": "^7.15.8",
+    "@types/jest": "^27.0.2",
     "babel-jest": "^27.3.1",
     "husky": "^7.0.2",
     "jest": "^27.3.1",
-    "lint-staged": "^11.2.3"
+    "lint-staged": "^11.2.3",
+    "rollup": "^2.58.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "ts-jest": "^27.0.7",
+    "typescript": "^4.4.4"
   },
   "dependencies": {
     "lodash": "^4.17.21"

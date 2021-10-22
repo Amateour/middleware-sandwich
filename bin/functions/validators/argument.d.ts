@@ -5,7 +5,8 @@ import {
     valueType,
     keyType,
     messageType,
-    TypeValid
+    TypeValid,
+    compareType
 } from "../type";
 
 /**
@@ -40,8 +41,9 @@ export interface func_arguments {
      *
      * @param valid
      * @param value
+     * @param scheme
      */
-    type: (valid: Function | string, value: any) => TypeValid,
+    type: (valid: Function | string, value: any, scheme: compareType) => TypeValid,
     /**
      * Strictly validates the value of a data type
      *
@@ -70,7 +72,7 @@ export type valid_type = ({value, key, scheme}: compareProps) => TypeValid
  * @param key
  * @param scheme
  */
-export type validation_customer = ({value, key, scheme}: compareProps) => any
+export type validation_customer = ({value, key, scheme}: compareProps) => any[]
 
 /**
  * Extract data types to validate in the function valid_extract_argument
@@ -78,7 +80,7 @@ export type validation_customer = ({value, key, scheme}: compareProps) => any
  *
  * @param scheme data: {type: Sandwich.String, strict: true, value: '100'}
  */
-export type omit_argument = (scheme: object) => Array<any>
+export type omit_argument = (scheme: object) => any[]
 
 /**
  * Validate a schema against a value
@@ -91,14 +93,14 @@ export type omit_argument = (scheme: object) => Array<any>
  */
 export type valid_extract_argument = (
     messages: messageType, scheme: object, value: valueType, type: any, key_main: keyType
-) => Array<any>
+) => any[]
 
 /**
  * validate Message
  *
  * @param errors
  */
-export type valid_resp_argument = (errors: Array<object>) => boolean
+export type valid_resp_argument = (errors: Array<object>) => Promise<boolean>
 
 /**
  * Validate an argument schema
@@ -110,7 +112,11 @@ export type valid_resp_argument = (errors: Array<object>) => boolean
  * }
  * @type compareProps
  */
-export type valid_argument = (props: compareProps) => {errors: Array<any>, success: boolean, value: String | Array<any> | number | Boolean | Object }
+export type valid_argument = (props: compareProps) => Promise<{
+    errors: Array<any>,
+    success: boolean,
+    value: String | Array<any> | Number | Boolean | Object 
+}>
 
 /**
  * Extract the defined value from the req or in the schema
@@ -120,7 +126,7 @@ export type valid_argument = (props: compareProps) => {errors: Array<any>, succe
  * @param schemes
  * @param key field key to validate
  */
-export type get_value<T> = (req_body: object, schemes: object, key: string | number) => T
+export type get_value = (req_body: object, schemes: object, key: string | number) => any 
 
 /**
  * This function validates all body data specified in the arguments
@@ -129,4 +135,4 @@ export type get_value<T> = (req_body: object, schemes: object, key: string | num
  * @param req_body request body {email: "example@sandwich.com"}
  * @param schemes schemes of validation { email: {type: Sandwich.String, strict: true} }
  */
-export type argument = (value_of: boolean, req_body: object, schemes: object) => argumentProps
+export type argument = (value_of: boolean, req_body: object, schemes: object) => Promise<argumentProps>

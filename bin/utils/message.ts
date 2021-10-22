@@ -1,3 +1,4 @@
+import * as SWCH from '../functions';
 /**
  * get data error
  *
@@ -7,14 +8,14 @@
  * }
  * @const
  */
-const get_data_errors = (data) => {
+const get_data_errors: SWCH.get_data_errors = (data) => {
     return data
 }
 
 /**
  * @class ClassException
  */
-export class ClassException {
+export class ClassException implements SWCH.ClassException {
     /**
      * Server error Generate
      *
@@ -43,7 +44,7 @@ export const Exception = new ClassException();
 /**
  * @class ClassMessage
  */
-class ClassMessage {
+class ClassMessage implements SWCH.ClassMessage {
 
     /**
      * send response request

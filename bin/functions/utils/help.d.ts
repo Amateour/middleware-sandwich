@@ -20,12 +20,28 @@ export type isString = (elm: any) => boolean;
  * @returns boolean
  */
 export type isNumber = (elm: any) => boolean;  
+
+/**
+ * 
+ */
+export type validate = {
+  Array: isArray,
+  String: isString,
+  Number: isNumber,
+  Object: isObject
+}
 /**
  *
  * @param middlewares
  * @param method
  */
 export type get_middlewares = (middlewares: middlewaresType, method: string) => Promise<Array<any>>;
+/**
+ * 
+ * @param {object} arr 
+ * @returns 
+ */
+ export type toUpper = (arr) => Array<string>
 /**
  * 
  * @param push
