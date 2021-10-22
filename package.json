@@ -1,7 +1,7 @@
 {
   "name": "middleware-sandwich",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Integrated connection middleware, allows to improve the traceability of the arguments and parameters transmitted by HTTP request.",
   "main": "build/index.js",
   "module": "build/index.es.js",
   "jsnext:main": "build/index.es.js",
