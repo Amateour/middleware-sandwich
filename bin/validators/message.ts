@@ -1,4 +1,4 @@
-import * as SWCH from '../functions';
+import * as SWCH from '../../functions';
 
 export const messageArgument: SWCH.messageArgument = {
     validation: (props) => ({

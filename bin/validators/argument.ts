@@ -1,8 +1,8 @@
-import * as SWCH from '../functions'; 
+import _ from 'lodash';
+import * as SWCH from '../../functions'; 
 import {Exception} from '../utils/message';
 import {validate} from "../utils/help";
 import {messageArgument} from "./message";
-import _ from '../libs/lodash';
 
 /**
  *  list of validation functions
@@ -118,7 +118,7 @@ const valid_type: SWCH.valid_type = ({value, key, scheme}) => {
  */
 const validation_customer: SWCH.validation_customer = ({value, key, scheme}) => {
     const {validation} = scheme;
-    return _.all(validation).map((func: Function, key_validation: string | number) => {
+    return _(validation).map((func: Function, key_validation: string | number) => {
         const messDefault = _.get(messageArgument, 'validation')
        return func(value) ? messDefault({key, key_validation}) : false;
     }).filter((value: any) => value).valueOf();
@@ -146,7 +146,7 @@ const omit_argument: SWCH.omit_argument = (scheme) => {
 const valid_extract_argument: SWCH.valid_extract_argument = (
     messages, scheme, value, type, key_main
 ) => {
-    return _.all(scheme)
+    return _(scheme)
         .map((valid_value, key) => {
         const func_valid = _.get(func_arguments, key);
         const message = _.get(messages, key);

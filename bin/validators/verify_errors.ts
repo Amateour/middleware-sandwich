@@ -1,25 +1,33 @@
-import * as SWCH from '../functions';
+import * as SWCH from '../../functions';
+import _ from 'lodash';
 import {Exception} from "../utils/message";
-import _ from '../libs/lodash';
 
 /**
  * validate errors and send message
  *
  * @param errors
  */
-export const verify_errors: SWCH.verify_errors = async (errors) => {
+export const verify_errors: SWCH.verify_errors = async (
+    errors, request
+) => {
 
-    const resp_err = _.all(errors)
-        .map((value, key) => new Object({[key]: value.errors}))
-        .filter((value) => _.find(value, (err) => err.length))
+    let response: SWCH.Any = {
+        errors: [],
+        message: 'args_validation_successful'
+    }
+    
+    const resp_err = _(errors)
+        .map((value: any, key) => new Object({[key]: value.errors}))
+        .filter((value: any) => _.find(value, (err) => err.length))
         .valueOf();
 
     if (resp_err.length) {
-        Exception.bad_request({
-            message: "args_validation_errors",
-            errors: resp_err
-        })
+        response.errors = resp_err;
+        response.message = 'args_validation_errors';
+        request ? 
+        Exception.bad_request(response) : 
+        Exception.error(response);
     } else {
-        return resp_err
+        return response
     }
 }

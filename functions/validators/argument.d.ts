@@ -80,7 +80,7 @@ export type validation_customer = ({value, key, scheme}: compareProps) => any[]
  *
  * @param scheme data: {type: Sandwich.String, strict: true, value: '100'}
  */
-export type omit_argument = (scheme: object) => any[]
+export type omit_argument = (scheme: object) => any
 
 /**
  * Validate a schema against a value

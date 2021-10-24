@@ -1,4 +1,6 @@
 
+export type Any = any;
+export type AnyArray = any[];
 export declare type methodType = Array<String> | String;
 export interface multiMiddlewareType {
     middleware: Array<Function> | Function,
@@ -50,11 +52,13 @@ export interface compareType {
     // validation?: Function | Function<object>
 }
 
+export type Scheme = bject<compareType>;
+
 export interface compareProps {
     value: valueType,
     key: keyType,
     message: messageType,
-    scheme: compareType,
+    scheme: Scheme,
 }
 
 export interface argValid {
@@ -62,7 +66,7 @@ export interface argValid {
     valid_value: any,
     type: valueType,
     key: keyType,
-    scheme?: compareType
+    scheme?: Scheme
 }
 
 export interface argMessProps {
@@ -70,7 +74,7 @@ export interface argMessProps {
     valid_value?: any,
     type?: valueType,
     key?: any,
-    key_validation?: string
+    key_validation?: string | number
 }
 
 export declare type messValid = {
@@ -89,6 +93,7 @@ interface MessageArgument {
 export declare module ErrorsRequest {
     type message = object | string;
     type errors= Array<any> | string;
+    type RespAny = any;
 
     interface Data {
         message: message,

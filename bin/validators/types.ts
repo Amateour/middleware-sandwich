@@ -1,4 +1,4 @@
-import * as SWCH from '../functions'; 
+import * as SWCH from '../../functions'; 
 
 export const Type: SWCH.Type = {
     String: String,

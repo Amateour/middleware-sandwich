@@ -3,7 +3,7 @@ export * from './utils/help';
 export * from './utils/message';
 export * from './type';
 
-import {routerProps, middlewaresType, compareType} from "./type";
+import {routerProps, middlewaresType, compareType, Scheme} from "./type";
 import {Types} from "./validators/types";
 
 /**
@@ -31,10 +31,16 @@ export type transform = (options: routerProps) => Promise<any>;
 export type ParserSchemesResponse = {
   schemes: any,
   args: any,
-  errors: any
+  errors: any[],
+  message: string,
 }
 
-export type parser_schemes = (value_of: boolean, scheme: compareType | null, req_body?: any,) => Promise<ParserSchemesResponse>
+/**
+ * 
+ */
+export type parser_schemes = (
+  value_of?: boolean | true | any, scheme?: Scheme | null, req_body?: any, request?: boolean
+  ) => Promise<ParserSchemesResponse>
 
 /**
  * 
@@ -52,7 +58,7 @@ export type parser_schemes = (value_of: boolean, scheme: compareType | null, req
  * @class {Sandwiches}
  */
 export interface Sandwiches extends Types {
-    scheme: compareType | null | any;
+    scheme: Scheme;
     value_of: boolean;
 
     parser_schemes(body: any): Promise<ParserSchemesResponse>
@@ -73,7 +79,7 @@ export interface Sandwiches extends Types {
      *
      * @param scheme
      */
-    Req(scheme?: compareType): any
+    Req(scheme?: Scheme): any
 }
 
 export declare type Sandwich = Sandwiches 

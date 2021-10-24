@@ -1,4 +1,4 @@
-import * as SWCH from '../functions';
+import * as SWCH from '../../functions';
 import {get_middlewares} from "../utils/help";
 
 /**

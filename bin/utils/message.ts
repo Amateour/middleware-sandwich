@@ -1,4 +1,4 @@
-import * as SWCH from '../functions';
+import * as SWCH from '../../functions';
 /**
  * get data error
  *
@@ -16,6 +16,16 @@ const get_data_errors: SWCH.get_data_errors = (data) => {
  * @class ClassException
  */
 export class ClassException implements SWCH.ClassException {
+
+    /**
+     * Server error Generate
+     *
+     * @param data {object}
+     */
+    error = (data: SWCH.ErrorsRequest.Data) => {
+        throw data
+    }
+
     /**
      * Server error Generate
      *
@@ -64,11 +74,18 @@ class ClassMessage implements SWCH.ClassMessage {
          * @constant response data response
          */
         const response = {
-            message: message?.message
+            message: message?.message,
+            errors: message?.errors,
+            statusCode: statusCode ?? 200,
         }
- 
-        res.status(statusCode ?? 200)
-            .json(stack ? {...response, stack} : response);
+        /**
+         * @constant data_send
+         */
+        const data_send = stack ? {...response, stack} : response;
+        if (res)
+            return res.status(response.statusCode)
+                .json(data_send);
+        Exception.error(data_send);
     }
 
     /**

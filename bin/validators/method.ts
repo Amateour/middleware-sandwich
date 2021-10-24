@@ -1,4 +1,4 @@
-import * as SWCH from '../functions';
+import * as SWCH from '../../functions';
 import {Exception} from "../utils/message";
 
 /**

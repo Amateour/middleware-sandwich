@@ -1,4 +1,5 @@
-import * as SWCH from '../functions'; 
+import * as SWCH from '../../functions'; 
+import _ from 'lodash';
 export const isArray: SWCH.isArray = (elm) => elm instanceof Array;
 export const isObject: SWCH.isObject = (elm) => elm instanceof Object;
 export const isString: SWCH.isString = (elm) => typeof elm === "string";
@@ -15,8 +16,6 @@ export const validate: SWCH.validate = {
     Object: isObject
 }
 
-const _ = require('lodash');
-
 /**
  *
  * @param middlewares
@@ -26,7 +25,7 @@ export const get_middlewares: SWCH.get_middlewares = async (middlewares, method)
     try {
         let flatten = false;
          if (!(typeof middlewares === 'object')) return middlewares;
-         const resp_middlewares = await _(middlewares)
+         const resp_middlewares: any = await _(middlewares)
          .filter((middleware: SWCH.multiMiddlewareType)=> {
             const middleware_is_function = typeof middleware === 'function';
             if(middleware_is_function) return true;
@@ -45,7 +44,7 @@ export const get_middlewares: SWCH.get_middlewares = async (middlewares, method)
             ? [middleware.methods]: middleware.methods;
             return toUpper(methods).includes(method.toUpperCase());
         }).map((middleware: SWCH.multiMiddlewareType) => middleware.middleware ?? middleware);
-        return flatten ? await resp_middlewares.flatten(resp_middlewares).valueOf() : resp_middlewares.valueOf();
+        return flatten ? await _.flatten(resp_middlewares).valueOf() : resp_middlewares.valueOf();
     }catch (e) {
         console.error(e);
     }
@@ -57,7 +56,7 @@ export const get_middlewares: SWCH.get_middlewares = async (middlewares, method)
  * @returns 
  */
 export const toUpper: SWCH.toUpper = (arr) => {
-    return _(arr).filter((val: any) => val).map(_.toUpper).valueOf();
+    return _(arr).filter((val) => val).map(_.toUpper).valueOf();
 }
 
 /**

@@ -16,6 +16,14 @@ import {ErrorsRequest} from "../type";
  * @template ClassException
  */
 export interface ClassException {
+
+    /**
+     * Bad request Generate error
+     *
+     * @param server_error {object}
+     */
+    error: (data: ErrorsRequest.Data) => ErrorsRequest.RespAny;
+
     /**
      * Bad request Generate error
      *

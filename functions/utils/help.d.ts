@@ -35,13 +35,13 @@ export type validate = {
  * @param middlewares
  * @param method
  */
-export type get_middlewares = (middlewares: middlewaresType, method: string) => Promise<Array<any>>;
+export type get_middlewares = (middlewares: middlewaresType, method: string) => Promise<any>;
 /**
  * 
  * @param {object} arr 
  * @returns 
  */
- export type toUpper = (arr) => Array<string>
+ export type toUpper = (arr: any[]) => any[]
 /**
  * 
  * @param push

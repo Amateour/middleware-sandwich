@@ -1,1 +1,1 @@
-export * from './bin/functions';
+export * from './functions';
