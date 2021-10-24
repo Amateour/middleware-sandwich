@@ -47,25 +47,20 @@ test('validation success', async () => {
   expect(resp1.message).toBe("args_validation_successful");
 });
 
-test('HTTP POST request is not allowed', (done) => {
+test('HTTP POST request is not allowed', async () => {
   class Users extends Sandwich.Req(UserScheme) {}
   const handler = Sandwich.handler(Users);
-  const hadler_request_post = async() => {
-    try {
-      const resp: any = await handler({
-        body: {
-          email: "test@sandwich.com",
-          password: "12345678",
-        },
-        method: 'POST',
-      }, null).catch(e => e);
-      expect(resp.message).toBe('HTTP POST request is not allowed');
-      done()
-    } catch (error) {
-      done(error);
-    }
+  const hadler_request_post = async () => {
+    return await handler({
+      body: {
+        email: "test@sandwich.com",
+        password: "12345678",
+      },
+      method: 'POST',
+    }, null);
   };
-  hadler_request_post();
+  expect.assertions(0);
+  await hadler_request_post().catch(error => expect(error.message).toMatch('HTTP POST request is not allowed'));
 });
 
 test('HTTP POST request is allowed', (done) => {
