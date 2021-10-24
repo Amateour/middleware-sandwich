@@ -1,7 +1,7 @@
 import * as SWCH from '../functions';
 import {push_against, toUpper} from './utils/help';
 import {Message} from './utils/message';
-import {argument, method, middleware, verify_errors, Types} from './validators/validator';
+import {argument, method, middleware, verifyErrors, Types} from './validators/validator';
 import _ from 'lodash';
 
 /**
@@ -63,7 +63,7 @@ const transform: SWCH.transform = (options) => {
  * @param request 
  * @returns 
  */
-const parser_schemes: SWCH.parser_schemes = async (
+const parserSchemes: SWCH.parserSchemes = async (
     value_of, scheme, req_body, request = false
 ) => {
     const
@@ -77,7 +77,7 @@ const parser_schemes: SWCH.parser_schemes = async (
      *
      * @param responseError bug check response 
      */
-    responseError = await verify_errors(result_argument.argument, request);
+    responseError = await verifyErrors(result_argument.argument, request);
 
     return {
         schemes: result_argument.argument,
@@ -108,7 +108,7 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
      */
     async parser_schemes(body: SWCH.Any)
     {
-        return await parser_schemes(
+        return await parserSchemes(
             this.value_of, this.scheme, body
         )
     }
@@ -178,9 +178,9 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
      * @param scheme
      */
     Req = (scheme: SWCH.Scheme) => {
-        return class add_arguments implements SWCH.add_arguments {
+        return class add_arguments implements SWCH.addArguments {
             readonly arg: SWCH.Any;
-            readonly parser_schemes: SWCH.parser_schemes;
+            readonly parser_schemes: SWCH.parserSchemes;
             f: SWCH.Any;
             request: SWCH.Any;
     
@@ -188,7 +188,7 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
                 this.arg = scheme;
                 this.parser_schemes = async function (value_of = true, scheme, body)
                 {
-                    return parser_schemes(
+                    return parserSchemes(
                         value_of,
                         scheme ?? this.arg,
                         body ?? {...req.body, ...req.query},

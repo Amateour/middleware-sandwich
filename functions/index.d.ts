@@ -3,7 +3,7 @@ export * from './utils/help';
 export * from './utils/message';
 export * from './type';
 
-import {routerProps, middlewaresType, compareType, Scheme} from "./type";
+import {routerProps, middlewaresType, Scheme} from "./type";
 import {Types} from "./validators/types";
 
 /**
@@ -12,11 +12,11 @@ import {Types} from "./validators/types";
  * @return {Promise<object>}
  */
 export type exec = (options: routerProps) => Promise<{
-  f: Function,
+  f: () => void,
   success: boolean,
   method: string,
-  schemes: any,
-  req_body: any,
+  schemes: unknown,
+  req_body: string | null | undefined,
 }>
 
 /**
@@ -38,16 +38,16 @@ export type ParserSchemesResponse = {
 /**
  * 
  */
-export type parser_schemes = (
+export type parserSchemes = (
   value_of?: boolean | true | any, scheme?: Scheme | null, req_body?: any, request?: boolean
   ) => Promise<ParserSchemesResponse>
 
 /**
  * 
  */
- export interface add_arguments {
+ export interface addArguments {
   readonly arg: any;
-  readonly parser_schemes: parser_schemes;
+  readonly parser_schemes: parserSchemes;
   f: any;
   request: any;
 }

@@ -8,6 +8,7 @@
   "scripts": {
     "build": "rollup -c",
     "test": "jest",
+    "lint": "lint-staged",
     "prepare": "husky install"
   },
   "husky": {
@@ -29,7 +30,10 @@
   "devDependencies": {
     "@babel/preset-env": "^7.15.8",
     "@types/jest": "^27.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
     "babel-jest": "^27.3.1",
+    "eslint": "^8.1.0",
     "husky": "^7.0.0",
     "jest": "^27.3.1",
     "lint-staged": "^11.2.3",
@@ -43,7 +47,6 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.176",
-    "lodash": "^4.17.21",
-    "underscore": "^1.13.1"
+    "lodash": "^4.17.21"
   }
 }

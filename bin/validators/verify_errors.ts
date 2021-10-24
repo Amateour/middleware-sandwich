@@ -7,11 +7,11 @@ import {Exception} from "../utils/message";
  *
  * @param errors
  */
-export const verify_errors: SWCH.verify_errors = async (
+export const verifyErrors: SWCH.verify_errors = async (
     errors, request
 ) => {
 
-    let response: SWCH.Any = {
+    const response: SWCH.Any = {
         errors: [],
         message: 'args_validation_successful'
     }
