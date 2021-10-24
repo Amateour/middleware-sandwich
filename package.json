@@ -7,7 +7,8 @@
   "jsnext:main": "build/index.es.js",
   "scripts": {
     "build": "rollup -c",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky install"
   },
   "husky": {
     "hooks": {
@@ -29,7 +30,7 @@
     "@babel/preset-env": "^7.15.8",
     "@types/jest": "^27.0.2",
     "babel-jest": "^27.3.1",
-    "husky": "^7.0.2",
+    "husky": "^7.0.0",
     "jest": "^27.3.1",
     "lint-staged": "^11.2.3",
     "rollup": "^2.58.0",
