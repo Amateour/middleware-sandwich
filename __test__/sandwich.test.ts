@@ -59,7 +59,7 @@ test('HTTP POST request is not allowed', async () => {
       method: 'POST',
     }, null);
   };
-  expect.assertions(0);
+  expect.assertions(1);
   await hadler_request_post().catch(error => expect(error.message).toMatch('HTTP POST request is not allowed'));
 });
 
