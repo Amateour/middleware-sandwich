@@ -1,5 +1,5 @@
 {
-  "name": "middleware-sandwich",
+  "name": "@amateour/middleware-sandwich",
   "version": "0.1.0",
   "description": "Integrated connection middleware, allows to improve the traceability of the arguments and parameters transmitted by HTTP request.",
   "main": "build/index.js",
