@@ -1,5 +1,5 @@
 import * as SWCH from '../functions'
-import {Sandwiches, Sandwich} from '../';
+import {Sandwich, Sandwiches} from '../index';
 
 const UserScheme = {
   email: {type: Sandwich.String, required: true, strict: true},
