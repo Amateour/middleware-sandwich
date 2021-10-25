@@ -13,11 +13,6 @@
     "lint": "lint-staged",
     "prepare": "husky install"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm test"
-    }
-  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
