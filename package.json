@@ -5,8 +5,10 @@
   "main": "build/index.js",
   "module": "build/index.es.js",
   "jsnext:main": "build/index.es.js",
-  "types": "index.d.ts",
-  "private": false,
+  "typings": "build/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "rollup -c",
     "test": "jest",
@@ -22,7 +24,9 @@
   "license": "GPL 3.0",
   "keywords": [],
   "files": [
-    "build"
+    "build",
+    "functions",
+    "index.js"
   ],
   "devDependencies": {
     "@babel/preset-env": "^7.15.8",
