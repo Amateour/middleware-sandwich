@@ -17,7 +17,7 @@
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
-  "repository": "git@github.com:Amateour/middleware-sandwich.git",
+  "repository": "git@github.com:amateour/middleware-sandwich.git",
   "author": "Brayan Salgado <binariado@gmail.com>",
   "license": "GPL 3.0",
   "keywords": [],
