@@ -3,7 +3,7 @@ export * from './utils/help';
 export * from './utils/message';
 export * from './type';
 
-import {routerProps, middlewaresType, Scheme} from "./type";
+import {routerProps, middlewaresType, Scheme, ReqType, ResType, Next} from "./type";
 import {Types} from "./validators/types";
 
 /**
@@ -74,12 +74,14 @@ export interface Sandwiches extends Types {
      * @param classRequest
      * @param middlewares
      */
-    handler(classRequest: any, middlewares?: middlewaresType): unknown
+    handler(classRequest: any, middlewares?: middlewaresType): (
+      req: ReqType, res: ResType, next?: Next
+    ) => unknown
     /**
      *
      * @param scheme
      */
-    Req(scheme?: Scheme): any
+     resource(scheme?: Scheme): any
 }
 
 export declare type Sandwich = Sandwiches 

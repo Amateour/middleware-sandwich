@@ -6,7 +6,8 @@ import {
     keyType,
     messageType,
     TypeValid,
-    compareType
+    compareType,
+    FunctionVoid
 } from "../type";
 
 /**
@@ -43,7 +44,7 @@ export interface func_arguments {
      * @param value
      * @param scheme
      */
-    type: (valid: Function | string, value: any, scheme: compareType) => TypeValid,
+    type: (valid: FunctionVoid | string, value: any, scheme: compareType) => TypeValid,
     /**
      * Strictly validates the value of a data type
      *
@@ -72,7 +73,7 @@ export type valid_type = ({value, key, scheme}: compareProps) => TypeValid
  * @param key
  * @param scheme
  */
-export type validation_customer = ({value, key, scheme}: compareProps) => any[]
+export type validation_custom = ({value, key, scheme}: compareProps) => any[]
 
 /**
  * Extract data types to validate in the function valid_extract_argument
@@ -115,7 +116,7 @@ export type valid_resp_argument = (errors: Array<object>) => Promise<boolean>
 export type valid_argument = (props: compareProps) => Promise<{
     errors: Array<any>,
     success: boolean,
-    value: String | Array<any> | Number | Boolean | Object 
+    value: string | Array<any> | number | boolean | object 
 }>
 
 /**

@@ -1,13 +1,22 @@
-import {middlewaresType, reqType, resType} from "../type";
+import {middlewaresType, ReqType, ResType} from "../type";
 
 /**
- * 
+ * @type FuncMiddleware The middleware function runs in the middleware_next function
+ * @returns void
+ */
+export declare type FuncMiddleware = (
+    req: ReqType, res: ResType, resolve: Promise, train: any
+) => void;
+
+/**
  * @param req
  * @param res
- * @param func
+ * @param funcMiddleware
  * @param train
  */
-export type middleware_next = (func: Function, req: reqType, res: resType, train: any) => Promise<object>
+export type middleware_next = (
+    funcMiddleware: FuncMiddleware, req: ReqType, res: ResType, train: any
+    ) => Promise<object>
 
 /**
  *
@@ -15,7 +24,7 @@ export type middleware_next = (func: Function, req: reqType, res: resType, train
  * @param req
  * @param res
  */
-export type exec_list_func = (middlewares: Array<Function>, req: reqType, res: resType) => Promise<any>
+export type exec_list_func = (middlewares: FuncMiddleware[], req: ReqType, res: resType) => Promise<any>
 
 /**
  * middleware
@@ -26,5 +35,5 @@ export type exec_list_func = (middlewares: Array<Function>, req: reqType, res: r
  * @param method {string} method request
  */
 export type middleware = (
-    req: reqType, res: resType, middlewares?: middlewaresType, method?: string
+    req: ReqType, res: ResType, middlewares?: middlewaresType, method?: string
 ) => Promise<any>

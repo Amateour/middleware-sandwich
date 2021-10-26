@@ -1,5 +1,8 @@
 import * as SWCH from '../../functions';
 
+/**
+ * Response messages due to validation failure
+ */
 export const messageArgument: SWCH.messageArgument = {
     validation: (props) => ({
         message: `${props.key}_${props.key_validation}`

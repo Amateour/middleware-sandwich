@@ -1,11 +1,37 @@
 import * as SWCH from '../../functions'; 
 import _ from 'lodash';
+
+/**
+ * validate if it is an array
+ * 
+ * @param elm 
+ * @returns boolean
+ */
 export const isArray: SWCH.isArray = (elm) => elm instanceof Array;
+/**
+ * validate if it is an objet
+ * 
+ * @param elm 
+ * @returns boolean
+ */
 export const isObject: SWCH.isObject = (elm) => elm instanceof Object;
+/**
+ * validate if it is an string
+ * 
+ * @param elm 
+ * @returns boolean
+ */
 export const isString: SWCH.isString = (elm) => typeof elm === "string";
+/**
+ * validate if it is an number
+ * 
+ * @param elm 
+ * @returns boolean
+ */
 export const isNumber: SWCH.isNumber = (elm) => typeof elm === "number";
 
 /**
+ * Functions validations (isArray, isString)
  * 
  * @constant validate
  */
@@ -17,9 +43,30 @@ export const validate: SWCH.validate = {
 }
 
 /**
+ * get_middlewares Middleware extraction, can be an array of function objects or an object
+ * 
+ * example:
+ * Array functions
+ * Sanwiche.handler(Users, [isAuth])
+ * 
+ * Array objects
+ * Sanwiche.handler(Users, [
+ * {
+ *   methods: ['POST'],
+ *   middleware: [isAuth]
+ * }
+ *])
  *
- * @param middlewares
- * @param method
+ * objects
+ * Sanwiche.handler(Users, {
+ *   methods: ['POST'],
+ *   middleware: [isAuth]
+ * })
+ * 
+ * The extraction of each middleware is selected according to the method of the http request
+ * 
+ * @param middlewares list middlewares
+ * @param {string} method method request (post, get)
  */
 export const get_middlewares: SWCH.get_middlewares = async (middlewares, method) => {
     try {
@@ -52,29 +99,30 @@ export const get_middlewares: SWCH.get_middlewares = async (middlewares, method)
 
 /**
  * 
- * @param {object} arr 
- * @returns 
+ * @param arr 
+ * @returns string[]
  */
 export const toUpper: SWCH.toUpper = (arr) => {
     return _(arr).filter((val) => val).map(_.toUpper).valueOf();
 }
 
 /**
+ * Execute the function according to its specified method
  * 
  * @param {object} push 
  * @param {object} req 
  * @param {object} res 
  */
-export const push_against: SWCH.push_against = async (push, req, res) => {
+export const push_against: SWCH.push_against = async (push, req, res, next) => {
     const method = push.request.method;
     switch (method) {
-        case 'POST': await push.post(req, res)
+        case 'POST': await push.post(req, res, next)
             break;
-        case 'GET': await push.get(req, res)
+        case 'GET': await push.get(req, res, next)
             break;
-        case 'PUT': await push.put(req, res)
+        case 'PUT': await push.put(req, res, next)
             break;
-        case 'DELETE': await push.delete(req, res)
+        case 'DELETE': await push.delete(req, res, next)
             break;
     }
 }

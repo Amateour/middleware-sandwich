@@ -111,14 +111,20 @@ const valid_type: SWCH.valid_type = ({value, key, scheme}) => {
 }
 
 /**
+ * custom validation, for the data type specified in the argument
+ * 
+ * example 
+ * email: {
+ * type: Sandwich.String, validation: (value: strin) => typeof value == 'string'
+ * }
  *
  * @param value
  * @param key
  * @param scheme
  */
-const validation_customer: SWCH.validation_customer = ({value, key, scheme}) => {
+const validation_custom: SWCH.validation_custom = ({value, key, scheme}) => {
     const {validation} = scheme;
-    return _(validation).map((func: Function, key_validation: string | number) => {
+    return _(validation).map((func: (value: any) => any, key_validation: string | number) => {
         const messDefault = _.get(messageArgument, 'validation')
        return func(value) ? messDefault({key, key_validation}) : false;
     }).filter((value: any) => value).valueOf();
@@ -178,7 +184,7 @@ const valid_argument: SWCH.valid_argument = async (props) => {
     const {value, scheme, message, key} = props;
 
     const type =  await valid_type(props);
-    const valid_errors = await validation_customer(props);
+    const valid_errors = await validation_custom(props);
     const extract_scheme = await omit_argument(scheme);
     const errors = await valid_extract_argument(message, extract_scheme, value, type, key);
     const success = await valid_resp_argument(errors)
@@ -195,7 +201,7 @@ const valid_argument: SWCH.valid_argument = async (props) => {
  * @param key field key to validate
  */
 const get_value: SWCH.get_value = (req_body, schemes, key) => {
-    const has_value = schemes.hasOwnProperty('value');
+    const has_value = _.has(schemes, 'value');
     const defined_value = has_value ? _.get(schemes, 'value') : _.get(req_body, key);
     return defined_value instanceof Function ? defined_value() : defined_value;
 }
@@ -212,7 +218,7 @@ export const argument: SWCH.argument = async (value_of, req_body, schemes) => {
     let body = {};
 
     for (const key in schemes) {
-        const scheme = schemes.hasOwnProperty(key) ? _.get(schemes, key): null;
+        const scheme = _.has(schemes, key) ? _.get(schemes, key): null;
         resp = _.assign({
             [key]: await valid_argument({
                 value: get_value(req_body, scheme, key),
