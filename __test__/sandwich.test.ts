@@ -18,6 +18,7 @@ test('args validation errors', async () => {
     const {message} : any = error;
     expect(message).toBe('args_validation_errors');
   }
+  expect.assertions(1);
 });
 
 test('validation success', async () => {
