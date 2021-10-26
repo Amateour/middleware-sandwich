@@ -18,6 +18,7 @@ test('args validation errors', async () => {
     const {message} : any = error;
     expect(message).toBe('args_validation_errors');
   }
+  expect.assertions(1);
 });
 
 test('validation success', async () => {
@@ -48,7 +49,7 @@ test('validation success', async () => {
 });
 
 test('HTTP POST request is not allowed', async () => {
-  class Users extends Sandwich.Req(UserScheme) {}
+  class Users extends Sandwich.resource(UserScheme) {}
   const handler = Sandwich.handler(Users);
   const hadler_request_post = async () => {
     return await handler({
@@ -64,7 +65,7 @@ test('HTTP POST request is not allowed', async () => {
 });
 
 test('HTTP POST request is allowed', (done) => {
-  class Users extends Sandwich.Req(UserScheme) {
+  class Users extends Sandwich.resource(UserScheme) {
     async post() {
       try {
         const resp: SWCH.ParserSchemesResponse = await this.parser_schemes();

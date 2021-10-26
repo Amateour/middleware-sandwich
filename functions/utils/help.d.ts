@@ -1,4 +1,4 @@
-import {middlewaresType} from "../type";
+import {middlewaresType, Next} from "../type";
 
 /**
  * validation array
@@ -48,4 +48,4 @@ export type get_middlewares = (middlewares: middlewaresType, method: string) => 
  * @param req
  * @param res
  */
-export type push_against = (push: any, req: any, res: any) => Promise<any>
+export type push_against = (push: any, req: any, res: any, next: Next) => Promise<any>

@@ -5,6 +5,7 @@ import {argument, method, middleware, verifyErrors, Types} from './validators/va
 import _ from 'lodash';
 
 /**
+ * 
  *
  * @param options
  * @return {Promise<object>}
@@ -57,10 +58,10 @@ const transform: SWCH.transform = (options) => {
 
 /**
  * 
- * @param value_of 
- * @param scheme 
- * @param req_body 
- * @param request 
+ * @param {boolean} value_of True to execute valueOf, false to keep the native format
+ * @param {object} scheme scheme
+ * @param {object} req_body data body request
+ * @param {boolean} request if it is true, the errors checked by res.status (200) .json ({message: 'message'}) will be returned, if it is false it generates an exception that is replicated in the handler function (Sandwich.handler)
  * @returns 
  */
 const parserSchemes: SWCH.parserSchemes = async (
@@ -104,7 +105,7 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
     }
 
     /**
-     * 
+     * parse and validate request body data
      */
     async parser_schemes(body: SWCH.Any)
     {
@@ -127,7 +128,7 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
      * @param middlewares
      */
     handler(classRequest: SWCH.Any, middlewares?: SWCH.middlewaresType) {
-        return async (req: SWCH.Any, res: SWCH.Any) => {
+        return async (req: SWCH.Any, res: SWCH.Any, next?: SWCH.Next) => {
             const $classRequest = new classRequest(req, res);
             const {arg} = $classRequest;
             
@@ -155,16 +156,12 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
 
             const errors: SWCH.Any = await transform(data_transform).then((resp) => {
                 $classRequest.f = resp.f;
-                //$classRequest.arg = resp.argument;
-                //$classRequest.body = resp.body;
-                //$classRequest.errors = resp.errors;
-                // $classRequest.schemes = resp.schemes;
                 $classRequest.request = {
                     success: resp.success,
                     method: resp.method
                 };
                 
-                push_against($classRequest, req, res)
+                push_against($classRequest, req, res, next)
                     .catch((err)=> err);
 
             }).catch((err) => err);
@@ -174,10 +171,11 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
     }
 
     /**
+     * 
      *
      * @param scheme
      */
-    Req = (scheme: SWCH.Scheme) => {
+    resource = (scheme: SWCH.Scheme) => {
         return class add_arguments implements SWCH.addArguments {
             readonly arg: SWCH.Any;
             readonly parser_schemes: SWCH.parserSchemes;

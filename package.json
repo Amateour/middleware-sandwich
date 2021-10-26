@@ -11,7 +11,8 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "test": "jest",
+    "test": "jest && npm run travis",
+    "travis": "jshint travis.js",
     "lint": "lint-staged",
     "prepare": "husky install"
   },
@@ -37,6 +38,7 @@
     "eslint": "^8.1.0",
     "husky": "^7.0.0",
     "jest": "^27.3.1",
+    "jshint": "^2.13.1",
     "lint-staged": "^11.2.3",
     "rollup": "^2.58.0",
     "rollup-plugin-commonjs": "^10.1.0",

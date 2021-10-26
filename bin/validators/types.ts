@@ -1,5 +1,8 @@
 import * as SWCH from '../../functions'; 
 
+/**
+ * Types of validatios
+ */
 export const Type: SWCH.Type = {
     String: String,
     Number: Number,
@@ -8,6 +11,9 @@ export const Type: SWCH.Type = {
     Object: Object,
 }
 
+/**
+ * Types of validatios
+ */
 export class Types implements SWCH.Types {
     String = Type.String
     Number = Type.Number
