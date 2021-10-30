@@ -35,7 +35,6 @@ jobs:
 
       # Command execution
       - run: npm install
-      - run: npm run build
       - run: npm test 
           
           

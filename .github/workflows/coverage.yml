@@ -33,7 +33,6 @@ jobs:
           node-version: ${{ matrix.node_version }}
       - name: npm install, npm run coverage
       - run: npm install
-      - run: npm run build
       - run: npm run test-coverage 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
