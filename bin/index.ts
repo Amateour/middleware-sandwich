@@ -184,11 +184,11 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
     
             constructor(req: SWCH.Any) {
                 this.arg = scheme;
-                this.parser_schemes = async function (value_of = true, scheme, body)
+                this.parser_schemes = async function (value_of = true, arg, body)
                 {
                     return parserSchemes(
                         value_of,
-                        scheme ?? this.arg,
+                        arg ?? this.arg,
                         body ?? {...req.body, ...req.query},
                         true // exec Exception.bad_request if there are errors
                     );

@@ -104,6 +104,7 @@ export interface compareType {
     min?: number,
     max?: number,
     value?: any,
+    strict?: boolean,
     validation?: FunctionVoid
 }
 /**

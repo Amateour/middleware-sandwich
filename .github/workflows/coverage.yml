@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     strategy:
@@ -26,20 +26,26 @@ jobs:
     name: Test on node ${{ matrix.node }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    
-    - uses: actions/checkout@v1
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@master
+      - name: Use Node.js ${{ matrix.node_version }}
+        with:
+          node-version: ${{ matrix.node_version }}
+      - name: npm install, npm run coverage
+      - run: npm install
+      - run: npm run coverage 
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel: true  
 
-    - name: Use Node.js ${{ matrix.node }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node }}
-
-
-    - name: npm install, make test-coverage
-    - run: npm install
-    - run: make test-coverage    
-
-    - name: Coveralls
+  finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
       uses: coverallsapp/github-action@master
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}          
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
