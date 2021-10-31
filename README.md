@@ -300,14 +300,14 @@ try {
     console.error(error)
 }
 ````
-**`ejamplo 1`:**
+**`example 1`:**
 ````javascript
     // valueOf = true
     args.email.valueOf() // = test@sandwich.com
     args.email instanceof String // = true
 ````
 
-**`ejamplo 2`:**
+**`example 2`:**
 ````javascript
     // valueOf = false
     args.email // = test@sandwich.com
