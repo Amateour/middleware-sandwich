@@ -1,4 +1,4 @@
-##### [Spanish](https://github.com/amateour/middleware-sandwich/blob/1.0.0-alpha/README-LANG/SPANISH.md)
+##### [Spanish](/README-LANG/SPANISH.md)
 # middleware-sandwich
 [![build](https://github.com/amateour/middleware-sandwich/actions/workflows/main.yml/badge.svg)](https://github.com/amateour/middleware-sandwich/actions/workflows/main.yml) [![npm version](https://badge.fury.io/js/@amateour%2Fmiddleware-sandwich.svg)](https://badge.fury.io/js/@amateour%2Fmiddleware-sandwich) [![Coverage Status](https://coveralls.io/repos/github/amateour/middleware-sandwich/badge.svg?branch=main)](https://coveralls.io/github/amateour/middleware-sandwich?branch=main)
 
@@ -103,7 +103,7 @@ validation | (function) custom data validation
 strict | (Boolean) determines the validation of the data type strictly if it is true, for example if the type is string and the value is a number, it will not pass the validation, but if it is false it will accept the data type as string if possible within the new chain; otherwise it will throw invalid data type error
 
 #### Parser:
-the this.parser_schemes () function is executed to parse the pattern of each schema according to the value of its parser element, see examples [Class Resource](/amateour/middleware-sandwich/tree/1.0.0-alpha#class-resource) and [Function Sandwich.resource](/amateour/middleware-sandwich/tree/1.0.0-alpha#function-sandwich.resource)
+the this.parser_schemes () function is executed to parse the pattern of each schema according to the value of its parser element, see examples [Class Resource](#class-resource) and [Function Sandwich.resource](#function-sandwichresource)
 
 #### Type of data:
 Sandwich.String

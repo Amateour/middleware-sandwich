@@ -103,7 +103,7 @@ validation | (function) validación de dato perzonalizada
 strict | (booleano) determina la validación del tipo de dato de manera stricta si es true, por ejemplo si el tipo es string, y el valor es un número, no pasara la validación, pero si es falso aceptará el tipo de dato como string si cabe dentro de new String, de lo contrario arrojara un error de tipo de dato no valido
 
 #### Parser:
-la función this.parser_schemes() es ejecutada para analizar el patron de cada esquema según el valor de su elemento de analisis, observar ejemplos [Class Resource](/amateour/middleware-sandwich/blob/1.0.0-alpha/README-LANG/SPANISH.md) and [Function Sandwich.resource](/amateour/middleware-sandwich/blob/1.0.0-alpha/README-LANG/SPANISH.md#function-sandwich.resource)
+la función this.parser_schemes() es ejecutada para analizar el patron de cada esquema según el valor de su elemento de analisis, observar ejemplos [Class Resource](#class-resource) and [Function Sandwich.resource](#function-sandwichresource)
 
 #### Tipos de datos:
 Sandwich.String
