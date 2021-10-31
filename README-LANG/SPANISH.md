@@ -1,18 +1,18 @@
 # middleware-sandwich
 [![build](https://github.com/amateour/middleware-sandwich/actions/workflows/main.yml/badge.svg)](https://github.com/amateour/middleware-sandwich/actions/workflows/main.yml) [![npm version](https://badge.fury.io/js/@amateour%2Fmiddleware-sandwich.svg)](https://badge.fury.io/js/@amateour%2Fmiddleware-sandwich) [![Coverage Status](https://coveralls.io/repos/github/amateour/middleware-sandwich/badge.svg?branch=main)](https://coveralls.io/github/amateour/middleware-sandwich?branch=main)
 
-Integrated connection middleware, allows to improve the traceability of the data (arguments and parameters) transmitted by HTTP request.
+Middleware de conexión integrado, permite mejorar la trazabilidad de los datos (argumentos y parámetros) transmitidos por solicitud HTTP.
 
 #
-## Features
+## Características
 ---
 
-- Validate the data transmitted by the http request
-- Analyze the validated data
-- Integrated middleware
-- Dynamic routes
+- Validar los datos transmitidos por la solicitud http
+- Analizar los datos validados
+- Middleware integrado
+- Rutas dinamicas
 
-## Instalation
+## Instalación
 
 requires [Node.js](https://nodejs.org/) v12+.
 
@@ -20,9 +20,9 @@ requires [Node.js](https://nodejs.org/) v12+.
 npm i @amateour/middleware-sandwich --save
 ```
 
-## Usage
+## Uso
 
-### Function Sandwich.resource
+### Función Sandwich.resource
 #
 ```javascript
 import { Sandwich } from '@amateour/middleware-sandwich';
@@ -35,11 +35,11 @@ class Users extends Sandwich.resource({
 }){
     // Method POST
     async post() {
-        const { args } = this.parser_schemes(); // argument and parameter validation
+        const { args } = this.parser_schemes(); // validación de argumentos y parámetros
         
-        const password = args.password.valueOf(); // recover password
-        // validation code ...
-        const email = args.email.valueOf(); // recover email
+        const password = args.password.valueOf(); // recuperar contraseña
+        // código de validación ...
+        const email = args.email.valueOf(); // recuperar correo electrónico
         
         return [{
             message: 'data_user',
@@ -64,11 +64,11 @@ class Users extends Resource {
     
     // Method POST
     async post() {
-        const { args } = this.parser_schemes(); // argument and parameter validation
+        const { args } = this.parser_schemes(); // validación de argumentos y parámetros
         
-        const password = args.password.valueOf(); // recover password
-        // validation code ...
-        const email = args.email.valueOf(); // recover email
+        const password = args.password.valueOf(); // recuperar contraseña
+        // código de validación ...
+        const email = args.email.valueOf(); // recuperar correo electrónico
         
         return [{
             message: 'data_user',
@@ -80,53 +80,53 @@ class Users extends Resource {
     }
 }
 ```
-### Parser and Shcemes
+### Parser y Shcemes
 
 #### Shcemes: 
-A schema represents a validation element, for example:
+Un esquema representa un elemento de validación por ejemplo:
 ```
     {type: Sandwich.String, required: true, strict: true}
 ```
 dicho esquema contine propiedades, cada una con su objetivo de validación.
 
-##### Properties of a schema: 
+##### Propiedades de un esquema: 
 #
-property | description
+propiedad | descripción
 ------------ | -------------
-type | type of data,
-required | (boolean) true required, false not required
-min | (number) determines the minimum value, if it is a string it will validate the number of characters, in the case of a number it will validate its value.
-max | (number) determines the maximum value, the same as the min property but pointing to a maximum value.
-value | assign a value, it has to be of the same declared type, it can be a function with a return value: () => uuid (); or value: 'developer'
-validation | (function) custom data validation
-strict | (Boolean) determines the validation of the data type strictly if it is true, for example if the type is string and the value is a number, it will not pass the validation, but if it is false it will accept the data type as string if possible within the new chain; otherwise it will throw invalid data type error
+type | tipo de dato,
+required | (booleano) true requerido, false no requerido
+min | (number) determina el valor minimo, si es un string validará la cantidad de caracteres, en el caso de un número valida su valor.
+max | (number) determina el valor maxímo, igual que la propiedad min pero apuntando a un maxímo valor.
+value | asignar un valor, tiene que ser igual tipo declarado, puede ser una función con una devolución value: () => uuid(); or value: 'developer'
+validation | (function) validación de dato perzonalizada
+strict | (booleano) determina la validación del tipo de dato de manera stricta si es true, por ejemplo si el tipo es string, y el valor es un número, no pasara la validación, pero si es falso aceptará el tipo de dato como string si cabe dentro de new String, de lo contrario arrojara un error de tipo de dato no valido
 
 #### Parser:
-the this.parser_schemes () function is executed to parse the pattern of each schema according to the value of its parser element, see examples [Class Resource](/amateour/middleware-sandwich#class-resource) and [Function Sandwich.resource](/amateour/middleware-sandwich#function-sandwich.resource)
+la función this.parser_schemes() es ejecutada para analizar el patron de cada esquema según el valor de su elemento de analisis, observar ejemplos [Class Resource](/amateour/middleware-sandwich#class-resource) and [Function Sandwich.resource](/amateour/middleware-sandwich#function-sandwich.resource)
 
-#### Type of data:
+#### Tipos de datos:
 Sandwich.String
 Sandwich.Number
 Sandwich.Array
 Sandwich.Boolean
 Sandwich.Object
 
-it is possible to use the objects, String, Number, Array, Boolean, Object, directly
+es posible utilizar los objetos String, Number, Array, Boolean, Object, directamente
 
-### Function handler
+### Función handler
 ```javascript
 Sandwich.handler
 ```
-The handler function prepares our class to be used by the routing service we use, currently we only validate support for:
+La función handler prepara nuesta clase para ser utilizada por el servicio de enrutamiento que usemos, actualmente solo validamos el soporte para:
 
 - Nexjs 
 - express
 
-but it would work on any technology that works the same. 
+pero serviría en cualquier tecnologias que funcione igual. 
 
-The controller function expects two parameters, the first is a class, the second is the name of the function that will be the final middleware of the request.
+La función handler espera dos parametros, el primero es una clase, el segundo es el nombre la función que sera el middleware final de la petición
 ```javascript
-Sandwich.handler(Users, 'handlerUser') // the second aprameter is optional
+Sandwich.handler(Users, 'handlerUser') // el segundo aprametro es opcional
 ```
 ```javascript
 import { Resource } from '@amateour/middleware-sandwich';
@@ -137,7 +137,7 @@ class Users extends Resource{
 }
 export default Sandwich.handler(Users, 'handlerUser')
 ```
-By not declaring the second parameter, it is implied that the final middleware function will be the same as the request method:
+al no declarar el segundo parametro, se da por entender que la función middleware final sera el igual al metodo de la petición: 
 
 ```javascript
 import { Resource } from '@amateour/middleware-sandwich';
@@ -175,15 +175,15 @@ app.use('/api', ruter);
 ```
 
 ##### Middleware
-Function that is executed before the input to the method function, there are several ways to pass the middleware:
+Función que se ejecuta antes de la entrada a la función del metodo, existen varias formas de pasar middleware:
 
-**`shape 1`**: (Array) In this way it is concatenated for all methods, with the option of adding one or more middleware
+**`forma 1`**: (Matrix) De esta manera queda concatenada para todos los metodos, con la opción de agregar uno o mas middleware
 
 ````javascript
 Sandwich.handler(User, [isAuthenticated, ...])
 ````
 
-**`shape 2`**: (Object array) specific methods can be assigned, per declared object
+**`forma 2`**: (Matrix de objectos) se pueden asignar metodos especificos, por objeto declarado
 ````javascript
 Sandwich.handler(User, [
     {
@@ -193,7 +193,7 @@ Sandwich.handler(User, [
 ])
 ````
 
-**`shape 3`**: (Objecto)
+**`forma 3`**: (Objecto)
 ````javascript
 Sandwich.handler(User, {
         methods: ['GET', 'PUT'],
@@ -205,7 +205,7 @@ Sandwich.handler(User, {
 ````javascript
 import { Router } from '@amateour/middleware-sandwich';
 ````
-Router allows creating a dynamic flow of routes through the resource function, initially incorporating Router.app (app), app corresponds to the tool to create the endpoints (URIs) of an application (endpoints), in this case express().
+Router permite crear un flujo dinamico de rutas a travez de la función resources, inicialmente incorporando Router.app(app), app corresponde a la herramienta para crear los puntos finales (URIs) de una aplicación (endpoints), en este caso express().
 
 ````javascript
 const app = express();
@@ -213,7 +213,7 @@ const router = Router.app(app);
 ````
 #### Resources
 ##### router.resources
-It receives two parameters, the first is a string matrix, which refers to the path (the url), the second parameter is the Sandwich.hanlder function, obviously passing the class with its referenced functions as a parameter (Sandwich.hanlder(Users)).
+Recibe dos parametros, el primero es una matrix de string, que hace referencia al el camino (la url), el segundo parametro es la función Sandwich.hanlder, obviamente pasando como parametro la clase con sus funciones referenciadas (Sandwich.hanlder(Users)).
 
 ###### Path resources
 #
@@ -225,12 +225,12 @@ router.resources([
 ], Sandwich.hanlder(Users));
 ````
 
-The path (or url), each one has a set of functions representing the requested method.
+Los path (o url), cada uno tiene un comulo de funciones en representación del metodo solicitado.
 
 ````sh
 '/user'
 ````
-Method | function
+Metodo | función
 ------------ | -------------
 Get | get
 Post | post
@@ -239,7 +239,7 @@ Post | post
 '/user/:id' or '/user/:id_user/books/:id_book'
 ````
 
-Method | function
+Metodo | función
 ------------ | -------------
 GET | one
 POST | stag
@@ -248,7 +248,7 @@ PUT | put
 PATCH | patch
 
 ###### Nombar endpoints
-In the case of adding two paths with arguments per url, it is necessary to give it a name to identify the entry, since they would share the same functions, example:
+En el caso de agregar dos path con argumentos por url, es necesario darle un nombre para identificar la entrada, ya que compartirían las mismas funciones, ejemplo:
 
 ````sh
 '/user/:id'
@@ -272,7 +272,7 @@ get(path_name) {
 
 ## Extras
 ### Validador de datos
-The Sandwiches class receives two parameters, the first is a Boolean data, if it is passed true, the validation output of that schema is represented by the instance of the type, see example 1 and 2.
+La clase Sandwiches recibe dos parametros, el primero es un dato booleano, si se le pasa true la salida de validación de ese esquema esta representado por la instancia del tipo, observar el ejemplo 1 y 2.
 
 ````Javascript
 import {Sandwiches} from '@amateour/middleware-sandwich';
@@ -313,12 +313,12 @@ try {
     args.email instanceof String // = false
 ````
 
-## Contribute
-### [Contributor guide](https://github.com/amateour/middleware-sandwich/blob/main/CODE_OF_CONDUCT.md)
+## Contribuir
+### [Guia del contribuidor](https://github.com/amateour/middleware-sandwich/blob/main/CODE_OF_CONDUCT.md)
 
-## Persons
-### Person in charge [Brayan Salgado](https://github.com/Binariado)
-### [List of contributors]()
+## Personas
+### Persona encargada [Brayan Salgado](https://github.com/Binariado)
+### [Lista de contribuidores]()
 
 ## License
 
@@ -326,7 +326,7 @@ GPL 3.0
 
 **Free Software**
 
-[//]: # (References used to build this document)
+[//]: # (Referencias utilizadas para construir este documento)
 
    [stackoverflow]: <http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax>
    [github]: <https://guides.github.com/features/mastering-markdown/#intro>
