@@ -1,6 +1,4 @@
-/**
- * @type Any
- */
+
 export declare type Any = any;
 /**
  * @type AnyArray

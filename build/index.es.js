@@ -18094,50 +18094,81 @@ var parserSchemes = function (value_of, scheme, req_body, request) {
     });
 };
 /**
- * class Sandwiches
  *
- * @class {Sandwiches}
+ *
+ * @export
+ * @class Sandwiches
+ * @extends {Types}
+ * @implements {SWCH.Sandwiches}
  */
 var Sandwiches = /** @class */ (function (_super) {
     __extends(Sandwiches, _super);
-    function Sandwiches(value_of, scheme) {
+    /**
+     * Creates an instance of Sandwiches.
+     *
+     * @param {boolean} [value_of=true]
+     * @param {*} [schemes={}]
+     * @memberof Sandwiches
+     */
+    function Sandwiches(value_of, schemes) {
         if (value_of === void 0) { value_of = true; }
-        if (scheme === void 0) { scheme = {}; }
+        if (schemes === void 0) { schemes = {}; }
         var _this = _super.call(this) || this;
         /**
+         * @function resource Returns a class called Resource, which loads the resources.
          *
-         *
-         * @param scheme
+         * @param {SWCH.schemes} schemes The validation schemes are passed to the this.schemes property of the Resource class, examples of schemes:
+         * {
+         *  email: {type: Sandwich.String, required: true, strict: true}
+         *  ...
+         * },
+         * @returns {SWCH.Resource} Class Resource
          */
-        _this.resource = function (scheme) {
+        _this.resource = function (schemes) {
             return /** @class */ (function () {
-                function add_arguments(req) {
-                    this.arg = scheme;
-                    this.parser_schemes = function (value_of, arg, body) {
+                /**
+                 * Creates an instance of Resource.
+                 *
+                 * @param {SWCH.Any} req
+                 */
+                function Resource(req) {
+                    this.schemes = schemes;
+                    /**
+                     * Parse and validate data
+                     *
+                     * @function
+                     * @param {boolean} [value_of=true] True to execute valueOf, false to keep the native format
+                     * @return {*}
+                     */
+                    this.parser_schemes = function parser_schemes(value_of) {
                         if (value_of === void 0) { value_of = true; }
                         return __awaiter(this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
-                                return [2 /*return*/, parserSchemes(value_of, arg !== null && arg !== void 0 ? arg : this.arg, body !== null && body !== void 0 ? body : __assign(__assign({}, req.body), req.query), true // exec Exception.bad_request if there are errors
+                                return [2 /*return*/, parserSchemes(value_of, this.schemes, __assign(__assign({}, req.body), req.query), true // exec Exception.bad_request if there are errors
                                     )];
                             });
                         });
                     };
                 }
-                return add_arguments;
+                return Resource;
             }());
         };
-        _this.scheme = scheme;
+        _this.schemes = schemes;
         _this.value_of = value_of;
         return _this;
     }
     /**
      * parse and validate request body data
+     *
+     * @param {SWCH.Any} body
+     * @return {*}
+     * @memberof Sandwiches
      */
     Sandwiches.prototype.parser_schemes = function (body) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, parserSchemes(this.value_of, this.scheme, body)];
+                    case 0: return [4 /*yield*/, parserSchemes(this.value_of, this.schemes, body)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -18145,15 +18176,21 @@ var Sandwiches = /** @class */ (function (_super) {
     };
     /**
      *
-     * @param options
+     *
+     * @param {SWCH.routerProps} options
+     * @return {*}
+     * @memberof Sandwiches
      */
     Sandwiches.prototype._ = function (options) {
         return transform(options);
     };
     /**
+     * Prepare the class to be used by routing
      *
-     * @param classRequest
-     * @param middlewares
+     * @param {SWCH.Any} classRequest
+     * @param {SWCH.middlewaresType} [middlewares]
+     * @return {*}
+     * @memberof Sandwiches
      */
     Sandwiches.prototype.handler = function (classRequest, middlewares) {
         var _this = this;
@@ -18168,7 +18205,8 @@ var Sandwiches = /** @class */ (function (_super) {
                                 'post',
                                 'get',
                                 'put',
-                                'delete'
+                                'delete',
+                                'pacth'
                             ], function (val) { return lodash.get($classRequest, val) ? val : undefined; })];
                     case 1:
                         methods_list = _a.sent();

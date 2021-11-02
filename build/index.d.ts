@@ -17,39 +17,96 @@ export declare const exec: SWCH.exec;
  */
 declare const parserSchemes: SWCH.parserSchemes;
 /**
- * class Sandwiches
  *
- * @class {Sandwiches}
+ *
+ * @export
+ * @class Sandwiches
+ * @extends {Types}
+ * @implements {SWCH.Sandwiches}
  */
 export declare class Sandwiches extends Types implements SWCH.Sandwiches {
-    scheme: SWCH.Scheme;
+    /**
+     * Validation schemes
+     *
+     * @type {SWCH.schemes}
+     * @memberof Sandwiches
+     */
+    schemes: SWCH.schemes;
+    /**
+     * True to execute valueOf, false to keep the native format
+     *
+     * @type {boolean}
+     * @memberof Sandwiches
+     */
     value_of: boolean;
-    constructor(value_of?: boolean, scheme?: {});
+    /**
+     * Creates an instance of Sandwiches.
+     *
+     * @param {boolean} [value_of=true]
+     * @param {*} [schemes={}]
+     * @memberof Sandwiches
+     */
+    constructor(value_of?: boolean, schemes?: {});
     /**
      * parse and validate request body data
+     *
+     * @param {SWCH.Any} body
+     * @return {*}
+     * @memberof Sandwiches
      */
     parser_schemes(body: SWCH.Any): Promise<SWCH.ParserSchemesResponse>;
     /**
      *
-     * @param options
+     *
+     * @param {SWCH.routerProps} options
+     * @return {*}
+     * @memberof Sandwiches
      */
     _(options: SWCH.routerProps): Promise<any>;
     /**
+     * Prepare the class to be used by routing
      *
-     * @param classRequest
-     * @param middlewares
+     * @param {SWCH.Any} classRequest
+     * @param {SWCH.middlewaresType} [middlewares]
+     * @return {*}
+     * @memberof Sandwiches
      */
     handler(classRequest: SWCH.Any, middlewares?: SWCH.middlewaresType): (req: SWCH.Any, res: SWCH.Any, next?: SWCH.Next) => Promise<void>;
     /**
+     * @function resource Returns a class called Resource, which loads the resources.
      *
-     *
-     * @param scheme
+     * @param {SWCH.schemes} schemes The validation schemes are passed to the this.schemes property of the Resource class, examples of schemes:
+     * {
+     *  email: {type: Sandwich.String, required: true, strict: true}
+     *  ...
+     * },
+     * @returns {SWCH.Resource} Class Resource
      */
-    resource: (scheme: any) => {
+    resource: (schemes: any) => {
         new (req: SWCH.Any): {
-            readonly arg: SWCH.Any;
+            /**
+             * Validation schemes
+             *
+             * @type {SWCH.schemes} schemes
+             */
+            readonly schemes: any;
+            /**
+             * Parse and validate data
+             *
+             * @type {SWCH.parserSchemes}
+             */
             readonly parser_schemes: SWCH.parserSchemes;
+            /**
+             * Loads the data returned by the middleware, in case the promise is fulfilled.
+             *
+             * @type {SWCH.Any} f
+             */
             f: SWCH.Any;
+            /**
+             *
+             *
+             * @type {SWCH.Any}
+             */
             request: SWCH.Any;
         };
     };
