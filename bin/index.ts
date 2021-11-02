@@ -87,62 +87,93 @@ const parserSchemes: SWCH.parserSchemes = async (
         message: responseError.message
     }
 }
-
 /**
- * class Sandwiches
  *
- * @class {Sandwiches}
+ *
+ * @export
+ * @class Sandwiches
+ * @extends {Types}
+ * @implements {SWCH.Sandwiches}
  */
 export class Sandwiches extends Types implements SWCH.Sandwiches {
-
-    scheme: SWCH.Scheme;
+    /**
+     * Validation schemes
+     *
+     * @type {SWCH.schemes}
+     * @memberof Sandwiches
+     */
+    schemes: SWCH.schemes;
+    /**
+     * True to execute valueOf, false to keep the native format
+     *
+     * @type {boolean}
+     * @memberof Sandwiches
+     */
     value_of: boolean;
-
-    constructor(value_of = true, scheme = {}) {
+    /**
+     * Creates an instance of Sandwiches.
+     * 
+     * @param {boolean} [value_of=true]
+     * @param {*} [schemes={}]
+     * @memberof Sandwiches
+     */
+    constructor(value_of = true, schemes = {}) {
         super(); 
-        this.scheme = scheme;
+        this.schemes = schemes;
         this.value_of = value_of;
     }
-
     /**
      * parse and validate request body data
+     *
+     * @param {SWCH.Any} body
+     * @return {*} 
+     * @memberof Sandwiches
      */
     async parser_schemes(body: SWCH.Any)
     {
         return await parserSchemes(
-            this.value_of, this.scheme, body
+            this.value_of, this.schemes, body
         )
     }
-
     /**
      *
-     * @param options
+     *
+     * @param {SWCH.routerProps} options
+     * @return {*} 
+     * @memberof Sandwiches
      */
     _(options: SWCH.routerProps) {
         return transform(options)
     }
-
     /**
+     * Prepare the class to be used by routing
      *
-     * @param classRequest
-     * @param middlewares
+     * @param {SWCH.Any} classRequest
+     * @param {SWCH.middlewaresType} [middlewares]
+     * @return {*} 
+     * @memberof Sandwiches
      */
     handler(classRequest: SWCH.Any, middlewares?: SWCH.middlewaresType) {
         return async (req: SWCH.Any, res: SWCH.Any, next?: SWCH.Next) => {
+            
             const $classRequest = new classRequest(req, res);
             const {arg} = $classRequest;
-            
+            /**
+             * selecte methods
+             *
+             * @constant methods_list
+             */
             const methods_list: SWCH.AnyArray = await _.map([
                 'post',
                 'get',
                 'put',
-                'delete'
+                'delete',
+                'pacth'
             ], (val) => _.get($classRequest, val) ? val: undefined);       
-
             /**
-             * list methods
+             * selected methods
              *
-             * @param methods
+             * @constant methods
              */
             const methods = await toUpper(methods_list);
 
@@ -169,32 +200,68 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
             if(errors) Message.response(res, errors.statusCode, errors);
         }
     }
-
     /**
-     * 
+     * @function resource Returns a class called Resource, which loads the resources.
      *
-     * @param scheme
+     * @param {SWCH.schemes} schemes The validation schemes are passed to the this.schemes property of the Resource class, examples of schemes: 
+     * {
+     *  email: {type: Sandwich.String, required: true, strict: true}
+     *  ...
+     * }, 
+     * @returns {SWCH.Resource} Class Resource
      */
-    resource = (scheme: SWCH.Scheme) => {
-        return class add_arguments implements SWCH.addArguments {
-            readonly arg: SWCH.Any;
+    resource = (schemes: SWCH.schemes) => {
+        return class Resource implements SWCH.Resource {
+            /**
+             * Validation schemes
+             *
+             * @type {SWCH.schemes} schemes
+             */
+            readonly schemes: SWCH.schemes;
+            /**
+             * Parse and validate data
+             *
+             * @type {SWCH.parserSchemes}
+             */
             readonly parser_schemes: SWCH.parserSchemes;
+            /**
+             * Loads the data returned by the middleware, in case the promise is fulfilled.
+             *
+             * @type {SWCH.Any} f
+             */
             f: SWCH.Any;
+            /**
+             * 
+             *
+             * @type {SWCH.Any}
+             */
             request: SWCH.Any;
-    
+            /**
+             * Creates an instance of Resource.
+             * 
+             * @param {SWCH.Any} req
+             */
             constructor(req: SWCH.Any) {
-                this.arg = scheme;
-                this.parser_schemes = async function (value_of = true, arg, body)
-                {
+                this.schemes = schemes;
+                /**
+                 * Parse and validate data
+                 * 
+                 * @function
+                 * @param {boolean} [value_of=true] True to execute valueOf, false to keep the native format
+                 * @return {*} 
+                 */
+                this.parser_schemes = async function parser_schemes(
+                    value_of = true
+                ): Promise<SWCH.ParserSchemesResponse>{
+                    
                     return parserSchemes(
                         value_of,
-                        arg ?? this.arg,
-                        body ?? {...req.body, ...req.query},
+                        this.schemes,
+                        {...req.body, ...req.query},
                         true // exec Exception.bad_request if there are errors
                     );
                 }
             }
-    
         }
     }
 }

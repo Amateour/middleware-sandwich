@@ -108,9 +108,9 @@ export interface compareType {
     validation?: FunctionVoid
 }
 /**
- * @type Scheme
+ * @type schemes
  */
-export declare type Scheme = bject<compareType>;
+export declare type schemes = bject<compareType>;
 /**
  * @interface compareProps
  */
@@ -118,7 +118,7 @@ export interface compareProps {
     value: valueType,
     key: keyType,
     message: messageType,
-    scheme: Scheme,
+    scheme: schemes,
 }
 /**
  * @interface argValid
@@ -128,7 +128,7 @@ export interface argValid {
     valid_value: any,
     type: valueType,
     key: keyType,
-    scheme?: Scheme
+    scheme?: schemes
 }
 /**
  * @interface argMessProps

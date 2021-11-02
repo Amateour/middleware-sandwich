@@ -3,7 +3,7 @@ export * from './utils/help';
 export * from './utils/message';
 export * from './type';
 
-import {routerProps, middlewaresType, Scheme, ReqType, ResType, Next} from "./type";
+import {routerProps, middlewaresType, schemes, ReqType, ResType, Next} from "./type";
 import {Types} from "./validators/types";
 
 /**
@@ -45,8 +45,8 @@ export type parserSchemes = (
 /**
  * 
  */
- export interface addArguments {
-  readonly arg: any;
+ export interface Resource {
+  readonly schemes: schemes;
   readonly parser_schemes: parserSchemes;
   f: any;
   request: any;
@@ -58,30 +58,45 @@ export type parserSchemes = (
  * @class {Sandwiches}
  */
 export interface Sandwiches extends Types {
-    scheme: Scheme;
+    schemes: schemes;
     value_of: boolean;
-
-    parser_schemes(body: any): Promise<ParserSchemesResponse>
-
     /**
      *
-     * @param options
+     *
+     * @param {*} body
+     * @return {*}  {Promise<ParserSchemesResponse>}
+     * @memberof Sandwiches
+     */
+    parser_schemes(body: any): Promise<ParserSchemesResponse>
+    /**
+     *
+     *
+     * @param {routerProps} options
+     * @return {*}  {Promise<transform>}
+     * @memberof Sandwiches
      */
     _(options: routerProps): Promise<transform>
-
     /**
      *
-     * @param classRequest
-     * @param middlewares
+     *
+     * @param {*} classRequest
+     * @param {middlewaresType} [middlewares]
+     * @return {*}  {(
+     *       req: ReqType, res: ResType, next?: Next
+     *     ) => unknown}
+     * @memberof Sandwiches
      */
     handler(classRequest: any, middlewares?: middlewaresType): (
       req: ReqType, res: ResType, next?: Next
     ) => unknown
     /**
      *
-     * @param scheme
+     *
+     * @param {schemes} [schemes]
+     * @return {*}  {*}
+     * @memberof Sandwiches
      */
-     resource(scheme?: Scheme): any
+    resource(schemes?: schemes): any
 }
 
 export declare type Sandwich = Sandwiches 
