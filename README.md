@@ -4,6 +4,9 @@
 
 Integrated connection middleware, allows to improve the traceability of the data (arguments and parameters) transmitted by HTTP request.
 
+## Nota:
+`Several of the aforementioned functionalities remain unstable and others are disabled. If you want to try this app, please wait for the release of the next alpha version or stable version 1.0.0`
+
 #
 ## Features
 ---
