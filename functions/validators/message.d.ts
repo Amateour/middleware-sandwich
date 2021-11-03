@@ -2,6 +2,6 @@ import types from "../type";
 
 /**
  *  
- * @type messageArgument
+ * messageArgument
  */
 export type messageArgument = types.MessageArgument;

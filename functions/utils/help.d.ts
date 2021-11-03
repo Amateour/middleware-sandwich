@@ -32,20 +32,20 @@ export type validate = {
 }
 /**
  *
- * @param middlewares
- * @param method
+ * @param middlewares -
+ * @param method -
  */
 export type get_middlewares = (middlewares: middlewaresType, method: string) => Promise<any>;
 /**
  * 
- * @param {object} arr 
+ * @param arr -
  * @returns 
  */
  export type toUpper = (arr: any[]) => any[]
 /**
  * 
- * @param push
- * @param req
- * @param res
+ * @param push -
+ * @param req -
+ * @param res -
  */
 export type push_against = (push: any, req: any, res: any, next: Next) => Promise<any>

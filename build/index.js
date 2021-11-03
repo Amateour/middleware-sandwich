@@ -17279,35 +17279,34 @@ var lodash = createCommonjsModule(function (module, exports) {
 /**
  * validate if it is an array
  *
- * @param elm
+ * @param elm - element validation
  * @returns boolean
  */
 var isArray = function (elm) { return elm instanceof Array; };
 /**
  * validate if it is an objet
  *
- * @param elm
+ * @param elm - element validation
  * @returns boolean
  */
 var isObject = function (elm) { return elm instanceof Object; };
 /**
  * validate if it is an string
  *
- * @param elm
+ * @param elm - element validation
  * @returns boolean
  */
 var isString = function (elm) { return typeof elm === "string"; };
 /**
  * validate if it is an number
  *
- * @param elm
+ * @param elm - element validation
  * @returns boolean
  */
 var isNumber = function (elm) { return typeof elm === "number"; };
 /**
  * Functions validations (isArray, isString)
  *
- * @constant validate
  */
 var validate = {
     Array: isArray,
@@ -17318,28 +17317,33 @@ var validate = {
 /**
  * get_middlewares Middleware extraction, can be an array of function objects or an object
  *
- * example:
+ * @example
  * Array functions
  * Sanwiche.handler(Users, [isAuth])
  *
  * Array objects
+ * ```ts
  * Sanwiche.handler(Users, [
  * {
  *   methods: ['POST'],
  *   middleware: [isAuth]
  * }
  *])
+ *```
  *
+ *```ts
  * objects
  * Sanwiche.handler(Users, {
  *   methods: ['POST'],
  *   middleware: [isAuth]
  * })
+ * ```
  *
+ * @remarks
  * The extraction of each middleware is selected according to the method of the http request
  *
- * @param middlewares list middlewares
- * @param {string} method method request (post, get)
+ * @param middlewares - list middlewares
+ * @param method - method request (post, get)
  */
 var get_middlewares = function (middlewares, method) { return __awaiter(void 0, void 0, void 0, function () {
     var flatten_1, resp_middlewares, _a, e_1;
@@ -17388,7 +17392,7 @@ var get_middlewares = function (middlewares, method) { return __awaiter(void 0, 
 }); };
 /**
  *
- * @param arr
+ * @param arr -
  * @returns string[]
  */
 var toUpper = function (arr) {
@@ -17397,9 +17401,10 @@ var toUpper = function (arr) {
 /**
  * Execute the function according to its specified method
  *
- * @param {object} push
- * @param {object} req
- * @param {object} res
+ * @param push -
+ * @param req -
+ * @param res -
+ * @param next - Next function
  */
 var push_against = function (push, req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var method, _a;
@@ -17439,24 +17444,23 @@ var push_against = function (push, req, res, next) { return __awaiter(void 0, vo
 /**
  * get data error
  *
- * @param data {object} {
+ * @param data - `{
  *     message: message of error "bad request",
  *     errors: data errors
- * }
- * @const
+ * }`
  */
 var get_data_errors = function (data) {
     return data;
 };
 /**
- * @class ClassException
+ * Class to handle exceptions
  */
 var ClassException = /** @class */ (function () {
     function ClassException() {
         /**
          * Server error Generate
          *
-         * @param data {object}
+         * @param data -
          */
         this.error = function (data) {
             throw data;
@@ -17464,7 +17468,7 @@ var ClassException = /** @class */ (function () {
         /**
          * Server error Generate
          *
-         * @param data {object}
+         * @param data -
          */
         this.server_error = function (data) {
             var _a = get_data_errors(data), message = _a.message, errors = _a.errors;
@@ -17473,7 +17477,7 @@ var ClassException = /** @class */ (function () {
         /**
          * Bad request Generate
          *
-         * @param data {object}
+         * @param data -
          */
         this.bad_request = function (data) {
             var _a = get_data_errors(data), message = _a.message, errors = _a.errors;
@@ -17484,7 +17488,7 @@ var ClassException = /** @class */ (function () {
 }());
 var Exception = new ClassException();
 /**
- * @class ClassMessage
+ * Classes for handling Http reply messages
  */
 var ClassMessage = /** @class */ (function () {
     function ClassMessage() {
@@ -17492,9 +17496,9 @@ var ClassMessage = /** @class */ (function () {
     /**
      * send response request
      *
-     * @param {object} res
-     * @param {number} statusCode number status
-     * @param {object | string} message message response
+     * @param res -
+     * @param statusCode - number status
+     * @param message - message response
      */
     ClassMessage.prototype.response = function (res, statusCode, message) {
         /**
@@ -17502,7 +17506,7 @@ var ClassMessage = /** @class */ (function () {
          */
         var stack = message.stack;
         /**
-         * @constant response data response
+         * data response
          */
         var response = {
             message: message === null || message === void 0 ? void 0 : message.message,
@@ -17510,7 +17514,7 @@ var ClassMessage = /** @class */ (function () {
             statusCode: statusCode !== null && statusCode !== void 0 ? statusCode : 200,
         };
         /**
-         * @constant data_send
+         *
          */
         var data_send = stack ? __assign(__assign({}, response), { stack: stack }) : response;
         if (res)
@@ -17521,8 +17525,8 @@ var ClassMessage = /** @class */ (function () {
     /**
      * send response request (error)
      *
-     * @param {object} res
-     * @param {object | string} mess
+     * @param res -
+     * @param mess -
      */
     ClassMessage.prototype.errors = function (res, mess) {
         this.response(res, 500, mess);
@@ -17530,8 +17534,8 @@ var ClassMessage = /** @class */ (function () {
     /**
      * send response request (success)
      *
-     * @param {object} res
-     * @param {object | string} mess
+     * @param res -
+     * @param mess -
      */
     ClassMessage.prototype.success = function (res, mess) {
         this.response(res, 200, mess);
@@ -17539,8 +17543,8 @@ var ClassMessage = /** @class */ (function () {
     /**
      * send response request (create)
      *
-     * @param {object} res
-     * @param {object | string} mess
+     * @param res -
+     * @param mess -
      */
     ClassMessage.prototype.create = function (res, mess) {
         this.response(res, 201, mess);
@@ -17552,10 +17556,10 @@ var Message = new ClassMessage();
 /**
  * middleware_next execution of each declared FuncMiddleware
  *
- * @param req Http Request
- * @param res Http Response
- * @param funcMiddleware FuncMiddleware The middleware function runs in the middleware_next function
- * @param train
+ * @param req - Http Request
+ * @param res - Http Response
+ * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
+ * @param train -
  */
 var middleware_next = function (funcMiddleware, req, res, train) {
     return new Promise(function (resolve) {
@@ -17566,8 +17570,8 @@ var middleware_next = function (funcMiddleware, req, res, train) {
  * exec_list_func controls the execution of each declared FuncMiddleware
  *
  * @param middlewares
- * @param req Http Request
- * @param res Http Response
+ * @param req - Http Request
+ * @param res - Http Response
  */
 var exec_list_func = function (middlewares, req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var train, _i, middlewares_1, middleware_1, result;
@@ -17595,19 +17599,23 @@ var exec_list_func = function (middlewares, req, res) { return __awaiter(void 0,
     });
 }); };
 /**
- * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function:
+ * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function
  *
+ * @example
+ * ```ts
  * Sanwiche.handler (Users, [{
  * methods: ['POST'],
  * middleware: [isAuth]
  *}])
+ *```
  *
+ * @remarks
  * The get_middlewares function takes care of the extraction
  *
- * @param req Http Request
- * @param res Http Response
- * @param middlewares array functions or function
- * @param method {string} method request
+ * @param req - Http Request
+ * @param res - Http Response
+ * @param middlewares - array functions or function
+ * @param method - `{string}` method request
  */
 var middleware = function (req, res, middlewares, method) { return __awaiter(void 0, void 0, void 0, function () {
     var functions;
@@ -17655,15 +17663,15 @@ var messageArgument = {
 /**
  *  list of validation functions
  *
- * @param func_arguments
+ * @param func_arguments -
  */
 var func_arguments = {
     /**
      * Validate value max
      *
-     * @param type
-     * @param valid_value
-     * @param value
+     * @param type -
+     * @param valid_value -
+     * @param value -
      */
     max: function (_a) {
         var _b, _c, _d, _e;
@@ -17679,9 +17687,9 @@ var func_arguments = {
     /**
      * Validate value min
      *
-     * @param type
-     * @param valid_value
-     * @param value
+     * @param type -
+     * @param valid_value -
+     * @param value -
      */
     min: function (_a) {
         var _b, _c, _d, _e;
@@ -17697,8 +17705,8 @@ var func_arguments = {
     /**
      * validate value required
      *
-     * @param valid_value
-     * @param value
+     * @param valid_value -
+     * @param value -
      */
     required: function (_a) {
         var valid_value = _a.valid_value, value = _a.value;
@@ -17707,9 +17715,9 @@ var func_arguments = {
     /**
      * Validate value type
      *
-     * @param valid
-     * @param value
-     * @param scheme
+     * @param valid -
+     * @param value -
+     * @param scheme -
      */
     type: function (value, func, scheme) {
         var list_type = ['String', 'Number', 'Object'];
@@ -17725,10 +17733,10 @@ var func_arguments = {
     /**
      * Strictly validates the value of a data type
      *
-     * @param strict true to validate or false not to validate strict mode
-     * @param type Array
-     * @param key data {occupation}
-     * @param value "Developer"
+     * @param strict - true to validate or false not to validate strict mode
+     * @param type - Array
+     * @param key - data {occupation}
+     * @param value - `Developer`
      */
     valid_strict: function (strict, type, key, value) {
         var _a;
@@ -17746,9 +17754,9 @@ var func_arguments = {
 /**
  * Validate a data type
  *
- * @param value value to validate "Developer"
- * @param key value key {occupation}
- * @param scheme scheme validation {type: String}
+ * @param value - value to validate "Developer"
+ * @param key - value key {occupation}
+ * @param scheme - scheme validation {type: String}
  */
 var valid_type = function (_a) {
     var value = _a.value, key = _a.key, scheme = _a.scheme;
@@ -17768,14 +17776,18 @@ var valid_type = function (_a) {
 /**
  * custom validation, for the data type specified in the argument
  *
- * example
- * email: {
- * type: Sandwich.String, validation: (value: strin) => typeof value == 'string'
+ * @example
+ * ```json
+ * {
+ *    email: {
+ *    type: Sandwich.String, validation: (value: strin) => typeof value == 'string'
+ *  }
  * }
+ * ```
  *
- * @param value
- * @param key
- * @param scheme
+ * @param value -
+ * @param key -
+ * @param scheme -
  */
 var validation_custom = function (_a) {
     var value = _a.value, key = _a.key, scheme = _a.scheme;
@@ -17789,7 +17801,7 @@ var validation_custom = function (_a) {
  * Extract data types to validate in the function valid_extract_argument
  * omitting those validated in the function valid_type
  *
- * @param scheme data: {type: Sandwich.String, strict: true, value: '100'}
+ * @param scheme - data: `{type: Sandwich.String, strict: true, value: '100'}`
  */
 var omit_argument = function (scheme) {
     return lodash.omit(scheme, ['type', 'strict', 'message', 'value', 'validation']);
@@ -17797,11 +17809,11 @@ var omit_argument = function (scheme) {
 /**
  * Validate a schema against a value
  *
- * @param scheme data validation schema
- * @param value value to be validated example "Brayan Salgado"
- * @param type data type to validate example String
- * @param messages
- * @param key_main key main
+ * @param scheme - data validation schema
+ * @param value - value to be validated example "Brayan Salgado"
+ * @param type - data type to validate example String
+ * @param messages -
+ * @param key_main - key main
  */
 var valid_extract_argument = function (messages, scheme, value, type, key_main) {
     return lodash(scheme)
@@ -17816,7 +17828,7 @@ var valid_extract_argument = function (messages, scheme, value, type, key_main) 
 /**
  * validate Message
  *
- * @param errors
+ * @param errors -
  */
 var valid_resp_argument = function (errors) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
@@ -17826,11 +17838,16 @@ var valid_resp_argument = function (errors) { return __awaiter(void 0, void 0, v
 /**
  * Validate an argument schema
  *
- * @param props data: {
+ * @param props - data
+ *
+ * @example
+ * ```json
+ * {
  *     value: "example@sandwich.com"
  *     key: "email"
  *     scheme: {type: Sandwich.String, strict: true}
  * }
+ * ```
  */
 var valid_argument = function (props) { return __awaiter(void 0, void 0, void 0, function () {
     var value, scheme, message, key, type, valid_errors, extract_scheme, errors, success;
@@ -17861,9 +17878,9 @@ var valid_argument = function (props) { return __awaiter(void 0, void 0, void 0,
  * Extract the defined value from the req or in the schema
  * (any value passed by req will be replaced by the value is defined in the schema)
  *
- * @param req_body data body
- * @param schemes
- * @param key field key to validate
+ * @param req_body - data body
+ * @param schemes -
+ * @param key - field key to validate
  */
 var get_value = function (req_body, schemes, key) {
     var has_value = lodash.has(schemes, 'value');
@@ -17873,9 +17890,9 @@ var get_value = function (req_body, schemes, key) {
 /**
  * This function validates all body data specified in the arguments
  *
- * @param value_of true stops returning the data to its primitive value of its instance
- * @param req_body request body {email: "example@sandwich.com"}
- * @param schemes schemes of validation { email: {type: Sandwich.String, strict: true} }
+ * @param value_of - true stops returning the data to its primitive value of its instance
+ * @param req_body - request body {email: "example@sandwich.com"}
+ * @param schemes - schemes of validation `{ email: {type: Sandwich.String, strict: true} }`
  */
 var argument = function (value_of, req_body, schemes) { return __awaiter(void 0, void 0, void 0, function () {
     var resp, body, _a, _b, _i, key, scheme, _c, _d, _e, value;
@@ -17923,8 +17940,8 @@ var argument = function (value_of, req_body, schemes) { return __awaiter(void 0,
 /**
  * Validate the request method
  *
- * @param api_method method allowed ["POST", "GET"] or "POST"
- * @param req_method request method "POST"
+ * @param api_method - method allowed ["POST", "GET"] or "POST"
+ * @param req_method - request method "POST"
  */
 var method = function (api_method, req_method) { return __awaiter(void 0, void 0, void 0, function () {
     var apiMethod;
@@ -17942,7 +17959,7 @@ var method = function (api_method, req_method) { return __awaiter(void 0, void 0
 /**
  * validate errors and send message
  *
- * @param errors
+ * @param errors -
  */
 var verifyErrors = function (errors, request) { return __awaiter(void 0, void 0, void 0, function () {
     var response, resp_err;
@@ -17997,10 +18014,10 @@ var Types = /** @class */ (function () {
 }());
 
 /**
+ * Execute validation functions (method, middleware)
  *
- *
- * @param options
- * @return {Promise<object>}
+ * @param options - Configuration object for validation process
+ * @return Promise<object>
  */
 var exec = function (options) { return __awaiter(void 0, void 0, void 0, function () {
     var req_method;
@@ -18015,7 +18032,7 @@ var exec = function (options) { return __awaiter(void 0, void 0, void 0, functio
                         var method, req_body, schemes, 
                         /**
                          *
-                         * @param middleware_resp middleware
+                         * @param middleware_resp - middleware
                          */
                         middleware_resp;
                         var _a;
@@ -18046,8 +18063,11 @@ var exec = function (options) { return __awaiter(void 0, void 0, void 0, functio
     });
 }); };
 /**
+ * @privateRemarks
+ * Run all validation functions, and catch all errors
  *
- * @param options
+ * @param options - Configuration object for validation process.
+ * @returns Promise<any>
  */
 var transform = function (options) {
     return new Promise(function (resolve, reject) {
@@ -18058,10 +18078,10 @@ var transform = function (options) {
 };
 /**
  *
- * @param {boolean} value_of True to execute valueOf, false to keep the native format
- * @param {object} scheme scheme
- * @param {object} req_body data body request
- * @param {boolean} request if it is true, the errors checked by res.status (200) .json ({message: 'message'}) will be returned, if it is false it generates an exception that is replicated in the handler function (Sandwich.handler)
+ * @param value_of - Determines how validated arguments and parameters are extracted.
+ * @param scheme - scheme
+ * @param req_body - data body request.
+ * @param request - if it is true, the errors checked by `res.status(200).json ({message: 'message'})` will be returned, if it is false it generates an exception that is replicated in the handler function `Sandwich.handler`
  * @returns
  */
 var parserSchemes = function (value_of, scheme, req_body, request) {
@@ -18076,7 +18096,7 @@ var parserSchemes = function (value_of, scheme, req_body, request) {
         /**
          * check for errors in arguments
          *
-         * @param responseError bug check response
+         * @param responseError - bug check response
          */
         responseError;
         return __generator(this, function (_a) {
@@ -18098,53 +18118,59 @@ var parserSchemes = function (value_of, scheme, req_body, request) {
     });
 };
 /**
- *
- *
- * @export
- * @class Sandwiches
- * @extends {Types}
- * @implements {SWCH.Sandwiches}
+ * @alpha
  */
 var Sandwiches = /** @class */ (function (_super) {
     __extends(Sandwiches, _super);
     /**
      * Creates an instance of Sandwiches.
      *
-     * @param {boolean} [value_of=true]
-     * @param {*} [schemes={}]
-     * @memberof Sandwiches
+     * @param value_of - Determines how validated arguments and parameters are extracted.
+     * @defaultValue value_of=true
+     * @param schemes - List of validation schemes.
+     * @defaultValue schemes={}
      */
     function Sandwiches(value_of, schemes) {
         if (value_of === void 0) { value_of = true; }
         if (schemes === void 0) { schemes = {}; }
         var _this = _super.call(this) || this;
         /**
-         * @function resource Returns a class called Resource, which loads the resources.
+         * Returns a class called Resource, which loads the resources. Also, after loading the necessary resources for the routing job, it loads the initial configuration for the validation of the arguments and parameters.
          *
-         * @param {SWCH.schemes} schemes The validation schemes are passed to the this.schemes property of the Resource class, examples of schemes:
+         *
+         * @remarks
+         * La configuración de los argumentos y parámetros se ejecutará a través de la función parser_schemes, que es una propiedad de la clase Resource.
+         *
+         * @param schemes - The validation schemes are passed to the this.schemes property of the Resource class
+         *
+         * @examples
+         * examples of schemes:
+         * ```json
          * {
-         *  email: {type: Sandwich.String, required: true, strict: true}
-         *  ...
-         * },
-         * @returns {SWCH.Resource} Class Resource
+         *   email: {type: Sandwich.String, required: true, strict: true,
+         *   password: {type: Sandwich.String, required: true, strict: true, min: 8,
+         * }
+         * ```
+         *
+         * @returns Class Resource
          */
         _this.resource = function (schemes) {
             return /** @class */ (function () {
                 /**
                  * Creates an instance of Resource.
                  *
-                 * @param {SWCH.Any} req
+                 * @param req - http request functions
                  */
                 function Resource(req) {
                     this.schemes = schemes;
                     /**
                      * Parse and validate data
                      *
-                     * @function
-                     * @param {boolean} [value_of=true] True to execute valueOf, false to keep the native format
-                     * @return {*}
+                     *
+                     * @param value_of - [value_of=true] True to execute valueOf, false to keep the native format
+                     * @return SWCH.ParserSchemesResponse
                      */
-                    this.parser_schemes = function parser_schemes(value_of) {
+                    this.parser_schemes = function (value_of) {
                         if (value_of === void 0) { value_of = true; }
                         return __awaiter(this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
@@ -18164,9 +18190,8 @@ var Sandwiches = /** @class */ (function (_super) {
     /**
      * parse and validate request body data
      *
-     * @param {SWCH.Any} body
-     * @return {*}
-     * @memberof Sandwiches
+     * @param body - Datos sujetos a validación
+     * @return
      */
     Sandwiches.prototype.parser_schemes = function (body) {
         return __awaiter(this, void 0, void 0, function () {
@@ -18181,9 +18206,8 @@ var Sandwiches = /** @class */ (function (_super) {
     /**
      *
      *
-     * @param {SWCH.routerProps} options
-     * @return {*}
-     * @memberof Sandwiches
+     * @param options -
+     * @return
      */
     Sandwiches.prototype._ = function (options) {
         return transform(options);
@@ -18191,10 +18215,16 @@ var Sandwiches = /** @class */ (function (_super) {
     /**
      * Prepare the class to be used by routing
      *
-     * @param {SWCH.Any} classRequest
-     * @param {SWCH.middlewaresType} [middlewares]
-     * @return {*}
-     * @memberof Sandwiches
+     * @example
+     * Controller function usage example
+     *
+     * ```ts
+     * Sandwich.handler(Users, [isAuthenticated()])
+     * ```
+     *
+     * @param classRequest - Classe that will serve as a pillow for routing.
+     * @param middlewares - Middleware functions that run before the final function or final middleware
+     * @return
      */
     Sandwiches.prototype.handler = function (classRequest, middlewares) {
         var _this = this;
@@ -18225,7 +18255,7 @@ var Sandwiches = /** @class */ (function (_super) {
                             res: res
                         };
                         return [4 /*yield*/, transform(data_transform).then(function (resp) {
-                                $classRequest.f = resp.f;
+                                $classRequest.train = resp.f;
                                 $classRequest.request = {
                                     success: resp.success,
                                     method: resp.method

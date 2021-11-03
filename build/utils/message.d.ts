@@ -1,59 +1,59 @@
 import * as SWCH from '../../functions';
 /**
- * @class ClassException
+ * Class to handle exceptions
  */
 export declare class ClassException implements SWCH.ClassException {
     /**
      * Server error Generate
      *
-     * @param data {object}
+     * @param data -
      */
     error: (data: SWCH.ErrorsRequest.Data) => never;
     /**
      * Server error Generate
      *
-     * @param data {object}
+     * @param data -
      */
     server_error: (data: SWCH.ErrorsRequest.Data) => never;
     /**
      * Bad request Generate
      *
-     * @param data {object}
+     * @param data -
      */
     bad_request: (data: SWCH.ErrorsRequest.Data) => never;
 }
 export declare const Exception: ClassException;
 /**
- * @class ClassMessage
+ * Classes for handling Http reply messages
  */
 declare class ClassMessage implements SWCH.ClassMessage {
     /**
      * send response request
      *
-     * @param {object} res
-     * @param {number} statusCode number status
-     * @param {object | string} message message response
+     * @param res -
+     * @param statusCode - number status
+     * @param message - message response
      */
     response(res: any, statusCode: number, message: any): any;
     /**
      * send response request (error)
      *
-     * @param {object} res
-     * @param {object | string} mess
+     * @param res -
+     * @param mess -
      */
     errors(res: any, mess: any): void;
     /**
      * send response request (success)
      *
-     * @param {object} res
-     * @param {object | string} mess
+     * @param res -
+     * @param mess -
      */
     success(res: any, mess: any): void;
     /**
      * send response request (create)
      *
-     * @param {object} res
-     * @param {object | string} mess
+     * @param res -
+     * @param mess -
      */
     create(res: any, mess: any): void;
 }

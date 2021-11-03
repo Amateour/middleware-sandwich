@@ -1,111 +1,113 @@
 import * as SWCH from '../functions';
 import { Types } from './validators/validator';
 /**
+ * Execute validation functions (method, middleware)
  *
- *
- * @param options
- * @return {Promise<object>}
+ * @param options - Configuration object for validation process
+ * @return Promise<object>
  */
 export declare const exec: SWCH.exec;
 /**
  *
- * @param {boolean} value_of True to execute valueOf, false to keep the native format
- * @param {object} scheme scheme
- * @param {object} req_body data body request
- * @param {boolean} request if it is true, the errors checked by res.status (200) .json ({message: 'message'}) will be returned, if it is false it generates an exception that is replicated in the handler function (Sandwich.handler)
+ * @param value_of - Determines how validated arguments and parameters are extracted.
+ * @param scheme - scheme
+ * @param req_body - data body request.
+ * @param request - if it is true, the errors checked by `res.status(200).json ({message: 'message'})` will be returned, if it is false it generates an exception that is replicated in the handler function `Sandwich.handler`
  * @returns
  */
 declare const parserSchemes: SWCH.parserSchemes;
 /**
- *
- *
- * @export
- * @class Sandwiches
- * @extends {Types}
- * @implements {SWCH.Sandwiches}
+ * @alpha
  */
 export declare class Sandwiches extends Types implements SWCH.Sandwiches {
     /**
-     * Validation schemes
+     * Object type property.
      *
-     * @type {SWCH.schemes}
-     * @memberof Sandwiches
      */
     schemes: SWCH.schemes;
     /**
-     * True to execute valueOf, false to keep the native format
+     * Booleana type property.
      *
-     * @type {boolean}
-     * @memberof Sandwiches
      */
     value_of: boolean;
     /**
      * Creates an instance of Sandwiches.
      *
-     * @param {boolean} [value_of=true]
-     * @param {*} [schemes={}]
-     * @memberof Sandwiches
+     * @param value_of - Determines how validated arguments and parameters are extracted.
+     * @defaultValue value_of=true
+     * @param schemes - List of validation schemes.
+     * @defaultValue schemes={}
      */
     constructor(value_of?: boolean, schemes?: {});
     /**
      * parse and validate request body data
      *
-     * @param {SWCH.Any} body
-     * @return {*}
-     * @memberof Sandwiches
+     * @param body - Datos sujetos a validación
+     * @return
      */
     parser_schemes(body: SWCH.Any): Promise<SWCH.ParserSchemesResponse>;
     /**
      *
      *
-     * @param {SWCH.routerProps} options
-     * @return {*}
-     * @memberof Sandwiches
+     * @param options -
+     * @return
      */
     _(options: SWCH.routerProps): Promise<any>;
     /**
      * Prepare the class to be used by routing
      *
-     * @param {SWCH.Any} classRequest
-     * @param {SWCH.middlewaresType} [middlewares]
-     * @return {*}
-     * @memberof Sandwiches
+     * @example
+     * Controller function usage example
+     *
+     * ```ts
+     * Sandwich.handler(Users, [isAuthenticated()])
+     * ```
+     *
+     * @param classRequest - Classe that will serve as a pillow for routing.
+     * @param middlewares - Middleware functions that run before the final function or final middleware
+     * @return
      */
     handler(classRequest: SWCH.Any, middlewares?: SWCH.middlewaresType): (req: SWCH.Any, res: SWCH.Any, next?: SWCH.Next) => Promise<void>;
     /**
-     * @function resource Returns a class called Resource, which loads the resources.
+     * Returns a class called Resource, which loads the resources. Also, after loading the necessary resources for the routing job, it loads the initial configuration for the validation of the arguments and parameters.
      *
-     * @param {SWCH.schemes} schemes The validation schemes are passed to the this.schemes property of the Resource class, examples of schemes:
+     *
+     * @remarks
+     * La configuración de los argumentos y parámetros se ejecutará a través de la función parser_schemes, que es una propiedad de la clase Resource.
+     *
+     * @param schemes - The validation schemes are passed to the this.schemes property of the Resource class
+     *
+     * @examples
+     * examples of schemes:
+     * ```json
      * {
-     *  email: {type: Sandwich.String, required: true, strict: true}
-     *  ...
-     * },
-     * @returns {SWCH.Resource} Class Resource
+     *   email: {type: Sandwich.String, required: true, strict: true,
+     *   password: {type: Sandwich.String, required: true, strict: true, min: 8,
+     * }
+     * ```
+     *
+     * @returns Class Resource
      */
     resource: (schemes: any) => {
         new (req: SWCH.Any): {
             /**
              * Validation schemes
              *
-             * @type {SWCH.schemes} schemes
              */
             readonly schemes: any;
             /**
              * Parse and validate data
              *
-             * @type {SWCH.parserSchemes}
              */
             readonly parser_schemes: SWCH.parserSchemes;
             /**
              * Loads the data returned by the middleware, in case the promise is fulfilled.
              *
-             * @type {SWCH.Any} f
              */
-            f: SWCH.Any;
+            train: SWCH.Any;
             /**
+             * http request functions
              *
-             *
-             * @type {SWCH.Any}
              */
             request: SWCH.Any;
         };

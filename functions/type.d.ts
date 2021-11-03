@@ -1,73 +1,73 @@
 
 export declare type Any = any;
 /**
- * @type AnyArray
+ * AnyArray
  */
 export declare type AnyArray = any[];
 /**
- * @type Next
+ * Next
  */
 export declare type Next = any;
 /**
- * @type FunctionVoid 
+ * FunctionVoid 
  */
 export declare type FunctionVoid = () => void;
 /**
- * @type methodType
+ * methodType
  */
 export declare type methodType = Array<string> | string;
 /**
- * @interface multiMiddlewareType
+ * multiMiddlewareType
  */
 export interface multiMiddlewareType {
     middleware: Array<FunctionVoid> | FunctionVoid,
     methods?: Array<string> | string
 }
 /**
- * @type middlewaresType
+ * middlewaresType
  */
 export declare type middlewaresType = FunctionVoid[] | FunctionVoid | multiMiddlewareType | multiMiddlewareType[];
 /**
- * @type middlewareType
+ * middlewareType
  */
 export declare type middlewareType = FunctionVoid[] | FunctionVoid;
 /**
- * @type ResType
+ * ResType
  */
 export declare type ResType = any;
 /**
- * @type ReqType
+ * ReqType
  */
 export declare type ReqType = any;
 /**
- * @type argumentType
+ * argumentType
  */
 export declare type argumentType = object;
 /**
- * @type valueType
+ * valueType
  */
 export declare type valueType = any;
 /**
- * @type keyType
+ * keyType
  */
 export declare type keyType = number | string;
 /**
- * @type messageType
+ * messageType
  */
 export declare type messageType = object | string | null
 /**
- * @type respType
+ * respType
  */
 export declare type respType = string;
 /**
- * @interface argumentProps
+ * argumentProps
  */
 export interface argumentProps {
     argument: any,
     body: any
 }
 /**
- * @interface routerProps
+ * routerProps
  */
 export interface routerProps {
     method: methodType,
@@ -77,14 +77,14 @@ export interface routerProps {
     req: ReqType,
 }
 /**
- * @interface typeProps
+ * typeProps
  */
 export interface typeProps {
     String: string,
     Number: number,
 }
 /**
- * @interface TypeValid
+ * TypeValid
  */
 export interface TypeValid {
     String?: FunctionVoid,
@@ -94,7 +94,7 @@ export interface TypeValid {
     Object?: FunctionVoid,
 }
 /**
- * @interface  compareType
+ *  compareType
  */
 export interface compareType {
     type?: FunctionVoid | string,
@@ -106,11 +106,11 @@ export interface compareType {
     validation?: FunctionVoid
 }
 /**
- * @type schemes
+ * schemes
  */
 export declare type schemes = bject<compareType>;
 /**
- * @interface compareProps
+ * compareProps
  */
 export interface compareProps {
     value: valueType,
@@ -119,7 +119,7 @@ export interface compareProps {
     scheme: schemes,
 }
 /**
- * @interface argValid
+ * argValid
  */
 export interface argValid {
     value: any,
@@ -129,7 +129,7 @@ export interface argValid {
     scheme?: schemes
 }
 /**
- * @interface argMessProps
+ * argMessProps
  */
 export interface argMessProps {
     value?: any,
@@ -139,14 +139,14 @@ export interface argMessProps {
     key_validation?: string | number
 }
 /**
- * @type messValid
+ * messValid
  */
 export declare type messValid = {
     message: string;
     value?: string | number;
 }
 /**
- * @interface MessageArgument
+ * MessageArgument
  */
 export interface MessageArgument {
     required: () => messValid | respType,
@@ -160,26 +160,26 @@ export interface MessageArgument {
  */
 export declare namespace ErrorsRequest {
     /**
-     * @type message
+     * message
      */
     export type message = object | string;
     /**
-     * @type errors
+     * errors
      */
     export type errors = any[] | string;
     /**
-     * @type RespAny
+     * RespAny
      */
     export type RespAny = any;
     /**
-     * @interface Data 
+     * Data 
      */
     export interface Data {
         message: message,
         errors?: errors
     }
     /**
-     * @interface Response errors
+     * Response errors
      */
     export interface RespError {
         message: message,

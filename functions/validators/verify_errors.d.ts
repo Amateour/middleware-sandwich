@@ -6,7 +6,7 @@ export interface ResponseVerifyErrors {
 /**
  * validate errors and send message
  *
- * @param errors
+ * @param errors -
  */
 export type verify_errors = (
   errors: object, request: boolean

@@ -9,10 +9,10 @@ export declare type FuncMiddleware = (
 ) => void;
 
 /**
- * @param req
- * @param res
- * @param funcMiddleware
- * @param train
+ * @param req -
+ * @param res -
+ * @param funcMiddleware -
+ * @param train -
  */
 export type middleware_next = (
     funcMiddleware: FuncMiddleware, req: ReqType, res: ResType, train: any
@@ -20,19 +20,19 @@ export type middleware_next = (
 
 /**
  *
- * @param middlewares
- * @param req
- * @param res
+ * @param middlewares -
+ * @param req -
+ * @param res -
  */
 export type exec_list_func = (middlewares: FuncMiddleware[], req: ReqType, res: resType) => Promise<any>
 
 /**
  * middleware
  *
- * @param res
- * @param req
- * @param middlewares array functions or function
- * @param method {string} method request
+ * @param res -
+ * @param req -
+ * @param middlewares - array functions or function
+ * @param method - {string} method request
  */
 export type middleware = (
     req: ReqType, res: ResType, middlewares?: middlewaresType, method?: string
