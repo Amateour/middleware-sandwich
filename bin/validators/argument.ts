@@ -7,15 +7,15 @@ import {messageArgument} from "./message";
 /**
  *  list of validation functions
  *
- * @param func_arguments
+ * @param func_arguments -
  */
 const func_arguments: SWCH.func_arguments = {
     /**
      * Validate value max
      *
-     * @param type
-     * @param valid_value
-     * @param value
+     * @param type -
+     * @param valid_value -
+     * @param value -
      */
     max: ({type, valid_value, value}) => {
         if (typeof value === 'number'){
@@ -29,9 +29,9 @@ const func_arguments: SWCH.func_arguments = {
     /**
      * Validate value min
      *
-     * @param type
-     * @param valid_value
-     * @param value
+     * @param type -
+     * @param valid_value -
+     * @param value -
      */
     min: ({type, valid_value, value}) => {
         if (typeof value === 'number'){
@@ -44,16 +44,16 @@ const func_arguments: SWCH.func_arguments = {
     /**
      * validate value required
      *
-     * @param valid_value
-     * @param value
+     * @param valid_value -
+     * @param value -
      */
     required: ({valid_value, value}) => valid_value ? (!!value || value === 0) : true,
     /**
      * Validate value type
      *
-     * @param valid
-     * @param value
-     * @param scheme
+     * @param valid -
+     * @param value -
+     * @param scheme -
      */
      type: (value, func, scheme) => {
         const list_type = ['String', 'Number', 'Object'];
@@ -70,10 +70,10 @@ const func_arguments: SWCH.func_arguments = {
     /**
      * Strictly validates the value of a data type
      *
-     * @param strict true to validate or false not to validate strict mode
-     * @param type Array
-     * @param key data {occupation}
-     * @param value "Developer"
+     * @param strict - true to validate or false not to validate strict mode
+     * @param type - Array
+     * @param key - data {occupation}
+     * @param value - `Developer`
      */
     valid_strict: (strict, type, key, value) => {
         const valid = _.get(validate, type);
@@ -92,9 +92,9 @@ const func_arguments: SWCH.func_arguments = {
 /**
  * Validate a data type
  *
- * @param value value to validate "Developer"
- * @param key value key {occupation}
- * @param scheme scheme validation {type: String}
+ * @param value - value to validate "Developer"
+ * @param key - value key {occupation}
+ * @param scheme - scheme validation {type: String}
  */
 const valid_type: SWCH.valid_type = ({value, key, scheme}) => {
     const type = _.get(scheme, 'type');
@@ -113,14 +113,18 @@ const valid_type: SWCH.valid_type = ({value, key, scheme}) => {
 /**
  * custom validation, for the data type specified in the argument
  * 
- * example 
- * email: {
- * type: Sandwich.String, validation: (value: strin) => typeof value == 'string'
+ * @example 
+ * ```json
+ * {
+ *    email: {
+ *    type: Sandwich.String, validation: (value: strin) => typeof value == 'string'
+ *  }
  * }
+ * ```
  *
- * @param value
- * @param key
- * @param scheme
+ * @param value -
+ * @param key -
+ * @param scheme -
  */
 const validation_custom: SWCH.validation_custom = ({value, key, scheme}) => {
     const {validation} = scheme;
@@ -134,7 +138,7 @@ const validation_custom: SWCH.validation_custom = ({value, key, scheme}) => {
  * Extract data types to validate in the function valid_extract_argument
  * omitting those validated in the function valid_type
  *
- * @param scheme data: {type: Sandwich.String, strict: true, value: '100'}
+ * @param scheme - data: `{type: Sandwich.String, strict: true, value: '100'}`
  */
 const omit_argument: SWCH.omit_argument = (scheme) => {
     return _.omit(scheme, ['type', 'strict', 'message', 'value', 'validation']);
@@ -143,11 +147,11 @@ const omit_argument: SWCH.omit_argument = (scheme) => {
 /**
  * Validate a schema against a value
  *
- * @param scheme data validation schema
- * @param value value to be validated example "Brayan Salgado"
- * @param type data type to validate example String
- * @param messages
- * @param key_main key main
+ * @param scheme - data validation schema
+ * @param value - value to be validated example "Brayan Salgado"
+ * @param type - data type to validate example String
+ * @param messages -
+ * @param key_main - key main
  */
 const valid_extract_argument: SWCH.valid_extract_argument = (
     messages, scheme, value, type, key_main
@@ -165,7 +169,7 @@ const valid_extract_argument: SWCH.valid_extract_argument = (
 /**
  * validate Message
  *
- * @param errors
+ * @param errors -
  */
 const valid_resp_argument: SWCH.valid_resp_argument = async (errors) => {
     return !errors.length;
@@ -174,11 +178,16 @@ const valid_resp_argument: SWCH.valid_resp_argument = async (errors) => {
 /**
  * Validate an argument schema
  *
- * @param props data: {
+ * @param props - data 
+ * 
+ * @example
+ * ```json
+ * {
  *     value: "example@sandwich.com"
  *     key: "email"
  *     scheme: {type: Sandwich.String, strict: true}
  * }
+ * ```
  */
 const valid_argument: SWCH.valid_argument = async (props) => {
     const {value, scheme, message, key} = props;
@@ -196,9 +205,9 @@ const valid_argument: SWCH.valid_argument = async (props) => {
  * Extract the defined value from the req or in the schema
  * (any value passed by req will be replaced by the value is defined in the schema)
  *
- * @param req_body data body
- * @param schemes
- * @param key field key to validate
+ * @param req_body - data body
+ * @param schemes -
+ * @param key - field key to validate
  */
 const get_value: SWCH.get_value = (req_body, schemes, key) => {
     const has_value = _.has(schemes, 'value');
@@ -209,9 +218,9 @@ const get_value: SWCH.get_value = (req_body, schemes, key) => {
 /**
  * This function validates all body data specified in the arguments
  *
- * @param value_of true stops returning the data to its primitive value of its instance
- * @param req_body request body {email: "example@sandwich.com"}
- * @param schemes schemes of validation { email: {type: Sandwich.String, strict: true} }
+ * @param value_of - true stops returning the data to its primitive value of its instance
+ * @param req_body - request body {email: "example@sandwich.com"}
+ * @param schemes - schemes of validation `{ email: {type: Sandwich.String, strict: true} }`
  */
 export const argument: SWCH.argument = async (value_of, req_body, schemes) => {
     let resp = {};

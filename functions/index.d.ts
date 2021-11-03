@@ -8,8 +8,14 @@ import {Types} from "./validators/types";
 
 /**
  *
- * @param options
- * @return {Promise<object>}
+ * @param options -
+ * @return `Promise<{
+  f: () => void,
+  success: boolean,
+  method: string,
+  schemes: unknown,
+  req_body: string | null | undefined,
+}>`
  */
 export type exec = (options: routerProps) => Promise<{
   f: () => void,
@@ -21,7 +27,7 @@ export type exec = (options: routerProps) => Promise<{
 
 /**
  *
- * @param options
+ * @param options -
  */
 export type transform = (options: routerProps) => Promise<any>;
 
@@ -48,14 +54,13 @@ export type parserSchemes = (
  export interface Resource {
   readonly schemes: schemes;
   readonly parser_schemes: parserSchemes;
-  f: any;
+  train: any;
   request: any;
 }
 
 /**
  * class Sandwiches
  *
- * @class {Sandwiches}
  */
 export interface Sandwiches extends Types {
     schemes: schemes;
@@ -63,28 +68,25 @@ export interface Sandwiches extends Types {
     /**
      *
      *
-     * @param {*} body
-     * @return {*}  {Promise<ParserSchemesResponse>}
-     * @memberof Sandwiches
+     * @param body -
+     * @return Promise<ParserSchemesResponse>
      */
     parser_schemes(body: any): Promise<ParserSchemesResponse>
     /**
      *
      *
-     * @param {routerProps} options
-     * @return {*}  {Promise<transform>}
-     * @memberof Sandwiches
+     * @param options -
+     * @return Promise<transform>
      */
     _(options: routerProps): Promise<transform>
     /**
      *
      *
-     * @param {*} classRequest
-     * @param {middlewaresType} [middlewares]
-     * @return {*}  {(
+     * @param classRequest -
+     * @param middlewares -
+     * @return `{(
      *       req: ReqType, res: ResType, next?: Next
-     *     ) => unknown}
-     * @memberof Sandwiches
+     *     ) => unknown}`
      */
     handler(classRequest: any, middlewares?: middlewaresType): (
       req: ReqType, res: ResType, next?: Next
@@ -92,9 +94,8 @@ export interface Sandwiches extends Types {
     /**
      *
      *
-     * @param {schemes} [schemes]
-     * @return {*}  {*}
-     * @memberof Sandwiches
+     * @param schemes -
+     * @return
      */
     resource(schemes?: schemes): any
 }

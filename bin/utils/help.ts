@@ -4,28 +4,28 @@ import _ from 'lodash';
 /**
  * validate if it is an array
  * 
- * @param elm 
+ * @param elm - element validation
  * @returns boolean
  */
 export const isArray: SWCH.isArray = (elm) => elm instanceof Array;
 /**
  * validate if it is an objet
  * 
- * @param elm 
+ * @param elm - element validation
  * @returns boolean
  */
 export const isObject: SWCH.isObject = (elm) => elm instanceof Object;
 /**
  * validate if it is an string
  * 
- * @param elm 
+ * @param elm - element validation
  * @returns boolean
  */
 export const isString: SWCH.isString = (elm) => typeof elm === "string";
 /**
  * validate if it is an number
  * 
- * @param elm 
+ * @param elm - element validation
  * @returns boolean
  */
 export const isNumber: SWCH.isNumber = (elm) => typeof elm === "number";
@@ -33,7 +33,6 @@ export const isNumber: SWCH.isNumber = (elm) => typeof elm === "number";
 /**
  * Functions validations (isArray, isString)
  * 
- * @constant validate
  */
 export const validate: SWCH.validate = {
     Array: isArray,
@@ -45,28 +44,33 @@ export const validate: SWCH.validate = {
 /**
  * get_middlewares Middleware extraction, can be an array of function objects or an object
  * 
- * example:
+ * @example
  * Array functions
  * Sanwiche.handler(Users, [isAuth])
  * 
  * Array objects
+ * ```ts
  * Sanwiche.handler(Users, [
  * {
  *   methods: ['POST'],
  *   middleware: [isAuth]
  * }
  *])
+ *```
  *
+ *```ts
  * objects
  * Sanwiche.handler(Users, {
  *   methods: ['POST'],
  *   middleware: [isAuth]
  * })
+ * ```
  * 
+ * @remarks
  * The extraction of each middleware is selected according to the method of the http request
  * 
- * @param middlewares list middlewares
- * @param {string} method method request (post, get)
+ * @param middlewares - list middlewares
+ * @param method - method request (post, get)
  */
 export const get_middlewares: SWCH.get_middlewares = async (middlewares, method) => {
     try {
@@ -99,7 +103,7 @@ export const get_middlewares: SWCH.get_middlewares = async (middlewares, method)
 
 /**
  * 
- * @param arr 
+ * @param arr -
  * @returns string[]
  */
 export const toUpper: SWCH.toUpper = (arr) => {
@@ -109,9 +113,10 @@ export const toUpper: SWCH.toUpper = (arr) => {
 /**
  * Execute the function according to its specified method
  * 
- * @param {object} push 
- * @param {object} req 
- * @param {object} res 
+ * @param push - 
+ * @param req -
+ * @param res -
+ * @param next - Next function
  */
 export const push_against: SWCH.push_against = async (push, req, res, next) => {
     const method = push.request.method;

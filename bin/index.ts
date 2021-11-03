@@ -5,10 +5,10 @@ import {argument, method, middleware, verifyErrors, Types} from './validators/va
 import _ from 'lodash';
 
 /**
- * 
+ * Execute validation functions (method, middleware)
  *
- * @param options
- * @return {Promise<object>}
+ * @param options - Configuration object for validation process
+ * @return Promise<object>
  */
 export const exec: SWCH.exec = async (options) => {
     let req_method = undefined;
@@ -25,7 +25,7 @@ export const exec: SWCH.exec = async (options) => {
         const
             /**
              *
-             * @param middleware_resp middleware
+             * @param middleware_resp - middleware
              */
             middleware_resp = await middleware(
                 options.req, options.res, options.middleware, method
@@ -45,8 +45,11 @@ export const exec: SWCH.exec = async (options) => {
 }
 
 /**
+ * @privateRemarks
+ * Run all validation functions, and catch all errors
  *
- * @param options
+ * @param options - Configuration object for validation process.
+ * @returns Promise<any>
  */
 const transform: SWCH.transform = (options) => {
     return new Promise((resolve, reject) => {
@@ -55,13 +58,12 @@ const transform: SWCH.transform = (options) => {
             .catch(err => reject(err));
     })
 }
-
 /**
  * 
- * @param {boolean} value_of True to execute valueOf, false to keep the native format
- * @param {object} scheme scheme
- * @param {object} req_body data body request
- * @param {boolean} request if it is true, the errors checked by res.status (200) .json ({message: 'message'}) will be returned, if it is false it generates an exception that is replicated in the handler function (Sandwich.handler)
+ * @param value_of - Determines how validated arguments and parameters are extracted.
+ * @param scheme - scheme
+ * @param req_body - data body request.
+ * @param request - if it is true, the errors checked by `res.status(200).json ({message: 'message'})` will be returned, if it is false it generates an exception that is replicated in the handler function `Sandwich.handler`
  * @returns 
  */
 const parserSchemes: SWCH.parserSchemes = async (
@@ -76,7 +78,7 @@ const parserSchemes: SWCH.parserSchemes = async (
     /**
      * check for errors in arguments
      *
-     * @param responseError bug check response 
+     * @param responseError - bug check response 
      */
     responseError = await verifyErrors(result_argument.argument, request);
 
@@ -88,34 +90,26 @@ const parserSchemes: SWCH.parserSchemes = async (
     }
 }
 /**
- *
- *
- * @export
- * @class Sandwiches
- * @extends {Types}
- * @implements {SWCH.Sandwiches}
+ * @alpha
  */
 export class Sandwiches extends Types implements SWCH.Sandwiches {
     /**
-     * Validation schemes
+     * Object type property.
      *
-     * @type {SWCH.schemes}
-     * @memberof Sandwiches
      */
     schemes: SWCH.schemes;
     /**
-     * True to execute valueOf, false to keep the native format
+     * Booleana type property.
      *
-     * @type {boolean}
-     * @memberof Sandwiches
      */
     value_of: boolean;
     /**
      * Creates an instance of Sandwiches.
      * 
-     * @param {boolean} [value_of=true]
-     * @param {*} [schemes={}]
-     * @memberof Sandwiches
+     * @param value_of - Determines how validated arguments and parameters are extracted.
+     * @defaultValue value_of=true
+     * @param schemes - List of validation schemes.
+     * @defaultValue schemes={}
      */
     constructor(value_of = true, schemes = {}) {
         super(); 
@@ -125,9 +119,8 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
     /**
      * parse and validate request body data
      *
-     * @param {SWCH.Any} body
-     * @return {*} 
-     * @memberof Sandwiches
+     * @param body - Datos sujetos a validación
+     * @return
      */
     async parser_schemes(body: SWCH.Any)
     {
@@ -138,20 +131,25 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
     /**
      *
      *
-     * @param {SWCH.routerProps} options
-     * @return {*} 
-     * @memberof Sandwiches
+     * @param options -
+     * @return
      */
     _(options: SWCH.routerProps) {
         return transform(options)
     }
     /**
      * Prepare the class to be used by routing
+     * 
+     * @example
+     * Controller function usage example
+     * 
+     * ```ts
+     * Sandwich.handler(Users, [isAuthenticated()])
+     * ```
      *
-     * @param {SWCH.Any} classRequest
-     * @param {SWCH.middlewaresType} [middlewares]
-     * @return {*} 
-     * @memberof Sandwiches
+     * @param classRequest - Classe that will serve as a pillow for routing.
+     * @param middlewares - Middleware functions that run before the final function or final middleware
+     * @return
      */
     handler(classRequest: SWCH.Any, middlewares?: SWCH.middlewaresType) {
         return async (req: SWCH.Any, res: SWCH.Any, next?: SWCH.Next) => {
@@ -161,7 +159,6 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
             /**
              * selecte methods
              *
-             * @constant methods_list
              */
             const methods_list: SWCH.AnyArray = await _.map([
                 'post',
@@ -173,7 +170,6 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
             /**
              * selected methods
              *
-             * @constant methods
              */
             const methods = await toUpper(methods_list);
 
@@ -186,7 +182,7 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
             }
 
             const errors: SWCH.Any = await transform(data_transform).then((resp) => {
-                $classRequest.f = resp.f;
+                $classRequest.train = resp.f;
                 $classRequest.request = {
                     success: resp.success,
                     method: resp.method
@@ -201,56 +197,62 @@ export class Sandwiches extends Types implements SWCH.Sandwiches {
         }
     }
     /**
-     * @function resource Returns a class called Resource, which loads the resources.
+     * Returns a class called Resource, which loads the resources. Also, after loading the necessary resources for the routing job, it loads the initial configuration for the validation of the arguments and parameters.
+     * 
+     * 
+     * @remarks
+     * La configuración de los argumentos y parámetros se ejecutará a través de la función parser_schemes, que es una propiedad de la clase Resource.
      *
-     * @param {SWCH.schemes} schemes The validation schemes are passed to the this.schemes property of the Resource class, examples of schemes: 
+     * @param schemes - The validation schemes are passed to the this.schemes property of the Resource class
+     * 
+     * @examples 
+     * examples of schemes:
+     * ```json
      * {
-     *  email: {type: Sandwich.String, required: true, strict: true}
-     *  ...
-     * }, 
-     * @returns {SWCH.Resource} Class Resource
+     *   email: {type: Sandwich.String, required: true, strict: true,
+     *   password: {type: Sandwich.String, required: true, strict: true, min: 8,
+     * }
+     * ```
+     * 
+     * @returns Class Resource
      */
     resource = (schemes: SWCH.schemes) => {
         return class Resource implements SWCH.Resource {
             /**
              * Validation schemes
              *
-             * @type {SWCH.schemes} schemes
              */
             readonly schemes: SWCH.schemes;
             /**
              * Parse and validate data
              *
-             * @type {SWCH.parserSchemes}
              */
             readonly parser_schemes: SWCH.parserSchemes;
             /**
              * Loads the data returned by the middleware, in case the promise is fulfilled.
              *
-             * @type {SWCH.Any} f
              */
-            f: SWCH.Any;
+            train: SWCH.Any;
             /**
-             * 
+             * http request functions
              *
-             * @type {SWCH.Any}
              */
             request: SWCH.Any;
             /**
              * Creates an instance of Resource.
              * 
-             * @param {SWCH.Any} req
+             * @param req - http request functions
              */
             constructor(req: SWCH.Any) {
                 this.schemes = schemes;
                 /**
                  * Parse and validate data
                  * 
-                 * @function
-                 * @param {boolean} [value_of=true] True to execute valueOf, false to keep the native format
-                 * @return {*} 
+                 * 
+                 * @param value_of - [value_of=true] True to execute valueOf, false to keep the native format
+                 * @return SWCH.ParserSchemesResponse
                  */
-                this.parser_schemes = async function parser_schemes(
+                this.parser_schemes = async function(
                     value_of = true
                 ): Promise<SWCH.ParserSchemesResponse>{
                     

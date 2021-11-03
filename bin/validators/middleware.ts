@@ -4,10 +4,10 @@ import {get_middlewares} from "../utils/help";
 /**
  * middleware_next execution of each declared FuncMiddleware
  * 
- * @param req Http Request
- * @param res Http Response
- * @param funcMiddleware FuncMiddleware The middleware function runs in the middleware_next function
- * @param train
+ * @param req - Http Request
+ * @param res - Http Response
+ * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
+ * @param train -
  */
 export const middleware_next: SWCH.middleware_next = (
     funcMiddleware, req, res, train
@@ -21,8 +21,8 @@ export const middleware_next: SWCH.middleware_next = (
  * exec_list_func controls the execution of each declared FuncMiddleware
  * 
  * @param middlewares
- * @param req Http Request
- * @param res Http Response
+ * @param req - Http Request
+ * @param res - Http Response
  */
 const exec_list_func: SWCH.exec_list_func = async (middlewares, req, res) => {
     let train = {};
@@ -35,19 +35,23 @@ const exec_list_func: SWCH.exec_list_func = async (middlewares, req, res) => {
 }
 
 /**
- * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function:
+ * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function
  *
+ * @example
+ * ```ts
  * Sanwiche.handler (Users, [{
  * methods: ['POST'],
  * middleware: [isAuth]
  *}])
+ *```
  *
+ * @remarks
  * The get_middlewares function takes care of the extraction
  *
- * @param req Http Request
- * @param res Http Response
- * @param middlewares array functions or function
- * @param method {string} method request
+ * @param req - Http Request
+ * @param res - Http Response
+ * @param middlewares - array functions or function
+ * @param method - `{string}` method request
  */
 export const middleware: SWCH.middleware = async (
     req, res, middlewares, method

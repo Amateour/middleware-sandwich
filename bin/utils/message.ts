@@ -2,25 +2,24 @@ import * as SWCH from '../../functions';
 /**
  * get data error
  *
- * @param data {object} {
+ * @param data - `{
  *     message: message of error "bad request",
  *     errors: data errors
- * }
- * @const
+ * }`
  */
 const get_data_errors: SWCH.get_data_errors = (data) => {
     return data
 }
 
 /**
- * @class ClassException
+ * Class to handle exceptions
  */
 export class ClassException implements SWCH.ClassException {
 
     /**
      * Server error Generate
      *
-     * @param data {object}
+     * @param data - 
      */
     error = (data: SWCH.ErrorsRequest.Data) => {
         throw data
@@ -29,7 +28,7 @@ export class ClassException implements SWCH.ClassException {
     /**
      * Server error Generate
      *
-     * @param data {object}
+     * @param data - 
      */
     server_error = (data: SWCH.ErrorsRequest.Data) => {
         const {message, errors} = get_data_errors(data);
@@ -39,7 +38,7 @@ export class ClassException implements SWCH.ClassException {
     /**
      * Bad request Generate
      *
-     * @param data {object}
+     * @param data - 
      */
     bad_request = (data: SWCH.ErrorsRequest.Data) => {
         const {message, errors} = get_data_errors(data);
@@ -52,16 +51,16 @@ export const Exception = new ClassException();
 
 
 /**
- * @class ClassMessage
+ * Classes for handling Http reply messages
  */
 class ClassMessage implements SWCH.ClassMessage {
 
     /**
      * send response request
      * 
-     * @param {object} res 
-     * @param {number} statusCode number status
-     * @param {object | string} message message response
+     * @param res - 
+     * @param statusCode - number status
+     * @param message - message response
      */
     response(res: any, statusCode: number, message: any) {
 
@@ -71,7 +70,7 @@ class ClassMessage implements SWCH.ClassMessage {
         const {stack} = message;
 
         /**
-         * @constant response data response
+         * data response
          */
         const response = {
             message: message?.message,
@@ -79,7 +78,7 @@ class ClassMessage implements SWCH.ClassMessage {
             statusCode: statusCode ?? 200,
         }
         /**
-         * @constant data_send
+         *
          */
         const data_send = stack ? {...response, stack} : response;
         if (res)
@@ -91,8 +90,8 @@ class ClassMessage implements SWCH.ClassMessage {
     /**
      * send response request (error)
      * 
-     * @param {object} res 
-     * @param {object | string} mess 
+     * @param res -
+     * @param mess -
      */
     errors(res: any, mess: any) {
         this.response(res, 500, mess)
@@ -101,8 +100,8 @@ class ClassMessage implements SWCH.ClassMessage {
     /**
      * send response request (success)
      * 
-     * @param {object} res 
-     * @param {object | string} mess 
+     * @param res -
+     * @param mess -
      */
     success(res: any, mess: any) {
         this.response(res, 200, mess)
@@ -111,8 +110,8 @@ class ClassMessage implements SWCH.ClassMessage {
     /**
      * send response request (create)
      * 
-     * @param {object} res 
-     * @param {object | string} mess 
+     * @param res -
+     * @param mess -
      */
     create(res: any, mess: any) {
       this.response(res, 201, mess)

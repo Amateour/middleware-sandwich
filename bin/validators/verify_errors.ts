@@ -5,7 +5,7 @@ import _ from 'lodash';
 /**
  * validate errors and send message
  *
- * @param errors
+ * @param errors -
  */
 export const verifyErrors: SWCH.verify_errors = async (
     errors, request
