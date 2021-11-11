@@ -7,7 +7,7 @@ import _ from 'lodash';
  * @param elm - element validation
  * @returns boolean
  */
-export const isArray: SWCH.isArray = (elm) => elm instanceof Array;
+export const isArray: SWCH.isArray = (elm) => elm instanceof Array && typeof elm === 'object';
 /**
  * validate if it is an objet
  * 

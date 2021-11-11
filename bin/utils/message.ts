@@ -1,4 +1,4 @@
-import * as SWCH from '../../functions';
+import * as SW from '../../functions';
 /**
  * get data error
  *
@@ -7,21 +7,21 @@ import * as SWCH from '../../functions';
  *     errors: data errors
  * }`
  */
-const get_data_errors: SWCH.get_data_errors = (data) => {
+const get_data_errors: SW.get_data_errors = (data) => {
     return data
 }
 
 /**
  * Class to handle exceptions
  */
-export class ClassException implements SWCH.ClassException {
+export class ClassException implements SW.ClassException {
 
     /**
      * Server error Generate
      *
      * @param data - 
      */
-    error = (data: SWCH.ErrorsRequest.Data) => {
+    error = (data: SW.ErrorsRequest.Data) => {
         throw data
     }
 
@@ -30,7 +30,7 @@ export class ClassException implements SWCH.ClassException {
      *
      * @param data - 
      */
-    server_error = (data: SWCH.ErrorsRequest.Data) => {
+    server_error = (data: SW.ErrorsRequest.Data) => {
         const {message, errors} = get_data_errors(data);
         throw {"statusCode": 500, "message": message, errors};
     }
@@ -40,7 +40,7 @@ export class ClassException implements SWCH.ClassException {
      *
      * @param data - 
      */
-    bad_request = (data: SWCH.ErrorsRequest.Data) => {
+    bad_request = (data: SW.ErrorsRequest.Data) => {
         const {message, errors} = get_data_errors(data);
         throw {"statusCode": 400, "message": message, errors};
     }
@@ -53,7 +53,7 @@ export const Exception = new ClassException();
 /**
  * Classes for handling Http reply messages
  */
-class ClassMessage implements SWCH.ClassMessage {
+class ClassMessage implements SW.ClassMessage {
 
     /**
      * send response request
@@ -81,10 +81,11 @@ class ClassMessage implements SWCH.ClassMessage {
          *
          */
         const data_send = stack ? {...response, stack} : response;
+        if(!res) throw data_send;
         if (res)
-            return res.status(response.statusCode)
-                .json(data_send);
-        Exception.error(data_send);
+            res.writeHead(response.statusCode, { 'Content-Type': 'application/json' });
+            res.write(JSON.stringify(data_send));
+            return res.end();
     }
 
     /**

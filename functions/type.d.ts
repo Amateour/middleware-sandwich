@@ -26,7 +26,7 @@ export interface multiMiddlewareType {
 /**
  * middlewaresType
  */
-export declare type middlewaresType = FunctionVoid[] | FunctionVoid | multiMiddlewareType | multiMiddlewareType[];
+export declare type middlewares = FunctionVoid[] | FunctionVoid | multiMiddlewareType | multiMiddlewareType[];
 /**
  * middlewareType
  */
@@ -72,7 +72,7 @@ export interface argumentProps {
 export interface routerProps {
     method: methodType,
     middleware?: middlewaresType,
-    argument: argumentType,
+    argument?: argumentType,
     res: ResType,
     req: ReqType,
 }
@@ -106,9 +106,21 @@ export interface compareType {
     validation?: FunctionVoid
 }
 /**
+ *  compareType
+ */
+export interface scheme {
+    type?: FunctionVoid | string,
+    required?: boolean,
+    min?: number,
+    max?: number,
+    value?: any,
+    strict?: boolean,
+    validation?: FunctionVoid
+}
+/**
  * schemes
  */
-export declare type schemes = bject<compareType>;
+export declare type schemes = Record<scheme>;
 /**
  * compareProps
  */

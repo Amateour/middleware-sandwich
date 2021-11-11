@@ -1,7 +1,8 @@
-import * as SWCH from '../../functions';
+import * as SW from '../../functions';
 /**
  * validate errors and send message
  *
  * @param errors -
+ * @param respActive -
  */
-export declare const verifyErrors: SWCH.verify_errors;
+export declare const verifyErrors: SW.verify_errors;

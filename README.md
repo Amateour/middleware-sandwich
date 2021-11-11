@@ -48,7 +48,7 @@ class Users extends Sandwich.resource({
         return [{
             message: 'data_user',
             data: {
-                name: 'Orlando Medina'
+                name: 'Orlando Medina',
                 email: email
             }
         }, 200];
@@ -63,8 +63,8 @@ import { Resource } from '@amateour/middleware-sandwich';
 
 ```javascript
 class Users extends Resource {
-    email = this.parser({type: Sandwich.String, required: true, strict: true}),
-    password = this.parser({type: Sandwich.String, required: true, strict: true, min: 8})
+    email = this.parser({type: Sandwich.String, required: true, strict: true}, 'email')
+    password = this.parser({type: Sandwich.String, required: true, strict: true, min: 8}, 'password')
     
     // Method POST
     async post() {
@@ -77,7 +77,7 @@ class Users extends Resource {
         return [{
             message: 'data_user',
             data: {
-                name: 'Orlando Medina'
+                name: 'Orlando Medina',
                 email: email
             }
         }, 200];
@@ -167,15 +167,16 @@ import { Router, Sandwich } from '@amateour/middleware-sandwich';
 
 const express = require('express');
 const app = express();
-const router = Router.app(app);
+const router = new Router(app);
+const middleware = new Middleware(router)
 app.get('/user', Sandwich.hanlder(Users, 'hanlderUser'));
 
-router.resources([
-'/user',
-'/user/:id',
-], Sandwich.hanlder(Users));
+router.resources({
+   only: ['POST'],
+   middleware: [isRole]
+}, ['/users', '/users/:id'], Users);
 
-app.use('/api', ruter);
+app.use('/api', middleware.ruter);
 ```
 
 ##### Middleware

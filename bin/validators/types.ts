@@ -1,9 +1,9 @@
-import * as SWCH from '../../functions'; 
+import * as SW from '../../functions';
 
 /**
- * Types of validatios
+ * Types of validations
  */
-export const Type: SWCH.Type = {
+export const Type: SW.Type = {
     String: String,
     Number: Number,
     Array: Array,
@@ -12,9 +12,9 @@ export const Type: SWCH.Type = {
 }
 
 /**
- * Types of validatios
+ * Types of validations
  */
-export class Types implements SWCH.Types {
+export class Types implements SW.Types {
     String = Type.String
     Number = Type.Number
     Array = Type.Array

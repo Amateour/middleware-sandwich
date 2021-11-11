@@ -1,32 +1,32 @@
-import * as SWCH from '../../functions';
+import * as SW from '../../functions';
 /**
  * Class to handle exceptions
  */
-export declare class ClassException implements SWCH.ClassException {
+export declare class ClassException implements SW.ClassException {
     /**
      * Server error Generate
      *
      * @param data -
      */
-    error: (data: SWCH.ErrorsRequest.Data) => never;
+    error: (data: SW.ErrorsRequest.Data) => never;
     /**
      * Server error Generate
      *
      * @param data -
      */
-    server_error: (data: SWCH.ErrorsRequest.Data) => never;
+    server_error: (data: SW.ErrorsRequest.Data) => never;
     /**
      * Bad request Generate
      *
      * @param data -
      */
-    bad_request: (data: SWCH.ErrorsRequest.Data) => never;
+    bad_request: (data: SW.ErrorsRequest.Data) => never;
 }
 export declare const Exception: ClassException;
 /**
  * Classes for handling Http reply messages
  */
-declare class ClassMessage implements SWCH.ClassMessage {
+declare class ClassMessage implements SW.ClassMessage {
     /**
      * send response request
      *

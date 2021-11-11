@@ -73,7 +73,7 @@ export type valid_type = ({value, key, scheme}: compareProps) => TypeValid
  * @param key -
  * @param scheme -
  */
-export type validation_custom = ({value, key, scheme}: compareProps) => any[]
+export type validation_custom = ({value, key, scheme}: compareProps) => Promise<any[]>
 
 /**
  * Extract data types to validate in the function valid_extract_argument
@@ -94,7 +94,7 @@ export type omit_argument = (scheme: object) => any
  */
 export type valid_extract_argument = (
     messages: messageType, scheme: object, value: valueType, type: any, key_main: keyType
-) => any[]
+) => Promise<any[]>
 
 /**
  * validate Message

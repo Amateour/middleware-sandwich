@@ -1,4 +1,4 @@
-import * as SWCH from '../../functions';
+import * as SW from '../../functions';
 import {Exception} from "../utils/message";
 import _ from 'lodash';
 
@@ -6,12 +6,13 @@ import _ from 'lodash';
  * validate errors and send message
  *
  * @param errors -
+ * @param respActive -
  */
-export const verifyErrors: SWCH.verify_errors = async (
-    errors, request
+export const verifyErrors: SW.verify_errors = async (
+    errors, respActive
 ) => {
 
-    const response: SWCH.Any = {
+    const response: SW.Any = {
         errors: [],
         message: 'args_validation_successful'
     }
@@ -24,8 +25,8 @@ export const verifyErrors: SWCH.verify_errors = async (
     if (resp_err.length) {
         response.errors = resp_err;
         response.message = 'args_validation_errors';
-        request ? 
-        Exception.bad_request(response) : 
+        respActive ?
+        Exception.bad_request(response) :
         Exception.error(response);
     } else {
         return response

@@ -1,4 +1,4 @@
-import * as SWCH from '../../functions';
+import * as SW from '../../functions';
 /**
  * This function validates all body data specified in the arguments
  *
@@ -6,4 +6,4 @@ import * as SWCH from '../../functions';
  * @param req_body - request body {email: "example@sandwich.com"}
  * @param schemes - schemes of validation `{ email: {type: Sandwich.String, strict: true} }`
  */
-export declare const argument: SWCH.argument;
+export declare const argument: SW.argument;

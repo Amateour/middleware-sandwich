@@ -17278,7 +17278,7 @@ var lodash = createCommonjsModule(function (module, exports) {
  * @param elm - element validation
  * @returns boolean
  */
-var isArray = function (elm) { return elm instanceof Array; };
+var isArray = function (elm) { return elm instanceof Array && typeof elm === 'object'; };
 /**
  * validate if it is an objet
  *
@@ -17438,118 +17438,6 @@ var push_against = function (push, req, res, next) { return __awaiter(void 0, vo
 }); };
 
 /**
- * get data error
- *
- * @param data - `{
- *     message: message of error "bad request",
- *     errors: data errors
- * }`
- */
-var get_data_errors = function (data) {
-    return data;
-};
-/**
- * Class to handle exceptions
- */
-var ClassException = /** @class */ (function () {
-    function ClassException() {
-        /**
-         * Server error Generate
-         *
-         * @param data -
-         */
-        this.error = function (data) {
-            throw data;
-        };
-        /**
-         * Server error Generate
-         *
-         * @param data -
-         */
-        this.server_error = function (data) {
-            var _a = get_data_errors(data), message = _a.message, errors = _a.errors;
-            throw { "statusCode": 500, "message": message, errors: errors };
-        };
-        /**
-         * Bad request Generate
-         *
-         * @param data -
-         */
-        this.bad_request = function (data) {
-            var _a = get_data_errors(data), message = _a.message, errors = _a.errors;
-            throw { "statusCode": 400, "message": message, errors: errors };
-        };
-    }
-    return ClassException;
-}());
-var Exception = new ClassException();
-/**
- * Classes for handling Http reply messages
- */
-var ClassMessage = /** @class */ (function () {
-    function ClassMessage() {
-    }
-    /**
-     * send response request
-     *
-     * @param res -
-     * @param statusCode - number status
-     * @param message - message response
-     */
-    ClassMessage.prototype.response = function (res, statusCode, message) {
-        /**
-         * stacked error information
-         */
-        var stack = message.stack;
-        /**
-         * data response
-         */
-        var response = {
-            message: message === null || message === void 0 ? void 0 : message.message,
-            errors: message === null || message === void 0 ? void 0 : message.errors,
-            statusCode: statusCode !== null && statusCode !== void 0 ? statusCode : 200,
-        };
-        /**
-         *
-         */
-        var data_send = stack ? __assign(__assign({}, response), { stack: stack }) : response;
-        if (res)
-            return res.status(response.statusCode)
-                .json(data_send);
-        Exception.error(data_send);
-    };
-    /**
-     * send response request (error)
-     *
-     * @param res -
-     * @param mess -
-     */
-    ClassMessage.prototype.errors = function (res, mess) {
-        this.response(res, 500, mess);
-    };
-    /**
-     * send response request (success)
-     *
-     * @param res -
-     * @param mess -
-     */
-    ClassMessage.prototype.success = function (res, mess) {
-        this.response(res, 200, mess);
-    };
-    /**
-     * send response request (create)
-     *
-     * @param res -
-     * @param mess -
-     */
-    ClassMessage.prototype.create = function (res, mess) {
-        this.response(res, 201, mess);
-    };
-    return ClassMessage;
-}());
-var Message = new ClassMessage();
-
-/**
  * middleware_next execution of each declared FuncMiddleware
  *
  * @param req - Http Request
@@ -17629,6 +17517,120 @@ var middleware = function (req, res, middlewares, method) { return __awaiter(voi
         }
     });
 }); };
+
+/**
+ * get data error
+ *
+ * @param data - `{
+ *     message: message of error "bad request",
+ *     errors: data errors
+ * }`
+ */
+var get_data_errors = function (data) {
+    return data;
+};
+/**
+ * Class to handle exceptions
+ */
+var ClassException = /** @class */ (function () {
+    function ClassException() {
+        /**
+         * Server error Generate
+         *
+         * @param data -
+         */
+        this.error = function (data) {
+            throw data;
+        };
+        /**
+         * Server error Generate
+         *
+         * @param data -
+         */
+        this.server_error = function (data) {
+            var _a = get_data_errors(data), message = _a.message, errors = _a.errors;
+            throw { "statusCode": 500, "message": message, errors: errors };
+        };
+        /**
+         * Bad request Generate
+         *
+         * @param data -
+         */
+        this.bad_request = function (data) {
+            var _a = get_data_errors(data), message = _a.message, errors = _a.errors;
+            throw { "statusCode": 400, "message": message, errors: errors };
+        };
+    }
+    return ClassException;
+}());
+var Exception = new ClassException();
+/**
+ * Classes for handling Http reply messages
+ */
+var ClassMessage = /** @class */ (function () {
+    function ClassMessage() {
+    }
+    /**
+     * send response request
+     *
+     * @param res -
+     * @param statusCode - number status
+     * @param message - message response
+     */
+    ClassMessage.prototype.response = function (res, statusCode, message) {
+        /**
+         * stacked error information
+         */
+        var stack = message.stack;
+        /**
+         * data response
+         */
+        var response = {
+            message: message === null || message === void 0 ? void 0 : message.message,
+            errors: message === null || message === void 0 ? void 0 : message.errors,
+            statusCode: statusCode !== null && statusCode !== void 0 ? statusCode : 200,
+        };
+        /**
+         *
+         */
+        var data_send = stack ? __assign(__assign({}, response), { stack: stack }) : response;
+        if (!res)
+            throw data_send;
+        if (res)
+            res.writeHead(response.statusCode, { 'Content-Type': 'application/json' });
+        res.write(JSON.stringify(data_send));
+        return res.end();
+    };
+    /**
+     * send response request (error)
+     *
+     * @param res -
+     * @param mess -
+     */
+    ClassMessage.prototype.errors = function (res, mess) {
+        this.response(res, 500, mess);
+    };
+    /**
+     * send response request (success)
+     *
+     * @param res -
+     * @param mess -
+     */
+    ClassMessage.prototype.success = function (res, mess) {
+        this.response(res, 200, mess);
+    };
+    /**
+     * send response request (create)
+     *
+     * @param res -
+     * @param mess -
+     */
+    ClassMessage.prototype.create = function (res, mess) {
+        this.response(res, 201, mess);
+    };
+    return ClassMessage;
+}());
+var Message = new ClassMessage();
 
 /**
  * Response messages due to validation failure
@@ -17711,8 +17713,8 @@ var func_arguments = {
     /**
      * Validate value type
      *
-     * @param valid -
      * @param value -
+     * @param func -
      * @param scheme -
      */
     type: function (value, func, scheme) {
@@ -17776,7 +17778,7 @@ var valid_type = function (_a) {
  * ```json
  * {
  *    email: {
- *    type: Sandwich.String, validation: (value: strin) => typeof value == 'string'
+ *    type: Sandwich.String, validation: (value: string) => typeof value == 'string'
  *  }
  * }
  * ```
@@ -17787,11 +17789,16 @@ var valid_type = function (_a) {
  */
 var validation_custom = function (_a) {
     var value = _a.value, key = _a.key, scheme = _a.scheme;
-    var validation = scheme.validation;
-    return lodash(validation).map(function (func, key_validation) {
-        var messDefault = lodash.get(messageArgument, 'validation');
-        return func(value) ? messDefault({ key: key, key_validation: key_validation }) : false;
-    }).filter(function (value) { return value; }).valueOf();
+    return __awaiter(void 0, void 0, void 0, function () {
+        var validation;
+        return __generator(this, function (_b) {
+            validation = scheme.validation;
+            return [2 /*return*/, lodash(validation).map(function (func, key_validation) {
+                    var messDefault = lodash.get(messageArgument, 'validation');
+                    return func(value) ? messDefault({ key: key, key_validation: key_validation }) : false;
+                }).filter(function (value) { return value; }).valueOf()];
+        });
+    });
 };
 /**
  * Extract data types to validate in the function valid_extract_argument
@@ -17811,16 +17818,18 @@ var omit_argument = function (scheme) {
  * @param messages -
  * @param key_main - key main
  */
-var valid_extract_argument = function (messages, scheme, value, type, key_main) {
-    return lodash(scheme)
-        .map(function (valid_value, key) {
-        var func_valid = lodash.get(func_arguments, key);
-        var message = lodash.get(messages, key);
-        var messDefault = lodash.get(messageArgument, key);
-        return !func_valid({ valid_value: valid_value, value: value, type: type, scheme: scheme }) &&
-            (message !== null && message !== void 0 ? message : messDefault({ valid_value: valid_value, value: value, type: type, key: key, key_main: key_main }));
-    }).filter(function (value) { return value; }).valueOf();
-};
+var valid_extract_argument = function (messages, scheme, value, type, key_main) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, lodash(scheme)
+                .map(function (valid_value, key) {
+                var func_valid = lodash.get(func_arguments, key);
+                var message = lodash.get(messages, key);
+                var messDefault = lodash.get(messageArgument, key);
+                return !func_valid({ valid_value: valid_value, value: value, type: type, scheme: scheme }) &&
+                    (message !== null && message !== void 0 ? message : messDefault({ valid_value: valid_value, value: value, type: type, key: key, key_main: key_main }));
+            }).filter(function (value) { return value; }).valueOf()];
+    });
+}); };
 /**
  * validate Message
  *
@@ -17956,8 +17965,9 @@ var method = function (api_method, req_method) { return __awaiter(void 0, void 0
  * validate errors and send message
  *
  * @param errors -
+ * @param respActive -
  */
-var verifyErrors = function (errors, request) { return __awaiter(void 0, void 0, void 0, function () {
+var verifyErrors = function (errors, respActive) { return __awaiter(void 0, void 0, void 0, function () {
     var response, resp_err;
     return __generator(this, function (_a) {
         response = {
@@ -17974,7 +17984,7 @@ var verifyErrors = function (errors, request) { return __awaiter(void 0, void 0,
         if (resp_err.length) {
             response.errors = resp_err;
             response.message = 'args_validation_errors';
-            request ?
+            respActive ?
                 Exception.bad_request(response) :
                 Exception.error(response);
         }
@@ -17986,7 +17996,7 @@ var verifyErrors = function (errors, request) { return __awaiter(void 0, void 0,
 }); };
 
 /**
- * Types of validatios
+ * Types of validations
  */
 var Type = {
     String: String,
@@ -17996,7 +18006,7 @@ var Type = {
     Object: Object,
 };
 /**
- * Types of validatios
+ * Types of validations
  */
 var Types = /** @class */ (function () {
     function Types() {
@@ -18007,6 +18017,102 @@ var Types = /** @class */ (function () {
         this.Object = Type.Object;
     }
     return Types;
+}());
+
+/*
+const METHODS_PARAMS = {
+    get: 'one',
+    put: 'put',
+    post: 'stag',
+    delete: 'delete',
+    patch: 'patch'
+}
+
+const METHODS = {
+    get: 'get',
+    post: 'post',
+}*/
+/**
+ *
+ * @param classResource -
+ * @param middleware -
+ */
+var handlerResource = function (classResource, middleware) {
+    return function () {
+        return { classResource: classResource, middleware: middleware };
+    };
+};
+/**
+ *
+ * @param resource -
+ */
+var getParams = function () {
+    var resource = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        resource[_i] = arguments[_i];
+    }
+    var length = resource.length;
+    var middleware = length === 3 ? resource[0] : undefined;
+    var paths = length === 3 ? resource[1] : resource[0];
+    var classes = length === 3 ? resource[2] : resource[1];
+    return [middleware, paths, classes];
+};
+/**
+ *
+ * @beta
+ */
+var Routers = /** @class */ (function () {
+    /**
+     *
+     * @param app -
+     */
+    function Routers(app) {
+        this.app = app;
+    }
+    /**
+     *
+     * @param resource -
+     */
+    Routers.prototype.resource = function () {
+        var resource = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            resource[_i] = arguments[_i];
+        }
+        var length = resource.length;
+        var middleware = length === 3 ? resource[0] : undefined;
+        var paths = length === 3 ? resource[1] : resource[0];
+        var classes = length === 3 ? resource[2] : resource[1];
+        this.router(middleware, paths, classes);
+    };
+    /**
+     *
+     * @param middleware -
+     * @param paths -
+     * @param classResource -
+     */
+    Routers.prototype.router = function (middleware, paths, classResource) {
+        if (isArray(paths)) {
+            for (var i = 0; i < paths.length; i++) {
+                this.app.use(paths[i], Sandwich$1.handler(classResource, middleware));
+            }
+        }
+        else {
+            this.app.use(paths, Sandwich$1.handler(classResource, middleware));
+        }
+    };
+    /**
+     *
+     * @param resource -
+     */
+    Routers.prototype.get = function () {
+        var resource = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            resource[_i] = arguments[_i];
+        }
+        var _a = getParams.apply(void 0, resource), middleware = _a[0], paths = _a[1], classResource = _a[2];
+        this.app.get(paths, handlerResource(classResource, middleware));
+    };
+    return Routers;
 }());
 
 /**
@@ -18025,31 +18131,25 @@ var exec = function (options) { return __awaiter(void 0, void 0, void 0, functio
                     req_method = options.req.method;
                 }
                 return [4 /*yield*/, method(options.method, req_method).then(function (result_method) { return __awaiter(void 0, void 0, void 0, function () {
-                        var method, req_body, schemes, 
+                        var method, req_body, 
                         /**
                          *
                          * @param middleware_resp - middleware
                          */
                         middleware_resp;
-                        var _a;
-                        return __generator(this, function (_b) {
-                            switch (_b.label) {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
                                 case 0:
                                     method = result_method;
                                     req_body = options.req.body;
-                                    schemes = (_a = options.argument) !== null && _a !== void 0 ? _a : {};
                                     return [4 /*yield*/, middleware(options.req, options.res, options.middleware, method)];
                                 case 1:
-                                    middleware_resp = _b.sent();
+                                    middleware_resp = _a.sent();
                                     return [2 /*return*/, {
                                             f: middleware_resp,
                                             success: true,
                                             method: method,
-                                            schemes: schemes,
                                             req_body: req_body,
-                                            /**argument: result_argument.argument,
-                                            body: result_argument.body,
-                                            errors: errors**/
                                         }];
                             }
                         });
@@ -18075,13 +18175,13 @@ var transform = function (options) {
 /**
  *
  * @param value_of - Determines how validated arguments and parameters are extracted.
- * @param scheme - scheme
+ * @param schemes - schemes
  * @param req_body - data body request.
- * @param request - if it is true, the errors checked by `res.status(200).json ({message: 'message'})` will be returned, if it is false it generates an exception that is replicated in the handler function `Sandwich.handler`
+ * @param respActive - if it is true, the errors checked by `res.status(200).json ({message: 'message'})` will be returned, if it is false it generates an exception that is replicated in the handler function `Sandwich.handler`
  * @returns
  */
-var parserSchemes = function (value_of, scheme, req_body, request) {
-    if (request === void 0) { request = false; }
+var parserSchemes = function (value_of, schemes, req_body, respActive) {
+    if (respActive === void 0) { respActive = false; }
     return __awaiter(void 0, void 0, void 0, function () {
         var 
         /**
@@ -18097,10 +18197,10 @@ var parserSchemes = function (value_of, scheme, req_body, request) {
         responseError;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, argument(value_of, req_body, scheme)];
+                case 0: return [4 /*yield*/, argument(value_of !== null && value_of !== void 0 ? value_of : true, req_body !== null && req_body !== void 0 ? req_body : {}, schemes)];
                 case 1:
                     result_argument = _a.sent();
-                    return [4 /*yield*/, verifyErrors(result_argument.argument, request)];
+                    return [4 /*yield*/, verifyErrors(result_argument.argument, respActive)];
                 case 2:
                     responseError = _a.sent();
                     return [2 /*return*/, {
@@ -18113,6 +18213,179 @@ var parserSchemes = function (value_of, scheme, req_body, request) {
         });
     });
 };
+/**
+ * Prepare the class to be used by routing
+ *
+ * @example
+ * Controller function usage example
+ *
+ * ```ts
+ * Sandwich.handler(Users, [isAuthenticated()])
+ * ```
+ *
+ * @param classRequest - Class that will serve as a pillow for routing.
+ * @param middlewares - Middleware functions that run before the final function or final middleware
+ * @return
+ */
+var Handler = function (classRequest, middlewares) {
+    return function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+        var $classRequest, methods_list, methods, data_transform, errors;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    $classRequest = new classRequest(req, res);
+                    methods_list = lodash.map([
+                        'post',
+                        'get',
+                        'put',
+                        'delete',
+                        'patch'
+                    ], function (val) { return lodash.get($classRequest, val) ? val : undefined; });
+                    methods = toUpper(methods_list);
+                    data_transform = {
+                        middleware: middlewares,
+                        method: methods,
+                        req: req,
+                        res: res
+                    };
+                    return [4 /*yield*/, transform(data_transform).then(function (resp) {
+                            $classRequest.train = resp.f;
+                            $classRequest.request = {
+                                success: resp.success,
+                                method: resp.method
+                            };
+                            push_against($classRequest, req, res, next)
+                                .catch(function (err) { return err; });
+                        }).catch(function (err) { return err; })];
+                case 1:
+                    errors = _a.sent();
+                    if (errors)
+                        Message.response(res, errors.statusCode, errors);
+                    return [2 /*return*/];
+            }
+        });
+    }); };
+};
+/**
+ * Returns a class called Resource, which loads the resources. Also, after loading the necessary
+ * resources for the routing job, it loads the initial configuration for the validation of the
+ * arguments and parameters.
+ *
+ *
+ * @remarks
+ * The configuration of the arguments and parameters will be executed through the
+ * parser_schemes function, which is a property of the Resource class.
+ *
+ * @examples
+ * examples of schemes:
+ * ```json
+ * {
+ *   email: {type: Sandwich.String, required: true, strict: true,
+ *   password: {type: Sandwich.String, required: true, strict: true, min: 8,
+ * }
+ * ```
+ */
+var Resource = /** @class */ (function () {
+    /**
+     * Creates an instance of Resource.
+     *
+     * @param req - http request functions
+     */
+    function Resource(req) {
+        /**
+         * argsActive validates if the Resource class is loaded from the args method
+         *
+         */
+        this.argsActive = false;
+        /**
+         * The addArgs property must be represented in the child class as a function
+         * within this function the schemas are loaded for the validation of the arguments
+         *
+         * @example
+         *
+         * async addArgs(){
+         *     await this.parser({type: Sandwich.String, required: true, strict: true}, ['email'])
+         * }
+         *
+         */
+        this.addArgs = undefined;
+        /**
+         * Parse and validate data
+         *
+         *
+         * @param valueOf - [value_of=true] True to execute valueOf, false to keep the native format
+         * @return SW.ParserSchemesResponse
+         */
+        this.parser_schemes = function (valueOf) {
+            var _this = this;
+            if (valueOf === void 0) { valueOf = true; }
+            return new Promise(function (resolve) {
+                _this.addArgs instanceof Function && !_this.argsActive ? resolve(_this.addArgs()) : resolve(true);
+            }).then(function () { return parserSchemes(valueOf, _this.schemes, __assign(__assign(__assign({}, req.body), req.query), req.params), true // exec Exception.bad_request if there are errors
+            ); });
+        };
+    }
+    /**
+     *
+     * @param schemes -
+     * @param arg -
+     */
+    Resource.prototype.parser = function (schemes, arg) {
+        var _this = this;
+        return new Promise(function (resolve) {
+            var _a, _b;
+            if (typeof arg == 'string') {
+                console.log(_this.schemes);
+                _this.schemes = __assign((_a = {}, _a[arg] = schemes, _a), _this.schemes);
+                console.log(_this.schemes);
+                resolve(true);
+            }
+            else {
+                for (var i = 1; i <= arg.length; i++) {
+                    _this.schemes = __assign((_b = {}, _b[arg[i - 1]] = schemes, _b), _this.schemes);
+                    if (i == arg.length)
+                        resolve(true);
+                }
+            }
+        });
+    };
+    /**
+     * Returns an anonymous extended class of Resource, which loads the resources. Also, after loading the necessary
+     * resources for routing work, load initial configuration for validation of the
+     * arguments and parameters.
+     *
+     *
+     * @remarks
+     * The configuration of the arguments and parameters will be executed through the
+     * parser_schemes function, which is a property of the Resource class.
+     *
+     * @param schemes - The validation schemes are passed to the this.schemes property of the Resource class
+     *
+     * @examples
+     * examples of schemes:
+     * ```json
+     * {
+     *   email: {type: Sandwich.String, required: true, strict: true,
+     *   password: {type: Sandwich.String, required: true, strict: true, min: 8,
+     * }
+     * ```
+     *
+     * @returns Class Args extends Resource
+     */
+    Resource.args = function (schemes) {
+        return /** @class */ (function (_super) {
+            __extends(class_1, _super);
+            function class_1(req) {
+                var _this = _super.call(this, req) || this;
+                _this.schemes = schemes;
+                _this.argsActive = true;
+                return _this;
+            }
+            return class_1;
+        }(Resource));
+    };
+    return Resource;
+}());
 /**
  * @alpha
  */
@@ -18130,55 +18403,6 @@ var Sandwiches = /** @class */ (function (_super) {
         if (value_of === void 0) { value_of = true; }
         if (schemes === void 0) { schemes = {}; }
         var _this = _super.call(this) || this;
-        /**
-         * Returns a class called Resource, which loads the resources. Also, after loading the necessary resources for the routing job, it loads the initial configuration for the validation of the arguments and parameters.
-         *
-         *
-         * @remarks
-         * La configuración de los argumentos y parámetros se ejecutará a través de la función parser_schemes, que es una propiedad de la clase Resource.
-         *
-         * @param schemes - The validation schemes are passed to the this.schemes property of the Resource class
-         *
-         * @examples
-         * examples of schemes:
-         * ```json
-         * {
-         *   email: {type: Sandwich.String, required: true, strict: true,
-         *   password: {type: Sandwich.String, required: true, strict: true, min: 8,
-         * }
-         * ```
-         *
-         * @returns Class Resource
-         */
-        _this.resource = function (schemes) {
-            return /** @class */ (function () {
-                /**
-                 * Creates an instance of Resource.
-                 *
-                 * @param req - http request functions
-                 */
-                function Resource(req) {
-                    this.schemes = schemes;
-                    /**
-                     * Parse and validate data
-                     *
-                     *
-                     * @param value_of - [value_of=true] True to execute valueOf, false to keep the native format
-                     * @return SWCH.ParserSchemesResponse
-                     */
-                    this.parser_schemes = function (value_of) {
-                        if (value_of === void 0) { value_of = true; }
-                        return __awaiter(this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                return [2 /*return*/, parserSchemes(value_of, this.schemes, __assign(__assign({}, req.body), req.query), true // exec Exception.bad_request if there are errors
-                                    )];
-                            });
-                        });
-                    };
-                }
-                return Resource;
-            }());
-        };
         _this.schemes = schemes;
         _this.value_of = value_of;
         return _this;
@@ -18186,7 +18410,7 @@ var Sandwiches = /** @class */ (function (_super) {
     /**
      * parse and validate request body data
      *
-     * @param body - Datos sujetos a validación
+     * @param body - Data subject to validation
      * @return
      */
     Sandwiches.prototype.parser_schemes = function (body) {
@@ -18204,73 +18428,38 @@ var Sandwiches = /** @class */ (function (_super) {
      *
      * @param options -
      * @return
+     * @deprecated
      */
     Sandwiches.prototype._ = function (options) {
         return transform(options);
     };
-    /**
-     * Prepare the class to be used by routing
-     *
-     * @example
-     * Controller function usage example
-     *
-     * ```ts
-     * Sandwich.handler(Users, [isAuthenticated()])
-     * ```
-     *
-     * @param classRequest - Classe that will serve as a pillow for routing.
-     * @param middlewares - Middleware functions that run before the final function or final middleware
-     * @return
-     */
-    Sandwiches.prototype.handler = function (classRequest, middlewares) {
-        var _this = this;
-        return function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var $classRequest, arg, methods_list, methods, data_transform, errors;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        $classRequest = new classRequest(req, res);
-                        arg = $classRequest.arg;
-                        return [4 /*yield*/, lodash.map([
-                                'post',
-                                'get',
-                                'put',
-                                'delete',
-                                'pacth'
-                            ], function (val) { return lodash.get($classRequest, val) ? val : undefined; })];
-                    case 1:
-                        methods_list = _a.sent();
-                        return [4 /*yield*/, toUpper(methods_list)];
-                    case 2:
-                        methods = _a.sent();
-                        data_transform = {
-                            middleware: middlewares,
-                            argument: arg,
-                            method: methods,
-                            req: req,
-                            res: res
-                        };
-                        return [4 /*yield*/, transform(data_transform).then(function (resp) {
-                                $classRequest.train = resp.f;
-                                $classRequest.request = {
-                                    success: resp.success,
-                                    method: resp.method
-                                };
-                                push_against($classRequest, req, res, next)
-                                    .catch(function (err) { return err; });
-                            }).catch(function (err) { return err; })];
-                    case 3:
-                        errors = _a.sent();
-                        if (errors)
-                            Message.response(res, errors.statusCode, errors);
-                        return [2 /*return*/];
-                }
-            });
-        }); };
-    };
     return Sandwiches;
 }(Types));
-var Sandwich = new Sandwiches();
+/**
+ *
+ */
+var Sandwich = /** @class */ (function (_super) {
+    __extends(Sandwich, _super);
+    function Sandwich() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /**
+         *
+         */
+        _this.handler = Handler;
+        /**
+         *
+         * @param app
+         */
+        _this.routers = function (app) { return new Routers(app); };
+        /**
+         *
+         */
+        _this.resource = Resource;
+        return _this;
+    }
+    return Sandwich;
+}(Sandwiches));
+var Sandwich$1 = new Sandwich();
 
-export { Sandwich, Sandwiches, exec };
+export { Resource, Sandwiches, Sandwich$1 as default };
 //# sourceMappingURL=index.es.js.map

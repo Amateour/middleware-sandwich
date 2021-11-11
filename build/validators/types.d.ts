@@ -1,15 +1,15 @@
-import * as SWCH from '../../functions';
+import * as SW from '../../functions';
 /**
- * Types of validatios
+ * Types of validations
  */
-export declare const Type: SWCH.Type;
+export declare const Type: SW.Type;
 /**
- * Types of validatios
+ * Types of validations
  */
-export declare class Types implements SWCH.Types {
-    String: SWCH.FunctionVoid | undefined;
-    Number: SWCH.FunctionVoid | undefined;
-    Array: SWCH.FunctionVoid | undefined;
-    Boolean: SWCH.FunctionVoid | undefined;
-    Object: SWCH.FunctionVoid | undefined;
+export declare class Types implements SW.Types {
+    String: SW.FunctionVoid | undefined;
+    Number: SW.FunctionVoid | undefined;
+    Array: SW.FunctionVoid | undefined;
+    Boolean: SW.FunctionVoid | undefined;
+    Object: SW.FunctionVoid | undefined;
 }

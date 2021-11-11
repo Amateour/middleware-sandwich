@@ -1,5 +1,5 @@
 import * as SWCH from '../functions'
-import {Sandwich, Sandwiches} from '../build';
+import Sandwich, {Sandwiches, Resource} from '../build';
 
 const UserScheme = {
   email: {type: Sandwich.String, required: true, strict: true},
@@ -49,9 +49,9 @@ test('validation success', async () => {
 });
 
 test('HTTP POST request is not allowed', async () => {
-  class Users extends Sandwich.resource(UserScheme) {}
+  class Users extends Resource.args(UserScheme) {}
   const handler = Sandwich.handler(Users);
-  const hadler_request_post = async () => {
+  const handler_request_post = async () => {
     return await handler({
       body: {
         email: "test@sandwich.com",
@@ -61,11 +61,13 @@ test('HTTP POST request is not allowed', async () => {
     }, null);
   };
   expect.assertions(1);
-  await hadler_request_post().catch(error => expect(error.message).toMatch('HTTP POST request is not allowed'));
+  await handler_request_post().catch(error => {
+    expect(error.message).toMatch('HTTP POST request is not allowed')
+  });
 });
 
 test('HTTP POST request is allowed', (done) => {
-  class Users extends Sandwich.resource(UserScheme) {
+  class Users extends Resource.args(UserScheme) {
     async post() {
       try {
         const resp: SWCH.ParserSchemesResponse = await this.parser_schemes();
@@ -77,7 +79,7 @@ test('HTTP POST request is allowed', (done) => {
     }
   }
   const handler = Sandwich.handler(Users);
-  const hadler_request_post = async() => {
+  const handler_request_post = async() => {
     try {
       await handler({
         body: {
@@ -90,5 +92,5 @@ test('HTTP POST request is allowed', (done) => {
       done(error);
     }
   };
-  hadler_request_post();
+  handler_request_post();
 });

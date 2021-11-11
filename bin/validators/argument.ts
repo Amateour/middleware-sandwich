@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import * as SWCH from '../../functions'; 
+import * as SW from '../../functions';
 import {Exception} from '../utils/message';
 import {validate} from "../utils/help";
 import {messageArgument} from "./message";
@@ -9,7 +9,7 @@ import {messageArgument} from "./message";
  *
  * @param func_arguments -
  */
-const func_arguments: SWCH.func_arguments = {
+const func_arguments: SW.func_arguments = {
     /**
      * Validate value max
      *
@@ -51,8 +51,8 @@ const func_arguments: SWCH.func_arguments = {
     /**
      * Validate value type
      *
-     * @param valid -
      * @param value -
+     * @param func -
      * @param scheme -
      */
      type: (value, func, scheme) => {
@@ -96,7 +96,7 @@ const func_arguments: SWCH.func_arguments = {
  * @param key - value key {occupation}
  * @param scheme - scheme validation {type: String}
  */
-const valid_type: SWCH.valid_type = ({value, key, scheme}) => {
+const valid_type: SW.valid_type = ({value, key, scheme}) => {
     const type = _.get(scheme, 'type');
     const strict = _.get(scheme, 'strict');
     const required = _.get(scheme, 'required');
@@ -117,7 +117,7 @@ const valid_type: SWCH.valid_type = ({value, key, scheme}) => {
  * ```json
  * {
  *    email: {
- *    type: Sandwich.String, validation: (value: strin) => typeof value == 'string'
+ *    type: Sandwich.String, validation: (value: string) => typeof value == 'string'
  *  }
  * }
  * ```
@@ -126,7 +126,7 @@ const valid_type: SWCH.valid_type = ({value, key, scheme}) => {
  * @param key -
  * @param scheme -
  */
-const validation_custom: SWCH.validation_custom = ({value, key, scheme}) => {
+const validation_custom: SW.validation_custom = async ({value, key, scheme}) => {
     const {validation} = scheme;
     return _(validation).map((func: (value: any) => any, key_validation: string | number) => {
         const messDefault = _.get(messageArgument, 'validation')
@@ -140,7 +140,7 @@ const validation_custom: SWCH.validation_custom = ({value, key, scheme}) => {
  *
  * @param scheme - data: `{type: Sandwich.String, strict: true, value: '100'}`
  */
-const omit_argument: SWCH.omit_argument = (scheme) => {
+const omit_argument: SW.omit_argument = (scheme) => {
     return _.omit(scheme, ['type', 'strict', 'message', 'value', 'validation']);
 }
 
@@ -153,7 +153,7 @@ const omit_argument: SWCH.omit_argument = (scheme) => {
  * @param messages -
  * @param key_main - key main
  */
-const valid_extract_argument: SWCH.valid_extract_argument = (
+const valid_extract_argument: SW.valid_extract_argument = async (
     messages, scheme, value, type, key_main
 ) => {
     return _(scheme)
@@ -171,7 +171,7 @@ const valid_extract_argument: SWCH.valid_extract_argument = (
  *
  * @param errors -
  */
-const valid_resp_argument: SWCH.valid_resp_argument = async (errors) => {
+const valid_resp_argument: SW.valid_resp_argument = async (errors) => {
     return !errors.length;
 }
 
@@ -189,7 +189,7 @@ const valid_resp_argument: SWCH.valid_resp_argument = async (errors) => {
  * }
  * ```
  */
-const valid_argument: SWCH.valid_argument = async (props) => {
+const valid_argument: SW.valid_argument = async (props) => {
     const {value, scheme, message, key} = props;
 
     const type =  await valid_type(props);
@@ -209,7 +209,7 @@ const valid_argument: SWCH.valid_argument = async (props) => {
  * @param schemes -
  * @param key - field key to validate
  */
-const get_value: SWCH.get_value = (req_body, schemes, key) => {
+const get_value: SW.get_value = (req_body, schemes, key) => {
     const has_value = _.has(schemes, 'value');
     const defined_value = has_value ? _.get(schemes, 'value') : _.get(req_body, key);
     return defined_value instanceof Function ? defined_value() : defined_value;
@@ -222,7 +222,7 @@ const get_value: SWCH.get_value = (req_body, schemes, key) => {
  * @param req_body - request body {email: "example@sandwich.com"}
  * @param schemes - schemes of validation `{ email: {type: Sandwich.String, strict: true} }`
  */
-export const argument: SWCH.argument = async (value_of, req_body, schemes) => {
+export const argument: SW.argument = async (value_of, req_body, schemes) => {
     let resp = {};
     let body = {};
 
