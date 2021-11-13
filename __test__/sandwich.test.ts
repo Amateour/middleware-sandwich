@@ -1,5 +1,5 @@
-import * as SWCH from '../functions'
-import Sandwich, {Sandwiches, Resource} from '../build';
+import {ParserSchemesResponse} from '../functions';
+import Sandwich, {Validators, Resource} from '../build';
 
 const UserScheme = {
   email: {type: Sandwich.String, required: true, strict: true},
@@ -7,10 +7,10 @@ const UserScheme = {
 }
 
 test('args validation errors', async () => {
-  const Snak = new Sandwiches(true, UserScheme);
+  const Snack = new Validators(true, UserScheme);
 
   try {
-    await Snak.parser_schemes({
+    await Snack.parserSchemes({
       email: "test@sandwich.com",
       password: "123",
     });
@@ -22,12 +22,12 @@ test('args validation errors', async () => {
 });
 
 test('validation success', async () => {
-  const Snak = new Sandwiches(true, {
+  const Snack = new Validators(true, {
     email: {type: Sandwich.String, required: true, strict: true},
     password: {type: Sandwich.String, required: true, strict: true, min: 8}
   });
   
-  const resp0: SWCH.ParserSchemesResponse = await Snak.parser_schemes({
+  const resp0: ParserSchemesResponse = await Snack.parserSchemes({
     email: "test@sandwich.com",
     password: "12345678",
   });
@@ -36,9 +36,9 @@ test('validation success', async () => {
   expect(resp0.args.password.valueOf()).toBe("12345678");
   expect(resp0.message).toBe("args_validation_successful");
 
-  Snak.value_of = false;
+  Snack.valueOf = false;
 
-  const resp1: SWCH.ParserSchemesResponse = await Snak.parser_schemes({
+  const resp1: ParserSchemesResponse = await Snack.parserSchemes({
     email: "test@sandwich.com",
     password: "12345678",
   });
@@ -67,10 +67,10 @@ test('HTTP POST request is not allowed', async () => {
 });
 
 test('HTTP POST request is allowed', (done) => {
-  class Users extends Resource.args(UserScheme) {
+  class Users extends Resource {
     async post() {
       try {
-        const resp: SWCH.ParserSchemesResponse = await this.parser_schemes();
+        const resp: ParserSchemesResponse = await this.parserSchemes();
         expect(resp.message).toBe("args_validation_successful");
         done();
       } catch (error) {

@@ -1,8 +1,9 @@
 import * as SW from '../../functions';
-import {argument, method, middleware, verifyErrors, Types} from '../validators/validator';
+import {argument, method, middleware, verifyErrors} from '../validators/validator';
 import {push_against, toUpper} from '../utils/help';
 import {Message} from '../utils/message';
 import Routers from './routers';
+import Validators from "./validators";
 import _ from 'lodash';
 
 /**
@@ -57,21 +58,21 @@ const transform: SW.HandlerTransform = (options) => {
 
 /**
  *
- * @param value_of - Determines how validated arguments and parameters are extracted.
+ * @param valueOf - Determines how validated arguments and parameters are extracted.
  * @param schemes - schemes
- * @param req_body - data body request.
+ * @param values - data body request.
  * @param respActive - if it is true, the errors checked by `res.status(200).json ({message: 'message'})` will be returned, if it is false it generates an exception that is replicated in the handler function `Sandwich.handler`
  * @returns
  */
-const parserSchemes: SW.HandlerParserSchemes = async (
-    value_of, schemes, req_body, respActive = false
+export const parserSchemes: SW.HandlerParserSchemes = async (
+    valueOf, schemes, values, respActive = false
 ) => {
     const
         /**
          *
          * @param result_argument result argument
          */
-        result_argument = await argument(value_of ?? true, req_body ?? {}, schemes),
+        result_argument = await argument(valueOf ?? true, values ?? {}, schemes),
         /**
          * check for errors in arguments
          *
@@ -105,6 +106,9 @@ const Handler = (classRequest: SW.HandlerResource, middlewares?: SW.middlewares)
     return async (req: SW.Any, res: SW.Any, next?: SW.Next) => {
 
         const $classRequest = new classRequest(req, res);
+        if($classRequest.addArgs instanceof Function) {
+            $classRequest.addArgs()
+        }
         /**
          * selected methods
          *
@@ -164,17 +168,7 @@ const Handler = (classRequest: SW.HandlerResource, middlewares?: SW.middlewares)
  * }
  * ```
  */
-export class Resource implements SW.Resource {
-    /**
-     * Validation schemes
-     *
-     */
-    schemes: SW.schemes;
-    /**
-     * Parse and validate data
-     *
-     */
-    readonly parser_schemes: SW.HandlerParserSchemes;
+export class Resource extends Validators implements SW.Resource {
     /**
      * Loads the data returned by the middleware, in case the promise is fulfilled.
      *
@@ -185,11 +179,6 @@ export class Resource implements SW.Resource {
      *
      */
     request: SW.Any;
-    /**
-     * argsActive validates if the Resource class is loaded from the args method
-     *
-     */
-    private argsActive: any = false;
     /**
      * The addArgs property must be represented in the child class as a function
      * within this function the schemas are loaded for the validation of the arguments
@@ -208,27 +197,9 @@ export class Resource implements SW.Resource {
      * @param req - http request functions
      */
     constructor(req: any) {
-        /**
-         * Parse and validate data
-         *
-         *
-         * @param valueOf - [value_of=true] True to execute valueOf, false to keep the native format
-         * @return SW.ParserSchemesResponse
-         */
-        this.parser_schemes = function(
-            valueOf = true
-        ): Promise<SW.ParserSchemesResponse> {
-            return new Promise((resolve) => {
-                this.addArgs instanceof Function && !this.argsActive ? resolve(this.addArgs()): resolve(true);
-            }).then(() => parserSchemes(
-                valueOf,
-                this.schemes,
-                {...req.body, ...req.query, ...req.params},
-                true // exec Exception.bad_request if there are errors
-            ));
-        }
+        super(true, {}, true)
+        this.values = {...req.body, ...req.query, ...req.params}
     }
-
     /**
      *
      * @param schemes -
@@ -237,12 +208,10 @@ export class Resource implements SW.Resource {
     parser(schemes: SW.schemes, arg: string | string[]) {
         return new Promise(resolve => {
             if(typeof arg == 'string') {
-                console.log(this.schemes)
                 this.schemes = {
                     [arg]: schemes,
                     ...this.schemes
                 };
-                console.log(this.schemes)
                 resolve(true);
             } else {
                 for (let i = 1; i <= arg.length; i++) {
@@ -283,67 +252,16 @@ export class Resource implements SW.Resource {
             constructor(req: any) {
                 super(req);
                 this.schemes = schemes;
-                this.argsActive = true;
+                this.addArgs = undefined;
             }
         }
     }
 }
 
 /**
- * @alpha
- */
-export class Sandwiches extends Types implements SW.Sandwiches {
-    /**
-     * Object type property.
-     *
-     */
-    schemes: SW.schemes;
-    /**
-     * Boolean type property.
-     *
-     */
-    value_of: boolean;
-    /**
-     * Creates an instance of Sandwiches.
-     *
-     * @param value_of - Determines how validated arguments and parameters are extracted.
-     * @defaultValue value_of=true
-     * @param schemes - List of validation schemes.
-     * @defaultValue schemes={}
-     */
-    constructor(value_of = true, schemes = {}) {
-        super();
-        this.schemes = schemes;
-        this.value_of = value_of;
-    }
-    /**
-     * parse and validate request body data
-     *
-     * @param body - Data subject to validation
-     * @return
-     */
-    async parser_schemes(body: SW.Any)
-    {
-        return await parserSchemes(
-            this.value_of, this.schemes, body
-        )
-    }
-    /**
-     *
-     *
-     * @param options -
-     * @return
-     * @deprecated
-     */
-    _(options: SW.routerProps) {
-        return transform(options)
-    }
-}
-
-/**
  *
  */
-class Sandwich extends Sandwiches implements SW.SandwichClass {
+class Sandwich extends Validators implements SW.SandwichClass {
     /**
      *
      */
@@ -356,7 +274,7 @@ class Sandwich extends Sandwiches implements SW.SandwichClass {
     /**
      *
      */
-    resource = Resource;
+    args = Resource.args;
 }
 
 export default new Sandwich();

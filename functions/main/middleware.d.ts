@@ -25,6 +25,10 @@ export type HandlerExec = (options: routerProps) => Promise<{
  */
 export type HandlerTransform = (options: routerProps) => Promise<any>;
 
+
+type valuesArgs = {[index: string | number]};
+type valueOf = boolean | true;
+
 /**
  *
  */
@@ -39,9 +43,9 @@ export type ParserSchemesResponse = {
  *
  */
 export type HandlerParserSchemes = (
-    value_of?: boolean | true | undefined,
+    valueOf?: valueOf,
     schemes?: schemes | null,
-    reqBody?: {[index: string | number]},
+    values?: valuesArgs,
     respActive?: boolean
 ) => Promise<ParserSchemesResponse>
 
@@ -50,9 +54,9 @@ export type HandlerParserSchemes = (
  */
 export interface Resource {
     readonly schemes: schemes;
-    readonly parser_schemes: HandlerParserSchemes;
     train: unknown;
     request: any;
+    addArgs: any;
 }
 
 /**
@@ -85,28 +89,20 @@ type ResourceClass = (schemes?: schemes) => HandlerResource
  * class Sandwiches
  *
  */
-export interface Sandwiches extends Types {
-    schemes: schemes;
-    value_of: boolean;
+export interface ValidatorsClass extends Types {
+    readonly schemes: schemes;
+    valueOf: boolean;
     /**
-     *
      *
      * @param body -
      * @return Promise<ParserSchemesResponse>
      */
-    parser_schemes(body: any): Promise<ParserSchemesResponse>
-    /**
-     *
-     *
-     * @param options -
-     * @return Promise<transform>
-     */
-    _(options: routerProps): Promise<transform>
+    parserSchemes(body: valuesArgs): Promise<ParserSchemesResponse>
 }
 /**
  *
  */
-export interface SandwichClass extends Sandwiches {
+export interface SandwichClass extends ValidatorsClass {
     /**
      *
      */

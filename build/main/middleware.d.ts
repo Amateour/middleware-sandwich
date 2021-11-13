@@ -1,6 +1,15 @@
 import * as SW from '../../functions';
-import { Types } from '../validators/validator';
 import Routers from './routers';
+import Validators from "./validators";
+/**
+ *
+ * @param valueOf - Determines how validated arguments and parameters are extracted.
+ * @param schemes - schemes
+ * @param values - data body request.
+ * @param respActive - if it is true, the errors checked by `res.status(200).json ({message: 'message'})` will be returned, if it is false it generates an exception that is replicated in the handler function `Sandwich.handler`
+ * @returns
+ */
+export declare const parserSchemes: SW.HandlerParserSchemes;
 /**
  * Returns a class called Resource, which loads the resources. Also, after loading the necessary
  * resources for the routing job, it loads the initial configuration for the validation of the
@@ -20,17 +29,7 @@ import Routers from './routers';
  * }
  * ```
  */
-export declare class Resource implements SW.Resource {
-    /**
-     * Validation schemes
-     *
-     */
-    schemes: SW.schemes;
-    /**
-     * Parse and validate data
-     *
-     */
-    readonly parser_schemes: SW.HandlerParserSchemes;
+export declare class Resource extends Validators implements SW.Resource {
     /**
      * Loads the data returned by the middleware, in case the promise is fulfilled.
      *
@@ -41,11 +40,6 @@ export declare class Resource implements SW.Resource {
      *
      */
     request: SW.Any;
-    /**
-     * argsActive validates if the Resource class is loaded from the args method
-     *
-     */
-    private argsActive;
     /**
      * The addArgs property must be represented in the child class as a function
      * within this function the schemas are loaded for the validation of the arguments
@@ -96,48 +90,9 @@ export declare class Resource implements SW.Resource {
     static args(schemes: SW.schemes): SW.HandlerResource;
 }
 /**
- * @alpha
- */
-export declare class Sandwiches extends Types implements SW.Sandwiches {
-    /**
-     * Object type property.
-     *
-     */
-    schemes: SW.schemes;
-    /**
-     * Boolean type property.
-     *
-     */
-    value_of: boolean;
-    /**
-     * Creates an instance of Sandwiches.
-     *
-     * @param value_of - Determines how validated arguments and parameters are extracted.
-     * @defaultValue value_of=true
-     * @param schemes - List of validation schemes.
-     * @defaultValue schemes={}
-     */
-    constructor(value_of?: boolean, schemes?: {});
-    /**
-     * parse and validate request body data
-     *
-     * @param body - Data subject to validation
-     * @return
-     */
-    parser_schemes(body: SW.Any): Promise<SW.ParserSchemesResponse>;
-    /**
-     *
-     *
-     * @param options -
-     * @return
-     * @deprecated
-     */
-    _(options: SW.routerProps): Promise<any>;
-}
-/**
  *
  */
-declare class Sandwich extends Sandwiches implements SW.SandwichClass {
+declare class Sandwich extends Validators implements SW.SandwichClass {
     /**
      *
      */
@@ -150,7 +105,7 @@ declare class Sandwich extends Sandwiches implements SW.SandwichClass {
     /**
      *
      */
-    resource: typeof Resource;
+    args: typeof Resource.args;
 }
 declare const _default: Sandwich;
 export default _default;

@@ -1,3 +1,4 @@
-import Sandwich, { Sandwiches, Resource } from './main/middleware';
-export { Sandwiches, Resource };
+import Sandwich, { Resource } from './main/middleware';
+import Validators from "./main/validators";
+export { Validators, Resource };
 export default Sandwich;

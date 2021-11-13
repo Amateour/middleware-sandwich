@@ -17995,30 +17995,6 @@ var verifyErrors = function (errors, respActive) { return __awaiter(void 0, void
     });
 }); };
 
-/**
- * Types of validations
- */
-var Type = {
-    String: String,
-    Number: Number,
-    Array: Array,
-    Boolean: Boolean,
-    Object: Object,
-};
-/**
- * Types of validations
- */
-var Types = /** @class */ (function () {
-    function Types() {
-        this.String = Type.String;
-        this.Number = Type.Number;
-        this.Array = Type.Array;
-        this.Boolean = Type.Boolean;
-        this.Object = Type.Object;
-    }
-    return Types;
-}());
-
 /*
 const METHODS_PARAMS = {
     get: 'one',
@@ -18116,6 +18092,70 @@ var Routers = /** @class */ (function () {
 }());
 
 /**
+ * Types of validations
+ */
+var Type = {
+    String: String,
+    Number: Number,
+    Array: Array,
+    Boolean: Boolean,
+    Object: Object,
+};
+/**
+ * Types of validations
+ */
+var Types = /** @class */ (function () {
+    function Types() {
+        this.String = Type.String;
+        this.Number = Type.Number;
+        this.Array = Type.Array;
+        this.Boolean = Type.Boolean;
+        this.Object = Type.Object;
+    }
+    return Types;
+}());
+/**
+ * @alpha
+ */
+var Validators = /** @class */ (function (_super) {
+    __extends(Validators, _super);
+    /**
+     * Creates an instance of Sandwiches.
+     *
+     * @param valueOf - Determines how validated arguments and parameters are extracted.
+     * @defaultValue value_of=true
+     * @param schemes - List of validation schemes.
+     * @param resActive -
+     * @defaultValue schemes={}
+     */
+    function Validators(valueOf, schemes, resActive) {
+        if (valueOf === void 0) { valueOf = true; }
+        if (schemes === void 0) { schemes = {}; }
+        if (resActive === void 0) { resActive = false; }
+        var _this = _super.call(this) || this;
+        /**
+         *
+         */
+        _this.values = undefined;
+        _this.schemes = schemes;
+        _this.valueOf = valueOf;
+        _this.resActive = resActive;
+        return _this;
+    }
+    /**
+     * parse and validate request body data
+     *
+     * @param values - Data subject to validation
+     * @return ParserSchemesResponse
+     */
+    Validators.prototype.parserSchemes = function (values) {
+        var _a;
+        return parserSchemes(this.valueOf, this.schemes, (_a = this.values) !== null && _a !== void 0 ? _a : values, this.resActive);
+    };
+    return Validators;
+}(Types));
+
+/**
  * Execute validation functions (method, middleware)
  *
  * @param options - Configuration object for validation process
@@ -18174,13 +18214,13 @@ var transform = function (options) {
 };
 /**
  *
- * @param value_of - Determines how validated arguments and parameters are extracted.
+ * @param valueOf - Determines how validated arguments and parameters are extracted.
  * @param schemes - schemes
- * @param req_body - data body request.
+ * @param values - data body request.
  * @param respActive - if it is true, the errors checked by `res.status(200).json ({message: 'message'})` will be returned, if it is false it generates an exception that is replicated in the handler function `Sandwich.handler`
  * @returns
  */
-var parserSchemes = function (value_of, schemes, req_body, respActive) {
+var parserSchemes = function (valueOf, schemes, values, respActive) {
     if (respActive === void 0) { respActive = false; }
     return __awaiter(void 0, void 0, void 0, function () {
         var 
@@ -18197,7 +18237,7 @@ var parserSchemes = function (value_of, schemes, req_body, respActive) {
         responseError;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, argument(value_of !== null && value_of !== void 0 ? value_of : true, req_body !== null && req_body !== void 0 ? req_body : {}, schemes)];
+                case 0: return [4 /*yield*/, argument(valueOf !== null && valueOf !== void 0 ? valueOf : true, values !== null && values !== void 0 ? values : {}, schemes)];
                 case 1:
                     result_argument = _a.sent();
                     return [4 /*yield*/, verifyErrors(result_argument.argument, respActive)];
@@ -18234,6 +18274,9 @@ var Handler = function (classRequest, middlewares) {
             switch (_a.label) {
                 case 0:
                     $classRequest = new classRequest(req, res);
+                    if ($classRequest.addArgs instanceof Function) {
+                        $classRequest.addArgs();
+                    }
                     methods_list = lodash.map([
                         'post',
                         'get',
@@ -18285,18 +18328,15 @@ var Handler = function (classRequest, middlewares) {
  * }
  * ```
  */
-var Resource = /** @class */ (function () {
+var Resource = /** @class */ (function (_super) {
+    __extends(Resource, _super);
     /**
      * Creates an instance of Resource.
      *
      * @param req - http request functions
      */
     function Resource(req) {
-        /**
-         * argsActive validates if the Resource class is loaded from the args method
-         *
-         */
-        this.argsActive = false;
+        var _this = _super.call(this, true, {}, true) || this;
         /**
          * The addArgs property must be represented in the child class as a function
          * within this function the schemas are loaded for the validation of the arguments
@@ -18308,22 +18348,9 @@ var Resource = /** @class */ (function () {
          * }
          *
          */
-        this.addArgs = undefined;
-        /**
-         * Parse and validate data
-         *
-         *
-         * @param valueOf - [value_of=true] True to execute valueOf, false to keep the native format
-         * @return SW.ParserSchemesResponse
-         */
-        this.parser_schemes = function (valueOf) {
-            var _this = this;
-            if (valueOf === void 0) { valueOf = true; }
-            return new Promise(function (resolve) {
-                _this.addArgs instanceof Function && !_this.argsActive ? resolve(_this.addArgs()) : resolve(true);
-            }).then(function () { return parserSchemes(valueOf, _this.schemes, __assign(__assign(__assign({}, req.body), req.query), req.params), true // exec Exception.bad_request if there are errors
-            ); });
-        };
+        _this.addArgs = undefined;
+        _this.values = __assign(__assign(__assign({}, req.body), req.query), req.params);
+        return _this;
     }
     /**
      *
@@ -18335,9 +18362,7 @@ var Resource = /** @class */ (function () {
         return new Promise(function (resolve) {
             var _a, _b;
             if (typeof arg == 'string') {
-                console.log(_this.schemes);
                 _this.schemes = __assign((_a = {}, _a[arg] = schemes, _a), _this.schemes);
-                console.log(_this.schemes);
                 resolve(true);
             }
             else {
@@ -18378,63 +18403,14 @@ var Resource = /** @class */ (function () {
             function class_1(req) {
                 var _this = _super.call(this, req) || this;
                 _this.schemes = schemes;
-                _this.argsActive = true;
+                _this.addArgs = undefined;
                 return _this;
             }
             return class_1;
         }(Resource));
     };
     return Resource;
-}());
-/**
- * @alpha
- */
-var Sandwiches = /** @class */ (function (_super) {
-    __extends(Sandwiches, _super);
-    /**
-     * Creates an instance of Sandwiches.
-     *
-     * @param value_of - Determines how validated arguments and parameters are extracted.
-     * @defaultValue value_of=true
-     * @param schemes - List of validation schemes.
-     * @defaultValue schemes={}
-     */
-    function Sandwiches(value_of, schemes) {
-        if (value_of === void 0) { value_of = true; }
-        if (schemes === void 0) { schemes = {}; }
-        var _this = _super.call(this) || this;
-        _this.schemes = schemes;
-        _this.value_of = value_of;
-        return _this;
-    }
-    /**
-     * parse and validate request body data
-     *
-     * @param body - Data subject to validation
-     * @return
-     */
-    Sandwiches.prototype.parser_schemes = function (body) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, parserSchemes(this.value_of, this.schemes, body)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    /**
-     *
-     *
-     * @param options -
-     * @return
-     * @deprecated
-     */
-    Sandwiches.prototype._ = function (options) {
-        return transform(options);
-    };
-    return Sandwiches;
-}(Types));
+}(Validators));
 /**
  *
  */
@@ -18454,12 +18430,12 @@ var Sandwich = /** @class */ (function (_super) {
         /**
          *
          */
-        _this.resource = Resource;
+        _this.args = Resource.args;
         return _this;
     }
     return Sandwich;
-}(Sandwiches));
+}(Validators));
 var Sandwich$1 = new Sandwich();
 
-export { Resource, Sandwiches, Sandwich$1 as default };
+export { Resource, Validators, Sandwich$1 as default };
 //# sourceMappingURL=index.es.js.map

@@ -1,7 +1,8 @@
- import Sandwich, {Sandwiches, Resource} from './main/middleware';
+import Sandwich, {Resource} from './main/middleware';
+import Validators from "./main/validators";
 
  export {
-     Sandwiches,
+     Validators,
      Resource
  }
 

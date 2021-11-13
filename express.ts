@@ -21,7 +21,7 @@ class Users extends Resource {
 
     async get(req: any, res: any) {
         try {
-            const data: any = await this.parser_schemes();
+            const data: any = await this.parserSchemes();
 
             res.status(200).json({
                 params: req.params,
@@ -38,7 +38,7 @@ class Users extends Resource {
 
     async post(req: any, res: any) {
         try {
-            const data = await this.parser_schemes();
+            const data = await this.parserSchemes();
             res.status(200).json({
                 params: req.params,
                 query: req.query,

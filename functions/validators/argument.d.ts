@@ -132,7 +132,7 @@ export type get_value = (req_body: object, schemes: object, key: string | number
  * This function validates all body data specified in the arguments
  *
  * @param value_of - true stops returning the data to its primitive value of its instance
- * @param req_body - request body {email: "example@sandwich.com"}
+ * @param values - request body {email: "example@sandwich.com"}
  * @param schemes - schemes of validation `{ email: {type: Sandwich.String, strict: true} }`
  */
-export type argument = (value_of: boolean, req_body: object, schemes: SWCH.compareType | null) => Promise<argumentProps>
+export type argument = (valueOf: boolean,  values: object, schemes: compareType | null) => Promise<argumentProps>
