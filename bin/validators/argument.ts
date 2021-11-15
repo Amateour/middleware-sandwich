@@ -2,7 +2,33 @@ import _ from 'lodash';
 import * as SW from '../../functions';
 import {Exception} from '../utils/message';
 import {validate} from "../utils/help";
-import {messageArgument} from "./message";
+
+/**
+ *
+ * Response messages due to validation failure
+ */
+const messageArgument: SW.messageArgument = {
+    validation: (props) => ({
+        message: `${props.key}_${props.key_validation}`
+    }),
+    required: () => ({
+        message: "required_field"
+    }),
+    min: (props) => ({
+        message: "minimum_characters",
+        value: props.valid_value
+    }),
+    max: (props) => ({
+        message: "maximum_characters",
+        value: props.valid_value
+    }),
+    strict: (props) => ({
+        message: "{key}_expected_data_type_{type}"
+            .replace('{key}', props.key)
+            .replace('{type}', props.type)
+            .toLowerCase()
+    })
+}
 
 /**
  *  list of validation functions

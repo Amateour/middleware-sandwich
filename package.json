@@ -7,6 +7,12 @@
   "jsnext:main": "build/index.es.js",
   "typings": "build/index.d.ts",
   "type": "module",
+  "libCustom": {
+    "validator": {
+      "main": "build/validator.js",
+      "module": "build/validator.es.js"
+    }
+  },
   "publishConfig": {
     "access": "public"
   },

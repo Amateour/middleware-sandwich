@@ -29,14 +29,14 @@ export interface ClassException {
      *
      * @param server_error - {object}
      */
-    server_error: (data: ErrorsRequest.Data) => ErrorsRequest.RespError
+    server_error: (data: ErrorsRequest.Data) => void
 
     /**
      * Bad request Generate error
      *
      * @param bad_request - {object}
      */
-    bad_request : (data: ErrorsRequest.Data) => ErrorsRequest.RespError
+    bad_request : (data: ErrorsRequest.Data) => void
 }
 
 /**

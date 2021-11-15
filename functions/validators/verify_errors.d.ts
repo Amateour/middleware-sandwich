@@ -9,5 +9,5 @@ export interface ResponseVerifyErrors {
  * @param errors -
  */
 export type verify_errors = (
-  errors: object, request: boolean
+  errors: object
 ) => Promise<ResponseVerifyErrors>

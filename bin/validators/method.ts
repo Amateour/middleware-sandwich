@@ -1,4 +1,4 @@
-import * as SWCH from '../../functions';
+import {handlerMethod} from "../../functions";
 import {Exception} from "../utils/message";
 
 /**
@@ -7,7 +7,7 @@ import {Exception} from "../utils/message";
  * @param api_method - method allowed ["POST", "GET"] or "POST"
  * @param req_method - request method "POST"
  */
-export const method: SWCH.method = async (api_method, req_method): Promise<string> => {
+export const method: handlerMethod = async (api_method, req_method): Promise<string> => {
     const apiMethod = api_method instanceof Array ? api_method : [api_method];
     if (!apiMethod.includes(req_method)){
         Exception.bad_request({

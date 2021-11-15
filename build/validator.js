@@ -17224,121 +17224,6 @@ var lodash = createCommonjsModule(function (module, exports) {
 });
 
 /**
- * get data error
- *
- * @param data - `{
- *     message: message of error "bad request",
- *     errors: data errors
- * }`
- */
-const get_data_errors = (data) => {
-    return data;
-};
-/**
- * Server error Generate
- *
- * @param data -
- */
-const error = (data) => {
-    throw data;
-};
-/**
- * Class to handle exceptions
- */
-class ClassException {
-    constructor() {
-        /**
-         * Server error Generate
-         *
-         */
-        this.error = error;
-        /**
-         * Server error Generate
-         *
-         * @param data -
-         */
-        this.server_error = (data) => {
-            const { message, errors } = get_data_errors(data);
-            error({ "statusCode": 500, "message": message, errors });
-        };
-        /**
-         * Bad request Generate
-         *
-         * @param data -
-         */
-        this.bad_request = (data) => {
-            const { message, errors } = get_data_errors(data);
-            error({ "statusCode": 400, "message": message, errors });
-        };
-    }
-}
-const Exception = new ClassException();
-/**
- * Classes for handling Http reply messages
- */
-class ClassMessage {
-    /**
-     * send response request
-     *
-     * @param res -
-     * @param statusCode - number status
-     * @param message - message response
-     */
-    response(res, statusCode, message) {
-        /**
-         * stacked error information
-         */
-        const { stack } = message;
-        /**
-         * data response
-         */
-        const response = {
-            message: message === null || message === void 0 ? void 0 : message.message,
-            errors: message === null || message === void 0 ? void 0 : message.errors,
-            statusCode: statusCode !== null && statusCode !== void 0 ? statusCode : 200,
-        };
-        /**
-         *
-         */
-        const data_send = stack ? Object.assign(Object.assign({}, response), { stack }) : response;
-        if (!res)
-            throw data_send;
-        if (res)
-            res.writeHead(response.statusCode, { 'Content-Type': 'application/json' });
-        res.write(JSON.stringify(data_send));
-        return res.end();
-    }
-    /**
-     * send response request (error)
-     *
-     * @param res -
-     * @param mess -
-     */
-    errors(res, mess) {
-        this.response(res, 500, mess);
-    }
-    /**
-     * send response request (success)
-     *
-     * @param res -
-     * @param mess -
-     */
-    success(res, mess) {
-        this.response(res, 200, mess);
-    }
-    /**
-     * send response request (create)
-     *
-     * @param res -
-     * @param mess -
-     */
-    create(res, mess) {
-        this.response(res, 201, mess);
-    }
-}
-const Message = new ClassMessage();
-
-/**
  * Identify if it is running in a browser
  */
 const isBrowser = () => typeof window !== 'undefined'
@@ -17455,31 +17340,114 @@ const get_middlewares = (middlewares, method) => __awaiter(void 0, void 0, void 
 const toUpper = (arr) => {
     return lodash(arr).filter((val) => val).map(lodash.toUpper).valueOf();
 };
+
 /**
- * Execute the function according to its specified method
+ * middleware_next execution of each declared FuncMiddleware
  *
- * @param push -
- * @param req -
- * @param res -
- * @param next - Next function
+ * @param req - Http Request
+ * @param res - Http Response
+ * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
+ * @param train -
  */
-const push_against = (push, req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const method = push.request.method;
-    switch (method) {
-        case 'POST':
-            yield push.post(req, res, next);
-            break;
-        case 'GET':
-            yield push.get(req, res, next);
-            break;
-        case 'PUT':
-            yield push.put(req, res, next);
-            break;
-        case 'DELETE':
-            yield push.delete(req, res, next);
+const middleware_next = (funcMiddleware, req, res, train) => {
+    return new Promise((resolve) => {
+        funcMiddleware(req, res, resolve, train);
+    });
+};
+/**
+ * exec_list_func controls the execution of each declared FuncMiddleware
+ *
+ * @param middlewares
+ * @param req - Http Request
+ * @param res - Http Response
+ */
+const exec_list_func = (middlewares, req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let train = {};
+    for (const middleware of middlewares) {
+        const result = yield middleware_next(middleware, req, res, train);
+        train = result ? Object.assign(Object.assign({}, train), result) : train;
+        if (!result)
             break;
     }
+    return train;
 });
+/**
+ * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function
+ *
+ * @example
+ * ```ts
+ * Sandwich.handler (Users, [{
+ * methods: ['POST'],
+ * middleware: [isAuth]
+ *}])
+ *```
+ *
+ * @remarks
+ * The get_middlewares function takes care of the extraction
+ *
+ * @param req - Http Request
+ * @param res - Http Response
+ * @param middlewares - array functions or function
+ * @param method - `{string}` method request
+ */
+const middleware = (req, res, middlewares, method) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!middlewares)
+        return true;
+    const functions = yield get_middlewares(middlewares, method !== null && method !== void 0 ? method : '');
+    return yield exec_list_func(functions instanceof Array ? functions : [functions], req, res)
+        .then((resp) => resp);
+});
+
+/**
+ * get data error
+ *
+ * @param data - `{
+ *     message: message of error "bad request",
+ *     errors: data errors
+ * }`
+ */
+const get_data_errors = (data) => {
+    return data;
+};
+/**
+ * Server error Generate
+ *
+ * @param data -
+ */
+const error = (data) => {
+    throw data;
+};
+/**
+ * Class to handle exceptions
+ */
+class ClassException {
+    constructor() {
+        /**
+         * Server error Generate
+         *
+         */
+        this.error = error;
+        /**
+         * Server error Generate
+         *
+         * @param data -
+         */
+        this.server_error = (data) => {
+            const { message, errors } = get_data_errors(data);
+            error({ "statusCode": 500, "message": message, errors });
+        };
+        /**
+         * Bad request Generate
+         *
+         * @param data -
+         */
+        this.bad_request = (data) => {
+            const { message, errors } = get_data_errors(data);
+            error({ "statusCode": 400, "message": message, errors });
+        };
+    }
+}
+const Exception = new ClassException();
 
 /**
  *
@@ -17738,6 +17706,22 @@ const argument = (value_of, req_body, schemes) => __awaiter(void 0, void 0, void
 });
 
 /**
+ * Validate the request method
+ *
+ * @param api_method - method allowed ["POST", "GET"] or "POST"
+ * @param req_method - request method "POST"
+ */
+const method = (api_method, req_method) => __awaiter(void 0, void 0, void 0, function* () {
+    const apiMethod = api_method instanceof Array ? api_method : [api_method];
+    if (!apiMethod.includes(req_method)) {
+        Exception.bad_request({
+            message: `HTTP ${req_method} request is not allowed`
+        });
+    }
+    return req_method;
+});
+
+/**
  * validate errors and send message
  *
  * @param errors -
@@ -17763,459 +17747,9 @@ const verifyErrors = (errors) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 
-/**
- *
- * @param valueOf - Determines how validated arguments and parameters are extracted.
- * @param schemes - schemes
- * @param values - data body request.
- * @returns
- */
-const parserSchemes = (valueOf, schemes, values) => __awaiter(void 0, void 0, void 0, function* () {
-    const 
-    /**
-     *
-     * @param result_argument result argument
-     */
-    result_argument = yield argument(valueOf !== null && valueOf !== void 0 ? valueOf : true, values !== null && values !== void 0 ? values : {}, schemes), 
-    /**
-     * check for errors in arguments
-     *
-     * @param responseError - bug check response
-     */
-    responseError = yield verifyErrors(result_argument.argument);
-    return {
-        schemes: result_argument.argument,
-        args: result_argument.body,
-        errors: responseError.errors,
-        message: responseError.message
-    };
-});
-/**
- * Types of validations
- */
-const Type = {
-    String: String,
-    Number: Number,
-    Array: Array,
-    Boolean: Boolean,
-    Object: Object,
-};
-/**
- * Types of validations
- */
-class Types {
-    constructor() {
-        this.String = Type.String;
-        this.Number = Type.Number;
-        this.Array = Type.Array;
-        this.Boolean = Type.Boolean;
-        this.Object = Type.Object;
-    }
-}
-/**
- * @alpha
- */
-class Validators extends Types {
-    /**
-     * Creates an instance of Sandwiches.
-     *
-     * @param valueOf - Determines how validated arguments and parameters are extracted.
-     * @defaultValue value_of=true
-     * @param schemes - List of validation schemes.
-     * @defaultValue schemes={}
-     */
-    constructor(valueOf = true, schemes = {}) {
-        super();
-        /**
-         *
-         */
-        this.values = undefined;
-        this.schemes = schemes;
-        this.valueOf = valueOf;
-    }
-    /**
-     * parse and validate request body data
-     *
-     * @param values - Data subject to validation
-     * @return ParserSchemesResponse
-     */
-    parserSchemes(values) {
-        var _a;
-        return parserSchemes(this.valueOf, this.schemes, (_a = this.values) !== null && _a !== void 0 ? _a : values);
-    }
-}
-
-/**
- * middleware_next execution of each declared FuncMiddleware
- *
- * @param req - Http Request
- * @param res - Http Response
- * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
- * @param train -
- */
-const middleware_next = (funcMiddleware, req, res, train) => {
-    return new Promise((resolve) => {
-        funcMiddleware(req, res, resolve, train);
-    });
-};
-/**
- * exec_list_func controls the execution of each declared FuncMiddleware
- *
- * @param middlewares
- * @param req - Http Request
- * @param res - Http Response
- */
-const exec_list_func = (middlewares, req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let train = {};
-    for (const middleware of middlewares) {
-        const result = yield middleware_next(middleware, req, res, train);
-        train = result ? Object.assign(Object.assign({}, train), result) : train;
-        if (!result)
-            break;
-    }
-    return train;
-});
-/**
- * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function
- *
- * @example
- * ```ts
- * Sandwich.handler (Users, [{
- * methods: ['POST'],
- * middleware: [isAuth]
- *}])
- *```
- *
- * @remarks
- * The get_middlewares function takes care of the extraction
- *
- * @param req - Http Request
- * @param res - Http Response
- * @param middlewares - array functions or function
- * @param method - `{string}` method request
- */
-const middleware = (req, res, middlewares, method) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!middlewares)
-        return true;
-    const functions = yield get_middlewares(middlewares, method !== null && method !== void 0 ? method : '');
-    return yield exec_list_func(functions instanceof Array ? functions : [functions], req, res)
-        .then((resp) => resp);
-});
-
-/**
- * Validate the request method
- *
- * @param api_method - method allowed ["POST", "GET"] or "POST"
- * @param req_method - request method "POST"
- */
-const method = (api_method, req_method) => __awaiter(void 0, void 0, void 0, function* () {
-    const apiMethod = api_method instanceof Array ? api_method : [api_method];
-    if (!apiMethod.includes(req_method)) {
-        Exception.bad_request({
-            message: `HTTP ${req_method} request is not allowed`
-        });
-    }
-    return req_method;
-});
-
-/*
-const METHODS_PARAMS = {
-    get: 'one',
-    put: 'put',
-    post: 'stag',
-    delete: 'delete',
-    patch: 'patch'
-}
-
-const METHODS = {
-    get: 'get',
-    post: 'post',
-}*/
-/**
- *
- * @param classResource -
- * @param middleware -
- */
-const handlerResource = (classResource, middleware) => {
-    return () => {
-        return { classResource, middleware };
-    };
-};
-/**
- *
- * @param resource -
- */
-const getParams = (...resource) => {
-    const length = resource.length;
-    const middleware = length === 3 ? resource[0] : undefined;
-    const paths = length === 3 ? resource[1] : resource[0];
-    const classes = length === 3 ? resource[2] : resource[1];
-    return [middleware, paths, classes];
-};
-/**
- *
- * @beta
- */
-class Routers {
-    /**
-     *
-     * @param app -
-     */
-    constructor(app) {
-        this.app = app;
-    }
-    /**
-     *
-     * @param resource -
-     */
-    resource(...resource) {
-        const length = resource.length;
-        const middleware = length === 3 ? resource[0] : undefined;
-        const paths = length === 3 ? resource[1] : resource[0];
-        const classes = length === 3 ? resource[2] : resource[1];
-        this.router(middleware, paths, classes);
-    }
-    /**
-     *
-     * @param middleware -
-     * @param paths -
-     * @param classResource -
-     */
-    router(middleware, paths, classResource) {
-        if (isArray(paths)) {
-            for (let i = 0; i < paths.length; i++) {
-                this.app.use(paths[i], handlerResource(classResource, middleware));
-            }
-        }
-        else {
-            this.app.use(paths, handlerResource(classResource, middleware));
-        }
-    }
-    /**
-     *
-     * @param resource -
-     */
-    get(...resource) {
-        const [middleware, paths, classResource] = getParams(...resource);
-        this.app.get(paths, handlerResource(classResource, middleware));
-    }
-}
-
-/**
- * Execute validation functions (method, middleware)
- *
- * @param options - Configuration object for validation process
- * @return Promise<object>
- */
-const exec = (options) => __awaiter(void 0, void 0, void 0, function* () {
-    let req_method = undefined;
-    if (typeof options.req.method == 'string') {
-        req_method = options.req.method;
-    }
-    return yield method(options.method, req_method).then((result_method) => __awaiter(void 0, void 0, void 0, function* () {
-        const method = result_method;
-        const req_body = options.req.body;
-        const 
-        /**
-         *
-         * @param middleware_resp - middleware
-         */
-        middleware_resp = yield middleware(options.req, options.res, options.middleware, method);
-        return {
-            f: middleware_resp,
-            success: true,
-            method: method,
-            req_body: req_body,
-        };
-    }));
-});
-/**
- * @privateRemarks
- * Run all validation functions, and catch all errors
- *
- * @param options - Configuration object for validation process.
- * @returns Promise<any>
- */
-const transform = (options) => {
-    return new Promise((resolve, reject) => {
-        exec(options)
-            .then((resp) => resolve(resp))
-            .catch(err => reject(err));
-    });
-};
-/**
- * Prepare the class to be used by routing
- *
- * @example
- * Controller function usage example
- *
- * ```ts
- * Sandwich.handler(Users, [isAuthenticated()])
- * ```
- *
- * @param classRequest - Class that will serve as a pillow for routing.
- * @param middlewares - Middleware functions that run before the final function or final middleware
- * @return
- */
-const Handler = (classRequest, middlewares) => {
-    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        const $classRequest = new classRequest(req, res);
-        if ($classRequest.addArgs instanceof Function) {
-            $classRequest.addArgs();
-        }
-        /**
-         * selected methods
-         *
-         */
-        const methods_list = lodash.map([
-            'post',
-            'get',
-            'put',
-            'delete',
-            'patch'
-        ], (val) => lodash.get($classRequest, val) ? val : undefined);
-        /**
-         * selected methods
-         *
-         */
-        const methods = toUpper(methods_list);
-        const data_transform = {
-            middleware: middlewares,
-            method: methods,
-            req: req,
-            res: res
-        };
-        const errors = yield transform(data_transform).then((resp) => {
-            $classRequest.train = resp.f;
-            $classRequest.request = {
-                success: resp.success,
-                method: resp.method
-            };
-            push_against($classRequest, req, res, next)
-                .catch((err) => err);
-        }).catch((err) => err);
-        if (errors)
-            Message.response(res, errors.statusCode, errors);
-    });
-};
-/**
- * Returns a class called Resource, which loads the resources. Also, after loading the necessary
- * resources for the routing job, it loads the initial configuration for the validation of the
- * arguments and parameters.
- *
- *
- * @remarks
- * The configuration of the arguments and parameters will be executed through the
- * parser_schemes function, which is a property of the Resource class.
- *
- * @examples
- * examples of schemes:
- * ```json
- * {
- *   email: {type: Sandwich.String, required: true, strict: true,
- *   password: {type: Sandwich.String, required: true, strict: true, min: 8,
- * }
- * ```
- */
-class Resource extends Validators {
-    /**
-     * Creates an instance of Resource.
-     *
-     * @param req - http request functions
-     */
-    constructor(req) {
-        super(true, {});
-        /**
-         * The addArgs property must be represented in the child class as a function
-         * within this function the schemas are loaded for the validation of the arguments
-         *
-         * @example
-         *
-         * async addArgs(){
-         *     await this.parser({type: Sandwich.String, required: true, strict: true}, ['email'])
-         * }
-         *
-         */
-        this.addArgs = undefined;
-        this.values = Object.assign(Object.assign(Object.assign({}, req.body), req.query), req.params);
-    }
-    /**
-     *
-     * @param schemes -
-     * @param arg -
-     */
-    parser(schemes, arg) {
-        return new Promise(resolve => {
-            if (typeof arg == 'string') {
-                this.schemes = Object.assign({ [arg]: schemes }, this.schemes);
-                resolve(true);
-            }
-            else {
-                for (let i = 1; i <= arg.length; i++) {
-                    this.schemes = Object.assign({ [arg[i - 1]]: schemes }, this.schemes);
-                    if (i == arg.length)
-                        resolve(true);
-                }
-            }
-        });
-    }
-    /**
-     * Returns an anonymous extended class of Resource, which loads the resources. Also, after loading the necessary
-     * resources for routing work, load initial configuration for validation of the
-     * arguments and parameters.
-     *
-     *
-     * @remarks
-     * The configuration of the arguments and parameters will be executed through the
-     * parser_schemes function, which is a property of the Resource class.
-     *
-     * @param schemes - The validation schemes are passed to the this.schemes property of the Resource class
-     *
-     * @examples
-     * examples of schemes:
-     * ```json
-     * {
-     *   email: {type: Sandwich.String, required: true, strict: true,
-     *   password: {type: Sandwich.String, required: true, strict: true, min: 8,
-     * }
-     * ```
-     *
-     * @returns Class Args extends Resource
-     */
-    static args(schemes) {
-        return class extends Resource {
-            constructor(req) {
-                super(req);
-                this.schemes = schemes;
-                this.addArgs = undefined;
-            }
-        };
-    }
-}
-/**
- *
- */
-class Sandwich extends Validators {
-    constructor() {
-        super(...arguments);
-        /**
-         *
-         */
-        this.handler = Handler;
-        /**
-         *
-         * @param app
-         */
-        this.routers = (app) => new Routers(app);
-        /**
-         *
-         */
-        this.args = Resource.args;
-    }
-}
-var Sandwich$1 = new Sandwich();
-
-exports.Resource = Resource;
-exports.Validators = Validators;
-exports["default"] = Sandwich$1;
-//# sourceMappingURL=index.js.map
+exports.argument = argument;
+exports.method = method;
+exports.middleware = middleware;
+exports.middleware_next = middleware_next;
+exports.verifyErrors = verifyErrors;
+//# sourceMappingURL=validator.js.map

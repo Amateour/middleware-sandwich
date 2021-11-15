@@ -1,5 +1,4 @@
 import {Routers as Route} from '../../functions';
-import Sandwich from '../index';
 import {isArray} from "../utils/help";
 
 /*
@@ -77,10 +76,10 @@ export class Routers implements Route {
     router(middleware: Route.middlewares, paths: Route.paths, classResource: Route.HandlerResource) {
         if (isArray(paths)){
             for (let i = 0; i < paths.length; i++) {
-                this.app.use(paths[i], Sandwich.handler(classResource, middleware))
+                this.app.use(paths[i], handlerResource(classResource, middleware))
             }
         } else {
-            this.app.use(paths, Sandwich.handler(classResource, middleware));
+            this.app.use(paths, handlerResource(classResource, middleware));
         }
     }
 

@@ -1,5 +1,17 @@
-import * as SWCH from '../../functions'; 
+import * as SW from '../../functions';
 import _ from 'lodash';
+
+/**
+ * Identify if it is running in a browser
+ */
+export const isBrowser: () => boolean = () => typeof window !== 'undefined'
+    && ({}).toString.call(window) === '[object Window]';
+
+/**
+ * Identify if it is running in a nodejs
+ */
+export const isNode: () => boolean = () => typeof global !== "undefined"
+    && ({}).toString.call(global) === '[object global]';
 
 /**
  * validate if it is an array
@@ -7,38 +19,40 @@ import _ from 'lodash';
  * @param elm - element validation
  * @returns boolean
  */
-export const isArray: SWCH.isArray = (elm) => elm instanceof Array && typeof elm === 'object';
+export const isArray: SW.isArray = (elm) => elm instanceof Array && typeof elm === 'object';
 /**
  * validate if it is an objet
  * 
  * @param elm - element validation
  * @returns boolean
  */
-export const isObject: SWCH.isObject = (elm) => elm instanceof Object;
+export const isObject: SW.isObject = (elm) => elm instanceof Object;
 /**
  * validate if it is an string
  * 
  * @param elm - element validation
  * @returns boolean
  */
-export const isString: SWCH.isString = (elm) => typeof elm === "string";
+export const isString: SW.isString = (elm) => typeof elm === "string";
 /**
  * validate if it is an number
  * 
  * @param elm - element validation
  * @returns boolean
  */
-export const isNumber: SWCH.isNumber = (elm) => typeof elm === "number";
+export const isNumber: SW.isNumber = (elm) => typeof elm === "number";
 
 /**
  * Functions validations (isArray, isString)
  * 
  */
-export const validate: SWCH.validate = {
+export const validate: SW.validate = {
     Array: isArray,
     String: isString,
     Number: isNumber,
-    Object: isObject
+    Object: isObject,
+    Browser: isBrowser,
+    Node: isNode
 }
 
 /**
@@ -46,11 +60,11 @@ export const validate: SWCH.validate = {
  * 
  * @example
  * Array functions
- * Sanwiche.handler(Users, [isAuth])
+ * Sandwich.handler(Users, [isAuth])
  * 
  * Array objects
  * ```ts
- * Sanwiche.handler(Users, [
+ * Sandwich.handler(Users, [
  * {
  *   methods: ['POST'],
  *   middleware: [isAuth]
@@ -60,7 +74,7 @@ export const validate: SWCH.validate = {
  *
  *```ts
  * objects
- * Sanwiche.handler(Users, {
+ * Sandwich.handler(Users, {
  *   methods: ['POST'],
  *   middleware: [isAuth]
  * })
@@ -72,12 +86,12 @@ export const validate: SWCH.validate = {
  * @param middlewares - list middlewares
  * @param method - method request (post, get)
  */
-export const get_middlewares: SWCH.get_middlewares = async (middlewares, method) => {
+export const get_middlewares: SW.get_middlewares = async (middlewares, method) => {
     try {
         let flatten = false;
          if (!(typeof middlewares === 'object')) return middlewares;
          const resp_middlewares: any = await _(middlewares)
-         .filter((middleware: SWCH.multiMiddlewareType)=> {
+         .filter((middleware: SW.multiMiddlewareType)=> {
             const middleware_is_function = typeof middleware === 'function';
             if(middleware_is_function) return true;
 
@@ -94,7 +108,7 @@ export const get_middlewares: SWCH.get_middlewares = async (middlewares, method)
             const methods =  typeof middleware.methods  === 'string'
             ? [middleware.methods]: middleware.methods;
             return toUpper(methods).includes(method.toUpperCase());
-        }).map((middleware: SWCH.multiMiddlewareType) => middleware.middleware ?? middleware);
+        }).map((middleware: SW.multiMiddlewareType) => middleware.middleware ?? middleware);
         return flatten ? await _.flatten(resp_middlewares).valueOf() : resp_middlewares.valueOf();
     }catch (e) {
         console.error(e);
@@ -106,7 +120,7 @@ export const get_middlewares: SWCH.get_middlewares = async (middlewares, method)
  * @param arr -
  * @returns string[]
  */
-export const toUpper: SWCH.toUpper = (arr) => {
+export const toUpper: SW.toUpper = (arr) => {
     return _(arr).filter((val) => val).map(_.toUpper).valueOf();
 }
 
@@ -118,7 +132,7 @@ export const toUpper: SWCH.toUpper = (arr) => {
  * @param res -
  * @param next - Next function
  */
-export const push_against: SWCH.push_against = async (push, req, res, next) => {
+export const push_against: SW.push_against = async (push, req, res, next) => {
     const method = push.request.method;
     switch (method) {
         case 'POST': await push.post(req, res, next)

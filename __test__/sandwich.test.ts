@@ -6,21 +6,6 @@ const UserScheme = {
   password: {type: Sandwich.String, required: true, strict: true, min: 8}
 }
 
-test('args validation errors', async () => {
-  const Snack = new Validators(true, UserScheme);
-
-  try {
-    await Snack.parserSchemes({
-      email: "test@sandwich.com",
-      password: "123",
-    });
-  } catch (error) {
-    const {message} : any = error;
-    expect(message).toBe('args_validation_errors');
-  }
-  expect.assertions(1);
-});
-
 test('validation success', async () => {
   const Snack = new Validators(true, {
     email: {type: Sandwich.String, required: true, strict: true},

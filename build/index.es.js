@@ -12,31 +12,6 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
-/* global Reflect, Promise */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 
 function __awaiter(thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -46,34 +21,6 @@ function __awaiter(thisArg, _arguments, P, generator) {
         function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-}
-
-function __generator(thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
 }
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -17273,53 +17220,180 @@ var lodash = createCommonjsModule(function (module, exports) {
 });
 
 /**
+ * get data error
+ *
+ * @param data - `{
+ *     message: message of error "bad request",
+ *     errors: data errors
+ * }`
+ */
+const get_data_errors = (data) => {
+    return data;
+};
+/**
+ * Server error Generate
+ *
+ * @param data -
+ */
+const error = (data) => {
+    throw data;
+};
+/**
+ * Class to handle exceptions
+ */
+class ClassException {
+    constructor() {
+        /**
+         * Server error Generate
+         *
+         */
+        this.error = error;
+        /**
+         * Server error Generate
+         *
+         * @param data -
+         */
+        this.server_error = (data) => {
+            const { message, errors } = get_data_errors(data);
+            error({ "statusCode": 500, "message": message, errors });
+        };
+        /**
+         * Bad request Generate
+         *
+         * @param data -
+         */
+        this.bad_request = (data) => {
+            const { message, errors } = get_data_errors(data);
+            error({ "statusCode": 400, "message": message, errors });
+        };
+    }
+}
+const Exception = new ClassException();
+/**
+ * Classes for handling Http reply messages
+ */
+class ClassMessage {
+    /**
+     * send response request
+     *
+     * @param res -
+     * @param statusCode - number status
+     * @param message - message response
+     */
+    response(res, statusCode, message) {
+        /**
+         * stacked error information
+         */
+        const { stack } = message;
+        /**
+         * data response
+         */
+        const response = {
+            message: message === null || message === void 0 ? void 0 : message.message,
+            errors: message === null || message === void 0 ? void 0 : message.errors,
+            statusCode: statusCode !== null && statusCode !== void 0 ? statusCode : 200,
+        };
+        /**
+         *
+         */
+        const data_send = stack ? Object.assign(Object.assign({}, response), { stack }) : response;
+        if (!res)
+            throw data_send;
+        if (res)
+            res.writeHead(response.statusCode, { 'Content-Type': 'application/json' });
+        res.write(JSON.stringify(data_send));
+        return res.end();
+    }
+    /**
+     * send response request (error)
+     *
+     * @param res -
+     * @param mess -
+     */
+    errors(res, mess) {
+        this.response(res, 500, mess);
+    }
+    /**
+     * send response request (success)
+     *
+     * @param res -
+     * @param mess -
+     */
+    success(res, mess) {
+        this.response(res, 200, mess);
+    }
+    /**
+     * send response request (create)
+     *
+     * @param res -
+     * @param mess -
+     */
+    create(res, mess) {
+        this.response(res, 201, mess);
+    }
+}
+const Message = new ClassMessage();
+
+/**
+ * Identify if it is running in a browser
+ */
+const isBrowser = () => typeof window !== 'undefined'
+    && ({}).toString.call(window) === '[object Window]';
+/**
+ * Identify if it is running in a nodejs
+ */
+const isNode = () => typeof global !== "undefined"
+    && ({}).toString.call(global) === '[object global]';
+/**
  * validate if it is an array
  *
  * @param elm - element validation
  * @returns boolean
  */
-var isArray = function (elm) { return elm instanceof Array && typeof elm === 'object'; };
+const isArray = (elm) => elm instanceof Array && typeof elm === 'object';
 /**
  * validate if it is an objet
  *
  * @param elm - element validation
  * @returns boolean
  */
-var isObject = function (elm) { return elm instanceof Object; };
+const isObject = (elm) => elm instanceof Object;
 /**
  * validate if it is an string
  *
  * @param elm - element validation
  * @returns boolean
  */
-var isString = function (elm) { return typeof elm === "string"; };
+const isString = (elm) => typeof elm === "string";
 /**
  * validate if it is an number
  *
  * @param elm - element validation
  * @returns boolean
  */
-var isNumber = function (elm) { return typeof elm === "number"; };
+const isNumber = (elm) => typeof elm === "number";
 /**
  * Functions validations (isArray, isString)
  *
  */
-var validate = {
+const validate = {
     Array: isArray,
     String: isString,
     Number: isNumber,
-    Object: isObject
+    Object: isObject,
+    Browser: isBrowser,
+    Node: isNode
 };
 /**
  * get_middlewares Middleware extraction, can be an array of function objects or an object
  *
  * @example
  * Array functions
- * Sanwiche.handler(Users, [isAuth])
+ * Sandwich.handler(Users, [isAuth])
  *
  * Array objects
  * ```ts
- * Sanwiche.handler(Users, [
+ * Sandwich.handler(Users, [
  * {
  *   methods: ['POST'],
  *   middleware: [isAuth]
@@ -17329,7 +17403,7 @@ var validate = {
  *
  *```ts
  * objects
- * Sanwiche.handler(Users, {
+ * Sandwich.handler(Users, {
  *   methods: ['POST'],
  *   middleware: [isAuth]
  * })
@@ -17341,58 +17415,41 @@ var validate = {
  * @param middlewares - list middlewares
  * @param method - method request (post, get)
  */
-var get_middlewares = function (middlewares, method) { return __awaiter(void 0, void 0, void 0, function () {
-    var flatten_1, resp_middlewares, _a, e_1;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _b.trys.push([0, 5, , 6]);
-                flatten_1 = false;
-                if (!(typeof middlewares === 'object'))
-                    return [2 /*return*/, middlewares];
-                return [4 /*yield*/, lodash(middlewares)
-                        .filter(function (middleware) {
-                        var middleware_is_function = typeof middleware === 'function';
-                        if (middleware_is_function)
-                            return true;
-                        if (!middleware.methods)
-                            return true;
-                        var methods_is_string = typeof middleware.methods === 'string';
-                        var methods_is_array = middleware.methods instanceof Array;
-                        if (!methods_is_string && !methods_is_array)
-                            throw "methods: An Array or String data type is expected";
-                        if (middleware.middleware instanceof Array)
-                            flatten_1 = true;
-                        var methods = typeof middleware.methods === 'string'
-                            ? [middleware.methods] : middleware.methods;
-                        return toUpper(methods).includes(method.toUpperCase());
-                    }).map(function (middleware) { var _a; return (_a = middleware.middleware) !== null && _a !== void 0 ? _a : middleware; })];
-            case 1:
-                resp_middlewares = _b.sent();
-                if (!flatten_1) return [3 /*break*/, 3];
-                return [4 /*yield*/, lodash.flatten(resp_middlewares).valueOf()];
-            case 2:
-                _a = _b.sent();
-                return [3 /*break*/, 4];
-            case 3:
-                _a = resp_middlewares.valueOf();
-                _b.label = 4;
-            case 4: return [2 /*return*/, _a];
-            case 5:
-                e_1 = _b.sent();
-                console.error(e_1);
-                return [3 /*break*/, 6];
-            case 6: return [2 /*return*/];
-        }
-    });
-}); };
+const get_middlewares = (middlewares, method) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let flatten = false;
+        if (!(typeof middlewares === 'object'))
+            return middlewares;
+        const resp_middlewares = yield lodash(middlewares)
+            .filter((middleware) => {
+            const middleware_is_function = typeof middleware === 'function';
+            if (middleware_is_function)
+                return true;
+            if (!middleware.methods)
+                return true;
+            const methods_is_string = typeof middleware.methods === 'string';
+            const methods_is_array = middleware.methods instanceof Array;
+            if (!methods_is_string && !methods_is_array)
+                throw "methods: An Array or String data type is expected";
+            if (middleware.middleware instanceof Array)
+                flatten = true;
+            const methods = typeof middleware.methods === 'string'
+                ? [middleware.methods] : middleware.methods;
+            return toUpper(methods).includes(method.toUpperCase());
+        }).map((middleware) => { var _a; return (_a = middleware.middleware) !== null && _a !== void 0 ? _a : middleware; });
+        return flatten ? yield lodash.flatten(resp_middlewares).valueOf() : resp_middlewares.valueOf();
+    }
+    catch (e) {
+        console.error(e);
+    }
+});
 /**
  *
  * @param arr -
  * @returns string[]
  */
-var toUpper = function (arr) {
-    return lodash(arr).filter(function (val) { return val; }).map(lodash.toUpper).valueOf();
+const toUpper = (arr) => {
+    return lodash(arr).filter((val) => val).map(lodash.toUpper).valueOf();
 };
 /**
  * Execute the function according to its specified method
@@ -17402,268 +17459,56 @@ var toUpper = function (arr) {
  * @param res -
  * @param next - Next function
  */
-var push_against = function (push, req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var method, _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                method = push.request.method;
-                _a = method;
-                switch (_a) {
-                    case 'POST': return [3 /*break*/, 1];
-                    case 'GET': return [3 /*break*/, 3];
-                    case 'PUT': return [3 /*break*/, 5];
-                    case 'DELETE': return [3 /*break*/, 7];
-                }
-                return [3 /*break*/, 9];
-            case 1: return [4 /*yield*/, push.post(req, res, next)];
-            case 2:
-                _b.sent();
-                return [3 /*break*/, 9];
-            case 3: return [4 /*yield*/, push.get(req, res, next)];
-            case 4:
-                _b.sent();
-                return [3 /*break*/, 9];
-            case 5: return [4 /*yield*/, push.put(req, res, next)];
-            case 6:
-                _b.sent();
-                return [3 /*break*/, 9];
-            case 7: return [4 /*yield*/, push.delete(req, res, next)];
-            case 8:
-                _b.sent();
-                return [3 /*break*/, 9];
-            case 9: return [2 /*return*/];
-        }
-    });
-}); };
-
-/**
- * middleware_next execution of each declared FuncMiddleware
- *
- * @param req - Http Request
- * @param res - Http Response
- * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
- * @param train -
- */
-var middleware_next = function (funcMiddleware, req, res, train) {
-    return new Promise(function (resolve) {
-        funcMiddleware(req, res, resolve, train);
-    });
-};
-/**
- * exec_list_func controls the execution of each declared FuncMiddleware
- *
- * @param middlewares
- * @param req - Http Request
- * @param res - Http Response
- */
-var exec_list_func = function (middlewares, req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var train, _i, middlewares_1, middleware_1, result;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                train = {};
-                _i = 0, middlewares_1 = middlewares;
-                _a.label = 1;
-            case 1:
-                if (!(_i < middlewares_1.length)) return [3 /*break*/, 4];
-                middleware_1 = middlewares_1[_i];
-                return [4 /*yield*/, middleware_next(middleware_1, req, res, train)];
-            case 2:
-                result = _a.sent();
-                train = result ? __assign(__assign({}, train), result) : train;
-                if (!result)
-                    return [3 /*break*/, 4];
-                _a.label = 3;
-            case 3:
-                _i++;
-                return [3 /*break*/, 1];
-            case 4: return [2 /*return*/, train];
-        }
-    });
-}); };
-/**
- * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function
- *
- * @example
- * ```ts
- * Sanwiche.handler (Users, [{
- * methods: ['POST'],
- * middleware: [isAuth]
- *}])
- *```
- *
- * @remarks
- * The get_middlewares function takes care of the extraction
- *
- * @param req - Http Request
- * @param res - Http Response
- * @param middlewares - array functions or function
- * @param method - `{string}` method request
- */
-var middleware = function (req, res, middlewares, method) { return __awaiter(void 0, void 0, void 0, function () {
-    var functions;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                if (!middlewares)
-                    return [2 /*return*/, true];
-                return [4 /*yield*/, get_middlewares(middlewares, method !== null && method !== void 0 ? method : '')];
-            case 1:
-                functions = _a.sent();
-                return [4 /*yield*/, exec_list_func(functions instanceof Array ? functions : [functions], req, res)
-                        .then(function (resp) { return resp; })];
-            case 2: return [2 /*return*/, _a.sent()];
-        }
-    });
-}); };
-
-/**
- * get data error
- *
- * @param data - `{
- *     message: message of error "bad request",
- *     errors: data errors
- * }`
- */
-var get_data_errors = function (data) {
-    return data;
-};
-/**
- * Class to handle exceptions
- */
-var ClassException = /** @class */ (function () {
-    function ClassException() {
-        /**
-         * Server error Generate
-         *
-         * @param data -
-         */
-        this.error = function (data) {
-            throw data;
-        };
-        /**
-         * Server error Generate
-         *
-         * @param data -
-         */
-        this.server_error = function (data) {
-            var _a = get_data_errors(data), message = _a.message, errors = _a.errors;
-            throw { "statusCode": 500, "message": message, errors: errors };
-        };
-        /**
-         * Bad request Generate
-         *
-         * @param data -
-         */
-        this.bad_request = function (data) {
-            var _a = get_data_errors(data), message = _a.message, errors = _a.errors;
-            throw { "statusCode": 400, "message": message, errors: errors };
-        };
+const push_against = (push, req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const method = push.request.method;
+    switch (method) {
+        case 'POST':
+            yield push.post(req, res, next);
+            break;
+        case 'GET':
+            yield push.get(req, res, next);
+            break;
+        case 'PUT':
+            yield push.put(req, res, next);
+            break;
+        case 'DELETE':
+            yield push.delete(req, res, next);
+            break;
     }
-    return ClassException;
-}());
-var Exception = new ClassException();
-/**
- * Classes for handling Http reply messages
- */
-var ClassMessage = /** @class */ (function () {
-    function ClassMessage() {
-    }
-    /**
-     * send response request
-     *
-     * @param res -
-     * @param statusCode - number status
-     * @param message - message response
-     */
-    ClassMessage.prototype.response = function (res, statusCode, message) {
-        /**
-         * stacked error information
-         */
-        var stack = message.stack;
-        /**
-         * data response
-         */
-        var response = {
-            message: message === null || message === void 0 ? void 0 : message.message,
-            errors: message === null || message === void 0 ? void 0 : message.errors,
-            statusCode: statusCode !== null && statusCode !== void 0 ? statusCode : 200,
-        };
-        /**
-         *
-         */
-        var data_send = stack ? __assign(__assign({}, response), { stack: stack }) : response;
-        if (!res)
-            throw data_send;
-        if (res)
-            res.writeHead(response.statusCode, { 'Content-Type': 'application/json' });
-        res.write(JSON.stringify(data_send));
-        return res.end();
-    };
-    /**
-     * send response request (error)
-     *
-     * @param res -
-     * @param mess -
-     */
-    ClassMessage.prototype.errors = function (res, mess) {
-        this.response(res, 500, mess);
-    };
-    /**
-     * send response request (success)
-     *
-     * @param res -
-     * @param mess -
-     */
-    ClassMessage.prototype.success = function (res, mess) {
-        this.response(res, 200, mess);
-    };
-    /**
-     * send response request (create)
-     *
-     * @param res -
-     * @param mess -
-     */
-    ClassMessage.prototype.create = function (res, mess) {
-        this.response(res, 201, mess);
-    };
-    return ClassMessage;
-}());
-var Message = new ClassMessage();
+});
 
 /**
+ *
  * Response messages due to validation failure
  */
-var messageArgument = {
-    validation: function (props) { return ({
-        message: props.key + "_" + props.key_validation
-    }); },
-    required: function () { return ({
+const messageArgument = {
+    validation: (props) => ({
+        message: `${props.key}_${props.key_validation}`
+    }),
+    required: () => ({
         message: "required_field"
-    }); },
-    min: function (props) { return ({
+    }),
+    min: (props) => ({
         message: "minimum_characters",
         value: props.valid_value
-    }); },
-    max: function (props) { return ({
+    }),
+    max: (props) => ({
         message: "maximum_characters",
         value: props.valid_value
-    }); },
-    strict: function (props) { return ({
+    }),
+    strict: (props) => ({
         message: "{key}_expected_data_type_{type}"
             .replace('{key}', props.key)
             .replace('{type}', props.type)
             .toLowerCase()
-    }); }
+    })
 };
-
 /**
  *  list of validation functions
  *
  * @param func_arguments -
  */
-var func_arguments = {
+const func_arguments = {
     /**
      * Validate value max
      *
@@ -17671,14 +17516,13 @@ var func_arguments = {
      * @param valid_value -
      * @param value -
      */
-    max: function (_a) {
-        var _b, _c, _d, _e;
-        var type = _a.type, valid_value = _a.valid_value, value = _a.value;
+    max: ({ type, valid_value, value }) => {
+        var _a, _b, _c, _d;
         if (typeof value === 'number') {
             return (value !== null && value !== void 0 ? value : 0) <= (valid_value !== null && valid_value !== void 0 ? valid_value : 0);
         }
         else {
-            var len = (_c = ((_b = type === null || type === void 0 ? void 0 : type.length) !== null && _b !== void 0 ? _b : 0)) !== null && _c !== void 0 ? _c : ((_e = (_d = type === null || type === void 0 ? void 0 : type.toString()) === null || _d === void 0 ? void 0 : _d.length) !== null && _e !== void 0 ? _e : 0);
+            const len = (_b = ((_a = type === null || type === void 0 ? void 0 : type.length) !== null && _a !== void 0 ? _a : 0)) !== null && _b !== void 0 ? _b : ((_d = (_c = type === null || type === void 0 ? void 0 : type.toString()) === null || _c === void 0 ? void 0 : _c.length) !== null && _d !== void 0 ? _d : 0);
             return len <= (valid_value !== null && valid_value !== void 0 ? valid_value : 0);
         }
     },
@@ -17689,14 +17533,13 @@ var func_arguments = {
      * @param valid_value -
      * @param value -
      */
-    min: function (_a) {
-        var _b, _c, _d, _e;
-        var type = _a.type, valid_value = _a.valid_value, value = _a.value;
+    min: ({ type, valid_value, value }) => {
+        var _a, _b, _c, _d;
         if (typeof value === 'number') {
             return (valid_value !== null && valid_value !== void 0 ? valid_value : 0) >= (valid_value !== null && valid_value !== void 0 ? valid_value : 0);
         }
         else {
-            var len = (_c = ((_b = type === null || type === void 0 ? void 0 : type.length) !== null && _b !== void 0 ? _b : 0)) !== null && _c !== void 0 ? _c : ((_e = (_d = type === null || type === void 0 ? void 0 : type.toString()) === null || _d === void 0 ? void 0 : _d.length) !== null && _e !== void 0 ? _e : 0);
+            const len = (_b = ((_a = type === null || type === void 0 ? void 0 : type.length) !== null && _a !== void 0 ? _a : 0)) !== null && _b !== void 0 ? _b : ((_d = (_c = type === null || type === void 0 ? void 0 : type.toString()) === null || _c === void 0 ? void 0 : _c.length) !== null && _d !== void 0 ? _d : 0);
             return len >= (valid_value !== null && valid_value !== void 0 ? valid_value : 0);
         }
     },
@@ -17706,10 +17549,7 @@ var func_arguments = {
      * @param valid_value -
      * @param value -
      */
-    required: function (_a) {
-        var valid_value = _a.valid_value, value = _a.value;
-        return valid_value ? (!!value || value === 0) : true;
-    },
+    required: ({ valid_value, value }) => valid_value ? (!!value || value === 0) : true,
     /**
      * Validate value type
      *
@@ -17717,8 +17557,8 @@ var func_arguments = {
      * @param func -
      * @param scheme -
      */
-    type: function (value, func, scheme) {
-        var list_type = ['String', 'Number', 'Object'];
+    type: (value, func, scheme) => {
+        const list_type = ['String', 'Number', 'Object'];
         switch (func.name) {
             case 'Array': return func.from(value);
             default:
@@ -17736,15 +17576,14 @@ var func_arguments = {
      * @param key - data {occupation}
      * @param value - `Developer`
      */
-    valid_strict: function (strict, type, key, value) {
-        var _a;
-        var valid = lodash.get(validate, type);
+    valid_strict: (strict, type, key, value) => {
+        const valid = lodash.get(validate, type);
         if (strict && valid instanceof Function) {
             !valid(value) ? Exception.bad_request({
                 message: "args_validation_errors",
-                errors: [(_a = {},
-                        _a[key] = [messageArgument.strict({ key: key, type: type })],
-                        _a)]
+                errors: [{
+                        [key]: [messageArgument.strict({ key, type })]
+                    }]
             }) : true;
         }
     }
@@ -17756,11 +17595,10 @@ var func_arguments = {
  * @param key - value key {occupation}
  * @param scheme - scheme validation {type: String}
  */
-var valid_type = function (_a) {
-    var value = _a.value, key = _a.key, scheme = _a.scheme;
-    var type = lodash.get(scheme, 'type');
-    var strict = lodash.get(scheme, 'strict');
-    var required = lodash.get(scheme, 'required');
+const valid_type = ({ value, key, scheme }) => {
+    const type = lodash.get(scheme, 'type');
+    const strict = lodash.get(scheme, 'strict');
+    const required = lodash.get(scheme, 'required');
     if (type) {
         required && value ? func_arguments.valid_strict(strict, type.name, key, value) : null;
         if (value === null || value === undefined)
@@ -17768,7 +17606,7 @@ var valid_type = function (_a) {
         return func_arguments.type(value, type, scheme);
     }
     else {
-        Exception.server_error({ message: key + " => " + value + " no data type" });
+        Exception.server_error({ message: `${key} => ${value} no data type` });
     }
 };
 /**
@@ -17787,26 +17625,20 @@ var valid_type = function (_a) {
  * @param key -
  * @param scheme -
  */
-var validation_custom = function (_a) {
-    var value = _a.value, key = _a.key, scheme = _a.scheme;
-    return __awaiter(void 0, void 0, void 0, function () {
-        var validation;
-        return __generator(this, function (_b) {
-            validation = scheme.validation;
-            return [2 /*return*/, lodash(validation).map(function (func, key_validation) {
-                    var messDefault = lodash.get(messageArgument, 'validation');
-                    return func(value) ? messDefault({ key: key, key_validation: key_validation }) : false;
-                }).filter(function (value) { return value; }).valueOf()];
-        });
-    });
-};
+const validation_custom = ({ value, key, scheme }) => __awaiter(void 0, void 0, void 0, function* () {
+    const { validation } = scheme;
+    return lodash(validation).map((func, key_validation) => {
+        const messDefault = lodash.get(messageArgument, 'validation');
+        return func(value) ? messDefault({ key, key_validation }) : false;
+    }).filter((value) => value).valueOf();
+});
 /**
  * Extract data types to validate in the function valid_extract_argument
  * omitting those validated in the function valid_type
  *
  * @param scheme - data: `{type: Sandwich.String, strict: true, value: '100'}`
  */
-var omit_argument = function (scheme) {
+const omit_argument = (scheme) => {
     return lodash.omit(scheme, ['type', 'strict', 'message', 'value', 'validation']);
 };
 /**
@@ -17818,28 +17650,24 @@ var omit_argument = function (scheme) {
  * @param messages -
  * @param key_main - key main
  */
-var valid_extract_argument = function (messages, scheme, value, type, key_main) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        return [2 /*return*/, lodash(scheme)
-                .map(function (valid_value, key) {
-                var func_valid = lodash.get(func_arguments, key);
-                var message = lodash.get(messages, key);
-                var messDefault = lodash.get(messageArgument, key);
-                return !func_valid({ valid_value: valid_value, value: value, type: type, scheme: scheme }) &&
-                    (message !== null && message !== void 0 ? message : messDefault({ valid_value: valid_value, value: value, type: type, key: key, key_main: key_main }));
-            }).filter(function (value) { return value; }).valueOf()];
-    });
-}); };
+const valid_extract_argument = (messages, scheme, value, type, key_main) => __awaiter(void 0, void 0, void 0, function* () {
+    return lodash(scheme)
+        .map((valid_value, key) => {
+        const func_valid = lodash.get(func_arguments, key);
+        const message = lodash.get(messages, key);
+        const messDefault = lodash.get(messageArgument, key);
+        return !func_valid({ valid_value, value, type, scheme }) &&
+            (message !== null && message !== void 0 ? message : messDefault({ valid_value, value, type, key, key_main }));
+    }).filter((value) => value).valueOf();
+});
 /**
  * validate Message
  *
  * @param errors -
  */
-var valid_resp_argument = function (errors) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        return [2 /*return*/, !errors.length];
-    });
-}); };
+const valid_resp_argument = (errors) => __awaiter(void 0, void 0, void 0, function* () {
+    return !errors.length;
+});
 /**
  * Validate an argument schema
  *
@@ -17854,31 +17682,15 @@ var valid_resp_argument = function (errors) { return __awaiter(void 0, void 0, v
  * }
  * ```
  */
-var valid_argument = function (props) { return __awaiter(void 0, void 0, void 0, function () {
-    var value, scheme, message, key, type, valid_errors, extract_scheme, errors, success;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                value = props.value, scheme = props.scheme, message = props.message, key = props.key;
-                return [4 /*yield*/, valid_type(props)];
-            case 1:
-                type = _a.sent();
-                return [4 /*yield*/, validation_custom(props)];
-            case 2:
-                valid_errors = _a.sent();
-                return [4 /*yield*/, omit_argument(scheme)];
-            case 3:
-                extract_scheme = _a.sent();
-                return [4 /*yield*/, valid_extract_argument(message, extract_scheme, value, type, key)];
-            case 4:
-                errors = _a.sent();
-                return [4 /*yield*/, valid_resp_argument(errors)];
-            case 5:
-                success = _a.sent();
-                return [2 /*return*/, { errors: valid_errors.concat(errors), success: success, value: type }];
-        }
-    });
-}); };
+const valid_argument = (props) => __awaiter(void 0, void 0, void 0, function* () {
+    const { value, scheme, message, key } = props;
+    const type = yield valid_type(props);
+    const valid_errors = yield validation_custom(props);
+    const extract_scheme = yield omit_argument(scheme);
+    const errors = yield valid_extract_argument(message, extract_scheme, value, type, key);
+    const success = yield valid_resp_argument(errors);
+    return { errors: valid_errors.concat(errors), success, value: type };
+});
 /**
  * Extract the defined value from the req or in the schema
  * (any value passed by req will be replaced by the value is defined in the schema)
@@ -17887,9 +17699,9 @@ var valid_argument = function (props) { return __awaiter(void 0, void 0, void 0,
  * @param schemes -
  * @param key - field key to validate
  */
-var get_value = function (req_body, schemes, key) {
-    var has_value = lodash.has(schemes, 'value');
-    var defined_value = has_value ? lodash.get(schemes, 'value') : lodash.get(req_body, key);
+const get_value = (req_body, schemes, key) => {
+    const has_value = lodash.has(schemes, 'value');
+    const defined_value = has_value ? lodash.get(schemes, 'value') : lodash.get(req_body, key);
     return defined_value instanceof Function ? defined_value() : defined_value;
 };
 /**
@@ -17899,48 +17711,192 @@ var get_value = function (req_body, schemes, key) {
  * @param req_body - request body {email: "example@sandwich.com"}
  * @param schemes - schemes of validation `{ email: {type: Sandwich.String, strict: true} }`
  */
-var argument = function (value_of, req_body, schemes) { return __awaiter(void 0, void 0, void 0, function () {
-    var resp, body, _a, _b, _i, key, scheme, _c, _d, _e, value;
-    var _f, _g;
-    return __generator(this, function (_h) {
-        switch (_h.label) {
-            case 0:
-                resp = {};
-                body = {};
-                _a = [];
-                for (_b in schemes)
-                    _a.push(_b);
-                _i = 0;
-                _h.label = 1;
-            case 1:
-                if (!(_i < _a.length)) return [3 /*break*/, 4];
-                key = _a[_i];
-                scheme = lodash.has(schemes, key) ? lodash.get(schemes, key) : null;
-                _d = (_c = lodash).assign;
-                _f = {};
-                _e = key;
-                return [4 /*yield*/, valid_argument({
-                        value: get_value(req_body, scheme, key),
-                        key: key,
-                        message: lodash.get(scheme, 'message'),
-                        scheme: scheme
-                    })];
-            case 2:
-                resp = _d.apply(_c, [(_f[_e] = _h.sent(),
-                        _f), resp]);
-                value = lodash.get(resp, key).value;
-                body = lodash.assign((_g = {}, _g[key] = value_of || !value ? value : value.valueOf(), _g), body);
-                _h.label = 3;
-            case 3:
-                _i++;
-                return [3 /*break*/, 1];
-            case 4: return [2 /*return*/, {
-                    argument: resp,
-                    body: body
-                }];
-        }
+const argument = (value_of, req_body, schemes) => __awaiter(void 0, void 0, void 0, function* () {
+    let resp = {};
+    let body = {};
+    for (const key in schemes) {
+        const scheme = lodash.has(schemes, key) ? lodash.get(schemes, key) : null;
+        resp = lodash.assign({
+            [key]: yield valid_argument({
+                value: get_value(req_body, scheme, key),
+                key: key,
+                message: lodash.get(scheme, 'message'),
+                scheme: scheme
+            })
+        }, resp);
+        const value = lodash.get(resp, key).value;
+        body = lodash.assign({ [key]: value_of || !value ? value : value.valueOf() }, body);
+    }
+    return {
+        argument: resp,
+        body: body
+    };
+});
+
+/**
+ * validate errors and send message
+ *
+ * @param errors -
+ */
+const verifyErrors = (errors) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = {
+        errors: [],
+        message: 'args_validation_successful'
+    };
+    const resp_err = lodash(errors)
+        .map((value, key) => {
+        return new Object({ [key]: value.errors });
+    })
+        .filter((value) => lodash.find(value, (err) => err.length))
+        .valueOf();
+    if (resp_err.length) {
+        response.errors = resp_err;
+        response.message = 'args_validation_errors';
+        isBrowser() ? Exception.error(response) : Exception.bad_request(response);
+    }
+    else {
+        return response;
+    }
+});
+
+/**
+ *
+ * @param valueOf - Determines how validated arguments and parameters are extracted.
+ * @param schemes - schemes
+ * @param values - data body request.
+ * @returns
+ */
+const parserSchemes = (valueOf, schemes, values) => __awaiter(void 0, void 0, void 0, function* () {
+    const 
+    /**
+     *
+     * @param result_argument result argument
+     */
+    result_argument = yield argument(valueOf !== null && valueOf !== void 0 ? valueOf : true, values !== null && values !== void 0 ? values : {}, schemes), 
+    /**
+     * check for errors in arguments
+     *
+     * @param responseError - bug check response
+     */
+    responseError = yield verifyErrors(result_argument.argument);
+    return {
+        schemes: result_argument.argument,
+        args: result_argument.body,
+        errors: responseError.errors,
+        message: responseError.message
+    };
+});
+/**
+ * Types of validations
+ */
+const Type = {
+    String: String,
+    Number: Number,
+    Array: Array,
+    Boolean: Boolean,
+    Object: Object,
+};
+/**
+ * Types of validations
+ */
+class Types {
+    constructor() {
+        this.String = Type.String;
+        this.Number = Type.Number;
+        this.Array = Type.Array;
+        this.Boolean = Type.Boolean;
+        this.Object = Type.Object;
+    }
+}
+/**
+ * @alpha
+ */
+class Validators extends Types {
+    /**
+     * Creates an instance of Sandwiches.
+     *
+     * @param valueOf - Determines how validated arguments and parameters are extracted.
+     * @defaultValue value_of=true
+     * @param schemes - List of validation schemes.
+     * @defaultValue schemes={}
+     */
+    constructor(valueOf = true, schemes = {}) {
+        super();
+        /**
+         *
+         */
+        this.values = undefined;
+        this.schemes = schemes;
+        this.valueOf = valueOf;
+    }
+    /**
+     * parse and validate request body data
+     *
+     * @param values - Data subject to validation
+     * @return ParserSchemesResponse
+     */
+    parserSchemes(values) {
+        var _a;
+        return parserSchemes(this.valueOf, this.schemes, (_a = this.values) !== null && _a !== void 0 ? _a : values);
+    }
+}
+
+/**
+ * middleware_next execution of each declared FuncMiddleware
+ *
+ * @param req - Http Request
+ * @param res - Http Response
+ * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
+ * @param train -
+ */
+const middleware_next = (funcMiddleware, req, res, train) => {
+    return new Promise((resolve) => {
+        funcMiddleware(req, res, resolve, train);
     });
-}); };
+};
+/**
+ * exec_list_func controls the execution of each declared FuncMiddleware
+ *
+ * @param middlewares
+ * @param req - Http Request
+ * @param res - Http Response
+ */
+const exec_list_func = (middlewares, req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let train = {};
+    for (const middleware of middlewares) {
+        const result = yield middleware_next(middleware, req, res, train);
+        train = result ? Object.assign(Object.assign({}, train), result) : train;
+        if (!result)
+            break;
+    }
+    return train;
+});
+/**
+ * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function
+ *
+ * @example
+ * ```ts
+ * Sandwich.handler (Users, [{
+ * methods: ['POST'],
+ * middleware: [isAuth]
+ *}])
+ *```
+ *
+ * @remarks
+ * The get_middlewares function takes care of the extraction
+ *
+ * @param req - Http Request
+ * @param res - Http Response
+ * @param middlewares - array functions or function
+ * @param method - `{string}` method request
+ */
+const middleware = (req, res, middlewares, method) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!middlewares)
+        return true;
+    const functions = yield get_middlewares(middlewares, method !== null && method !== void 0 ? method : '');
+    return yield exec_list_func(functions instanceof Array ? functions : [functions], req, res)
+        .then((resp) => resp);
+});
 
 /**
  * Validate the request method
@@ -17948,52 +17904,15 @@ var argument = function (value_of, req_body, schemes) { return __awaiter(void 0,
  * @param api_method - method allowed ["POST", "GET"] or "POST"
  * @param req_method - request method "POST"
  */
-var method = function (api_method, req_method) { return __awaiter(void 0, void 0, void 0, function () {
-    var apiMethod;
-    return __generator(this, function (_a) {
-        apiMethod = api_method instanceof Array ? api_method : [api_method];
-        if (!apiMethod.includes(req_method)) {
-            Exception.bad_request({
-                message: "HTTP " + req_method + " request is not allowed"
-            });
-        }
-        return [2 /*return*/, req_method];
-    });
-}); };
-
-/**
- * validate errors and send message
- *
- * @param errors -
- * @param respActive -
- */
-var verifyErrors = function (errors, respActive) { return __awaiter(void 0, void 0, void 0, function () {
-    var response, resp_err;
-    return __generator(this, function (_a) {
-        response = {
-            errors: [],
-            message: 'args_validation_successful'
-        };
-        resp_err = lodash(errors)
-            .map(function (value, key) {
-            var _a;
-            return new Object((_a = {}, _a[key] = value.errors, _a));
-        })
-            .filter(function (value) { return lodash.find(value, function (err) { return err.length; }); })
-            .valueOf();
-        if (resp_err.length) {
-            response.errors = resp_err;
-            response.message = 'args_validation_errors';
-            respActive ?
-                Exception.bad_request(response) :
-                Exception.error(response);
-        }
-        else {
-            return [2 /*return*/, response];
-        }
-        return [2 /*return*/];
-    });
-}); };
+const method = (api_method, req_method) => __awaiter(void 0, void 0, void 0, function* () {
+    const apiMethod = api_method instanceof Array ? api_method : [api_method];
+    if (!apiMethod.includes(req_method)) {
+        Exception.bad_request({
+            message: `HTTP ${req_method} request is not allowed`
+        });
+    }
+    return req_method;
+});
 
 /*
 const METHODS_PARAMS = {
@@ -18013,147 +17932,70 @@ const METHODS = {
  * @param classResource -
  * @param middleware -
  */
-var handlerResource = function (classResource, middleware) {
-    return function () {
-        return { classResource: classResource, middleware: middleware };
+const handlerResource = (classResource, middleware) => {
+    return () => {
+        return { classResource, middleware };
     };
 };
 /**
  *
  * @param resource -
  */
-var getParams = function () {
-    var resource = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        resource[_i] = arguments[_i];
-    }
-    var length = resource.length;
-    var middleware = length === 3 ? resource[0] : undefined;
-    var paths = length === 3 ? resource[1] : resource[0];
-    var classes = length === 3 ? resource[2] : resource[1];
+const getParams = (...resource) => {
+    const length = resource.length;
+    const middleware = length === 3 ? resource[0] : undefined;
+    const paths = length === 3 ? resource[1] : resource[0];
+    const classes = length === 3 ? resource[2] : resource[1];
     return [middleware, paths, classes];
 };
 /**
  *
  * @beta
  */
-var Routers = /** @class */ (function () {
+class Routers {
     /**
      *
      * @param app -
      */
-    function Routers(app) {
+    constructor(app) {
         this.app = app;
     }
     /**
      *
      * @param resource -
      */
-    Routers.prototype.resource = function () {
-        var resource = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            resource[_i] = arguments[_i];
-        }
-        var length = resource.length;
-        var middleware = length === 3 ? resource[0] : undefined;
-        var paths = length === 3 ? resource[1] : resource[0];
-        var classes = length === 3 ? resource[2] : resource[1];
+    resource(...resource) {
+        const length = resource.length;
+        const middleware = length === 3 ? resource[0] : undefined;
+        const paths = length === 3 ? resource[1] : resource[0];
+        const classes = length === 3 ? resource[2] : resource[1];
         this.router(middleware, paths, classes);
-    };
+    }
     /**
      *
      * @param middleware -
      * @param paths -
      * @param classResource -
      */
-    Routers.prototype.router = function (middleware, paths, classResource) {
+    router(middleware, paths, classResource) {
         if (isArray(paths)) {
-            for (var i = 0; i < paths.length; i++) {
-                this.app.use(paths[i], Sandwich$1.handler(classResource, middleware));
+            for (let i = 0; i < paths.length; i++) {
+                this.app.use(paths[i], handlerResource(classResource, middleware));
             }
         }
         else {
-            this.app.use(paths, Sandwich$1.handler(classResource, middleware));
+            this.app.use(paths, handlerResource(classResource, middleware));
         }
-    };
+    }
     /**
      *
      * @param resource -
      */
-    Routers.prototype.get = function () {
-        var resource = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            resource[_i] = arguments[_i];
-        }
-        var _a = getParams.apply(void 0, resource), middleware = _a[0], paths = _a[1], classResource = _a[2];
+    get(...resource) {
+        const [middleware, paths, classResource] = getParams(...resource);
         this.app.get(paths, handlerResource(classResource, middleware));
-    };
-    return Routers;
-}());
-
-/**
- * Types of validations
- */
-var Type = {
-    String: String,
-    Number: Number,
-    Array: Array,
-    Boolean: Boolean,
-    Object: Object,
-};
-/**
- * Types of validations
- */
-var Types = /** @class */ (function () {
-    function Types() {
-        this.String = Type.String;
-        this.Number = Type.Number;
-        this.Array = Type.Array;
-        this.Boolean = Type.Boolean;
-        this.Object = Type.Object;
     }
-    return Types;
-}());
-/**
- * @alpha
- */
-var Validators = /** @class */ (function (_super) {
-    __extends(Validators, _super);
-    /**
-     * Creates an instance of Sandwiches.
-     *
-     * @param valueOf - Determines how validated arguments and parameters are extracted.
-     * @defaultValue value_of=true
-     * @param schemes - List of validation schemes.
-     * @param resActive -
-     * @defaultValue schemes={}
-     */
-    function Validators(valueOf, schemes, resActive) {
-        if (valueOf === void 0) { valueOf = true; }
-        if (schemes === void 0) { schemes = {}; }
-        if (resActive === void 0) { resActive = false; }
-        var _this = _super.call(this) || this;
-        /**
-         *
-         */
-        _this.values = undefined;
-        _this.schemes = schemes;
-        _this.valueOf = valueOf;
-        _this.resActive = resActive;
-        return _this;
-    }
-    /**
-     * parse and validate request body data
-     *
-     * @param values - Data subject to validation
-     * @return ParserSchemesResponse
-     */
-    Validators.prototype.parserSchemes = function (values) {
-        var _a;
-        return parserSchemes(this.valueOf, this.schemes, (_a = this.values) !== null && _a !== void 0 ? _a : values, this.resActive);
-    };
-    return Validators;
-}(Types));
+}
 
 /**
  * Execute validation functions (method, middleware)
@@ -18161,43 +18003,28 @@ var Validators = /** @class */ (function (_super) {
  * @param options - Configuration object for validation process
  * @return Promise<object>
  */
-var exec = function (options) { return __awaiter(void 0, void 0, void 0, function () {
-    var req_method;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                req_method = undefined;
-                if (typeof options.req.method == 'string') {
-                    req_method = options.req.method;
-                }
-                return [4 /*yield*/, method(options.method, req_method).then(function (result_method) { return __awaiter(void 0, void 0, void 0, function () {
-                        var method, req_body, 
-                        /**
-                         *
-                         * @param middleware_resp - middleware
-                         */
-                        middleware_resp;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    method = result_method;
-                                    req_body = options.req.body;
-                                    return [4 /*yield*/, middleware(options.req, options.res, options.middleware, method)];
-                                case 1:
-                                    middleware_resp = _a.sent();
-                                    return [2 /*return*/, {
-                                            f: middleware_resp,
-                                            success: true,
-                                            method: method,
-                                            req_body: req_body,
-                                        }];
-                            }
-                        });
-                    }); })];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
-    });
-}); };
+const exec = (options) => __awaiter(void 0, void 0, void 0, function* () {
+    let req_method = undefined;
+    if (typeof options.req.method == 'string') {
+        req_method = options.req.method;
+    }
+    return yield method(options.method, req_method).then((result_method) => __awaiter(void 0, void 0, void 0, function* () {
+        const method = result_method;
+        const req_body = options.req.body;
+        const 
+        /**
+         *
+         * @param middleware_resp - middleware
+         */
+        middleware_resp = yield middleware(options.req, options.res, options.middleware, method);
+        return {
+            f: middleware_resp,
+            success: true,
+            method: method,
+            req_body: req_body,
+        };
+    }));
+});
 /**
  * @privateRemarks
  * Run all validation functions, and catch all errors
@@ -18205,52 +18032,11 @@ var exec = function (options) { return __awaiter(void 0, void 0, void 0, functio
  * @param options - Configuration object for validation process.
  * @returns Promise<any>
  */
-var transform = function (options) {
-    return new Promise(function (resolve, reject) {
+const transform = (options) => {
+    return new Promise((resolve, reject) => {
         exec(options)
-            .then(function (resp) { return resolve(resp); })
-            .catch(function (err) { return reject(err); });
-    });
-};
-/**
- *
- * @param valueOf - Determines how validated arguments and parameters are extracted.
- * @param schemes - schemes
- * @param values - data body request.
- * @param respActive - if it is true, the errors checked by `res.status(200).json ({message: 'message'})` will be returned, if it is false it generates an exception that is replicated in the handler function `Sandwich.handler`
- * @returns
- */
-var parserSchemes = function (valueOf, schemes, values, respActive) {
-    if (respActive === void 0) { respActive = false; }
-    return __awaiter(void 0, void 0, void 0, function () {
-        var 
-        /**
-         *
-         * @param result_argument result argument
-         */
-        result_argument, 
-        /**
-         * check for errors in arguments
-         *
-         * @param responseError - bug check response
-         */
-        responseError;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, argument(valueOf !== null && valueOf !== void 0 ? valueOf : true, values !== null && values !== void 0 ? values : {}, schemes)];
-                case 1:
-                    result_argument = _a.sent();
-                    return [4 /*yield*/, verifyErrors(result_argument.argument, respActive)];
-                case 2:
-                    responseError = _a.sent();
-                    return [2 /*return*/, {
-                            schemes: result_argument.argument,
-                            args: result_argument.body,
-                            errors: responseError.errors,
-                            message: responseError.message
-                        }];
-            }
-        });
+            .then((resp) => resolve(resp))
+            .catch(err => reject(err));
     });
 };
 /**
@@ -18267,47 +18053,46 @@ var parserSchemes = function (valueOf, schemes, values, respActive) {
  * @param middlewares - Middleware functions that run before the final function or final middleware
  * @return
  */
-var Handler = function (classRequest, middlewares) {
-    return function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-        var $classRequest, methods_list, methods, data_transform, errors;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    $classRequest = new classRequest(req, res);
-                    if ($classRequest.addArgs instanceof Function) {
-                        $classRequest.addArgs();
-                    }
-                    methods_list = lodash.map([
-                        'post',
-                        'get',
-                        'put',
-                        'delete',
-                        'patch'
-                    ], function (val) { return lodash.get($classRequest, val) ? val : undefined; });
-                    methods = toUpper(methods_list);
-                    data_transform = {
-                        middleware: middlewares,
-                        method: methods,
-                        req: req,
-                        res: res
-                    };
-                    return [4 /*yield*/, transform(data_transform).then(function (resp) {
-                            $classRequest.train = resp.f;
-                            $classRequest.request = {
-                                success: resp.success,
-                                method: resp.method
-                            };
-                            push_against($classRequest, req, res, next)
-                                .catch(function (err) { return err; });
-                        }).catch(function (err) { return err; })];
-                case 1:
-                    errors = _a.sent();
-                    if (errors)
-                        Message.response(res, errors.statusCode, errors);
-                    return [2 /*return*/];
-            }
-        });
-    }); };
+const Handler = (classRequest, middlewares) => {
+    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        const $classRequest = new classRequest(req, res);
+        if ($classRequest.addArgs instanceof Function) {
+            $classRequest.addArgs();
+        }
+        /**
+         * selected methods
+         *
+         */
+        const methods_list = lodash.map([
+            'post',
+            'get',
+            'put',
+            'delete',
+            'patch'
+        ], (val) => lodash.get($classRequest, val) ? val : undefined);
+        /**
+         * selected methods
+         *
+         */
+        const methods = toUpper(methods_list);
+        const data_transform = {
+            middleware: middlewares,
+            method: methods,
+            req: req,
+            res: res
+        };
+        const errors = yield transform(data_transform).then((resp) => {
+            $classRequest.train = resp.f;
+            $classRequest.request = {
+                success: resp.success,
+                method: resp.method
+            };
+            push_against($classRequest, req, res, next)
+                .catch((err) => err);
+        }).catch((err) => err);
+        if (errors)
+            Message.response(res, errors.statusCode, errors);
+    });
 };
 /**
  * Returns a class called Resource, which loads the resources. Also, after loading the necessary
@@ -18328,15 +18113,14 @@ var Handler = function (classRequest, middlewares) {
  * }
  * ```
  */
-var Resource = /** @class */ (function (_super) {
-    __extends(Resource, _super);
+class Resource extends Validators {
     /**
      * Creates an instance of Resource.
      *
      * @param req - http request functions
      */
-    function Resource(req) {
-        var _this = _super.call(this, true, {}, true) || this;
+    constructor(req) {
+        super(true, {});
         /**
          * The addArgs property must be represented in the child class as a function
          * within this function the schemas are loaded for the validation of the arguments
@@ -18348,32 +18132,29 @@ var Resource = /** @class */ (function (_super) {
          * }
          *
          */
-        _this.addArgs = undefined;
-        _this.values = __assign(__assign(__assign({}, req.body), req.query), req.params);
-        return _this;
+        this.addArgs = undefined;
+        this.values = Object.assign(Object.assign(Object.assign({}, req.body), req.query), req.params);
     }
     /**
      *
      * @param schemes -
      * @param arg -
      */
-    Resource.prototype.parser = function (schemes, arg) {
-        var _this = this;
-        return new Promise(function (resolve) {
-            var _a, _b;
+    parser(schemes, arg) {
+        return new Promise(resolve => {
             if (typeof arg == 'string') {
-                _this.schemes = __assign((_a = {}, _a[arg] = schemes, _a), _this.schemes);
+                this.schemes = Object.assign({ [arg]: schemes }, this.schemes);
                 resolve(true);
             }
             else {
-                for (var i = 1; i <= arg.length; i++) {
-                    _this.schemes = __assign((_b = {}, _b[arg[i - 1]] = schemes, _b), _this.schemes);
+                for (let i = 1; i <= arg.length; i++) {
+                    this.schemes = Object.assign({ [arg[i - 1]]: schemes }, this.schemes);
                     if (i == arg.length)
                         resolve(true);
                 }
             }
         });
-    };
+    }
     /**
      * Returns an anonymous extended class of Resource, which loads the resources. Also, after loading the necessary
      * resources for routing work, load initial configuration for validation of the
@@ -18397,44 +18178,37 @@ var Resource = /** @class */ (function (_super) {
      *
      * @returns Class Args extends Resource
      */
-    Resource.args = function (schemes) {
-        return /** @class */ (function (_super) {
-            __extends(class_1, _super);
-            function class_1(req) {
-                var _this = _super.call(this, req) || this;
-                _this.schemes = schemes;
-                _this.addArgs = undefined;
-                return _this;
+    static args(schemes) {
+        return class extends Resource {
+            constructor(req) {
+                super(req);
+                this.schemes = schemes;
+                this.addArgs = undefined;
             }
-            return class_1;
-        }(Resource));
-    };
-    return Resource;
-}(Validators));
+        };
+    }
+}
 /**
  *
  */
-var Sandwich = /** @class */ (function (_super) {
-    __extends(Sandwich, _super);
-    function Sandwich() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+class Sandwich extends Validators {
+    constructor() {
+        super(...arguments);
         /**
          *
          */
-        _this.handler = Handler;
+        this.handler = Handler;
         /**
          *
          * @param app
          */
-        _this.routers = function (app) { return new Routers(app); };
+        this.routers = (app) => new Routers(app);
         /**
          *
          */
-        _this.args = Resource.args;
-        return _this;
+        this.args = Resource.args;
     }
-    return Sandwich;
-}(Validators));
+}
 var Sandwich$1 = new Sandwich();
 
 export { Resource, Validators, Sandwich$1 as default };

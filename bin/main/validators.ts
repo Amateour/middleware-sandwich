@@ -1,5 +1,37 @@
 import * as SW from "../../functions";
-import {parserSchemes} from "./middleware";
+import {argument} from "../validators/argument";
+import {verifyErrors} from "../validators/verifyErrors";
+
+/**
+ *
+ * @param valueOf - Determines how validated arguments and parameters are extracted.
+ * @param schemes - schemes
+ * @param values - data body request.
+ * @returns
+ */
+export const parserSchemes: SW.HandlerParserSchemes = async (
+    valueOf, schemes, values
+) => {
+    const
+        /**
+         *
+         * @param result_argument result argument
+         */
+        result_argument = await argument(valueOf ?? true, values ?? {}, schemes),
+        /**
+         * check for errors in arguments
+         *
+         * @param responseError - bug check response
+         */
+        responseError = await verifyErrors(result_argument.argument);
+
+    return {
+        schemes: result_argument.argument,
+        args: result_argument.body,
+        errors: responseError.errors,
+        message: responseError.message
+    }
+}
 
 /**
  * Types of validations
@@ -30,11 +62,6 @@ export class Types implements SW.Types {
 class Validators extends Types implements SW.ValidatorsClass {
     /**
      *
-     * @private
-     */
-    private readonly resActive: any;
-    /**
-     *
      */
     values: SW.valuesArgs | undefined = undefined;
     /**
@@ -53,14 +80,12 @@ class Validators extends Types implements SW.ValidatorsClass {
      * @param valueOf - Determines how validated arguments and parameters are extracted.
      * @defaultValue value_of=true
      * @param schemes - List of validation schemes.
-     * @param resActive -
      * @defaultValue schemes={}
      */
-    constructor(valueOf = true, schemes: object = {}, resActive = false) {
+    constructor(valueOf = true, schemes: object = {}) {
         super();
         this.schemes = schemes;
         this.valueOf = valueOf;
-        this.resActive = resActive;
     }
 
     /**
@@ -72,7 +97,7 @@ class Validators extends Types implements SW.ValidatorsClass {
     parserSchemes(values?: SW.valuesArgs): Promise<SW.ParserSchemesResponse>
     {
         return parserSchemes(
-            this.valueOf, this.schemes, this.values ?? values, this.resActive
+            this.valueOf, this.schemes, this.values ?? values
         )
     }
 }

@@ -1,47 +1,55 @@
-import * as SWCH from '../../functions';
+import * as SW from '../../functions';
+/**
+ * Identify if it is running in a browser
+ */
+export declare const isBrowser: () => boolean;
+/**
+ * Identify if it is running in a nodejs
+ */
+export declare const isNode: () => boolean;
 /**
  * validate if it is an array
  *
  * @param elm - element validation
  * @returns boolean
  */
-export declare const isArray: SWCH.isArray;
+export declare const isArray: SW.isArray;
 /**
  * validate if it is an objet
  *
  * @param elm - element validation
  * @returns boolean
  */
-export declare const isObject: SWCH.isObject;
+export declare const isObject: SW.isObject;
 /**
  * validate if it is an string
  *
  * @param elm - element validation
  * @returns boolean
  */
-export declare const isString: SWCH.isString;
+export declare const isString: SW.isString;
 /**
  * validate if it is an number
  *
  * @param elm - element validation
  * @returns boolean
  */
-export declare const isNumber: SWCH.isNumber;
+export declare const isNumber: SW.isNumber;
 /**
  * Functions validations (isArray, isString)
  *
  */
-export declare const validate: SWCH.validate;
+export declare const validate: SW.validate;
 /**
  * get_middlewares Middleware extraction, can be an array of function objects or an object
  *
  * @example
  * Array functions
- * Sanwiche.handler(Users, [isAuth])
+ * Sandwich.handler(Users, [isAuth])
  *
  * Array objects
  * ```ts
- * Sanwiche.handler(Users, [
+ * Sandwich.handler(Users, [
  * {
  *   methods: ['POST'],
  *   middleware: [isAuth]
@@ -51,7 +59,7 @@ export declare const validate: SWCH.validate;
  *
  *```ts
  * objects
- * Sanwiche.handler(Users, {
+ * Sandwich.handler(Users, {
  *   methods: ['POST'],
  *   middleware: [isAuth]
  * })
@@ -63,13 +71,13 @@ export declare const validate: SWCH.validate;
  * @param middlewares - list middlewares
  * @param method - method request (post, get)
  */
-export declare const get_middlewares: SWCH.get_middlewares;
+export declare const get_middlewares: SW.get_middlewares;
 /**
  *
  * @param arr -
  * @returns string[]
  */
-export declare const toUpper: SWCH.toUpper;
+export declare const toUpper: SW.toUpper;
 /**
  * Execute the function according to its specified method
  *
@@ -78,4 +86,4 @@ export declare const toUpper: SWCH.toUpper;
  * @param res -
  * @param next - Next function
  */
-export declare const push_against: SWCH.push_against;
+export declare const push_against: SW.push_against;

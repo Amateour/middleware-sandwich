@@ -12,6 +12,15 @@ const get_data_errors: SW.get_data_errors = (data) => {
 }
 
 /**
+ * Server error Generate
+ *
+ * @param data -
+ */
+const error = (data: SW.ErrorsRequest.Data) => {
+    throw data
+}
+
+/**
  * Class to handle exceptions
  */
 export class ClassException implements SW.ClassException {
@@ -19,11 +28,8 @@ export class ClassException implements SW.ClassException {
     /**
      * Server error Generate
      *
-     * @param data - 
      */
-    error = (data: SW.ErrorsRequest.Data) => {
-        throw data
-    }
+    error = error
 
     /**
      * Server error Generate
@@ -32,7 +38,7 @@ export class ClassException implements SW.ClassException {
      */
     server_error = (data: SW.ErrorsRequest.Data) => {
         const {message, errors} = get_data_errors(data);
-        throw {"statusCode": 500, "message": message, errors};
+        error({"statusCode": 500, "message": message, errors});
     }
 
     /**
@@ -42,7 +48,7 @@ export class ClassException implements SW.ClassException {
      */
     bad_request = (data: SW.ErrorsRequest.Data) => {
         const {message, errors} = get_data_errors(data);
-        throw {"statusCode": 400, "message": message, errors};
+        error({"statusCode": 400, "message": message, errors});
     }
 
 }

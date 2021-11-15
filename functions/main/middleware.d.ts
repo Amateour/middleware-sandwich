@@ -45,8 +45,7 @@ export type ParserSchemesResponse = {
 export type HandlerParserSchemes = (
     valueOf?: valueOf,
     schemes?: schemes | null,
-    values?: valuesArgs,
-    respActive?: boolean
+    values?: valuesArgs
 ) => Promise<ParserSchemesResponse>
 
 /**

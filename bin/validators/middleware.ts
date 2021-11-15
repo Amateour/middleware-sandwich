@@ -1,4 +1,4 @@
-import * as SWCH from '../../functions';
+import * as SW from '../../functions';
 import {get_middlewares} from "../utils/help";
 
 /**
@@ -9,7 +9,7 @@ import {get_middlewares} from "../utils/help";
  * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
  * @param train -
  */
-export const middleware_next: SWCH.middleware_next = (
+export const middleware_next: SW.middleware_next = (
     funcMiddleware, req, res, train
 ) => {
    return new Promise((resolve) => {
@@ -24,7 +24,7 @@ export const middleware_next: SWCH.middleware_next = (
  * @param req - Http Request
  * @param res - Http Response
  */
-const exec_list_func: SWCH.exec_list_func = async (middlewares, req, res) => {
+const exec_list_func: SW.exec_list_func = async (middlewares, req, res) => {
     let train = {};
     for (const middleware of middlewares) {
         const result = await middleware_next(middleware, req, res, train);
@@ -39,7 +39,7 @@ const exec_list_func: SWCH.exec_list_func = async (middlewares, req, res) => {
  *
  * @example
  * ```ts
- * Sanwiche.handler (Users, [{
+ * Sandwich.handler (Users, [{
  * methods: ['POST'],
  * middleware: [isAuth]
  *}])
@@ -53,7 +53,7 @@ const exec_list_func: SWCH.exec_list_func = async (middlewares, req, res) => {
  * @param middlewares - array functions or function
  * @param method - `{string}` method request
  */
-export const middleware: SWCH.middleware = async (
+export const middleware: SW.middleware = async (
     req, res, middlewares, method
 ) => {
     if (!middlewares) return true;

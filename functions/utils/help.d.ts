@@ -25,10 +25,12 @@ export type isNumber = (elm: any) => boolean;
  * 
  */
 export type validate = {
-  Array: isArray,
-  String: isString,
-  Number: isNumber,
-  Object: isObject
+    Array: isArray,
+    String: isString,
+    Number: isNumber,
+    Object: isObject,
+    Browser: () => boolean,
+    Node: () => boolean
 }
 /**
  *

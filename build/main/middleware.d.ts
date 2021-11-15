@@ -2,15 +2,6 @@ import * as SW from '../../functions';
 import Routers from './routers';
 import Validators from "./validators";
 /**
- *
- * @param valueOf - Determines how validated arguments and parameters are extracted.
- * @param schemes - schemes
- * @param values - data body request.
- * @param respActive - if it is true, the errors checked by `res.status(200).json ({message: 'message'})` will be returned, if it is false it generates an exception that is replicated in the handler function `Sandwich.handler`
- * @returns
- */
-export declare const parserSchemes: SW.HandlerParserSchemes;
-/**
  * Returns a class called Resource, which loads the resources. Also, after loading the necessary
  * resources for the routing job, it loads the initial configuration for the validation of the
  * arguments and parameters.

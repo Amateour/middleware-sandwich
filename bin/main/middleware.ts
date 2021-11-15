@@ -1,6 +1,6 @@
 import * as SW from '../../functions';
-import {argument, method, middleware, verifyErrors} from '../validators/validator';
 import {push_against, toUpper} from '../utils/help';
+import {middleware, method} from '../validator';
 import {Message} from '../utils/message';
 import Routers from './routers';
 import Validators from "./validators";
@@ -54,38 +54,6 @@ const transform: SW.HandlerTransform = (options) => {
             .then((resp) => resolve(resp) )
             .catch(err => reject(err));
     })
-}
-
-/**
- *
- * @param valueOf - Determines how validated arguments and parameters are extracted.
- * @param schemes - schemes
- * @param values - data body request.
- * @param respActive - if it is true, the errors checked by `res.status(200).json ({message: 'message'})` will be returned, if it is false it generates an exception that is replicated in the handler function `Sandwich.handler`
- * @returns
- */
-export const parserSchemes: SW.HandlerParserSchemes = async (
-    valueOf, schemes, values, respActive = false
-) => {
-    const
-        /**
-         *
-         * @param result_argument result argument
-         */
-        result_argument = await argument(valueOf ?? true, values ?? {}, schemes),
-        /**
-         * check for errors in arguments
-         *
-         * @param responseError - bug check response
-         */
-        responseError = await verifyErrors(result_argument.argument, respActive);
-
-    return {
-        schemes: result_argument.argument,
-        args: result_argument.body,
-        errors: responseError.errors,
-        message: responseError.message
-    }
 }
 
 /**
@@ -197,7 +165,7 @@ export class Resource extends Validators implements SW.Resource {
      * @param req - http request functions
      */
     constructor(req: any) {
-        super(true, {}, true)
+        super(true, {})
         this.values = {...req.body, ...req.query, ...req.params}
     }
     /**

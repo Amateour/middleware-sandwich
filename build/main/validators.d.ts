@@ -1,5 +1,13 @@
 import * as SW from "../../functions";
 /**
+ *
+ * @param valueOf - Determines how validated arguments and parameters are extracted.
+ * @param schemes - schemes
+ * @param values - data body request.
+ * @returns
+ */
+export declare const parserSchemes: SW.HandlerParserSchemes;
+/**
  * Types of validations
  */
 export declare const Type: SW.Type;
@@ -17,11 +25,6 @@ export declare class Types implements SW.Types {
  * @alpha
  */
 declare class Validators extends Types implements SW.ValidatorsClass {
-    /**
-     *
-     * @private
-     */
-    private readonly resActive;
     /**
      *
      */
@@ -42,10 +45,9 @@ declare class Validators extends Types implements SW.ValidatorsClass {
      * @param valueOf - Determines how validated arguments and parameters are extracted.
      * @defaultValue value_of=true
      * @param schemes - List of validation schemes.
-     * @param resActive -
      * @defaultValue schemes={}
      */
-    constructor(valueOf?: boolean, schemes?: object, resActive?: boolean);
+    constructor(valueOf?: boolean, schemes?: object);
     /**
      * parse and validate request body data
      *

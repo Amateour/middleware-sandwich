@@ -188,7 +188,8 @@ export declare namespace ErrorsRequest {
      */
     export interface Data {
         message: message,
-        errors?: errors
+        errors?: errors,
+        statusCode?: number
     }
     /**
      * Response errors
