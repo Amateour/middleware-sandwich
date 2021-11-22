@@ -2,7 +2,7 @@ import Sandwich, {Validators} from "../../build";
 import {verifyErrors} from "../../build/validator";
 
 test('args validation errors', async () => {
-    const Snack = new Validators(true, {
+    const Snack = new Validators({
         email: {type: Sandwich.String, required: true, strict: true},
         password: {type: Sandwich.String, required: true, strict: true, min: 8}
     });

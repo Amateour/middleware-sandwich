@@ -13,10 +13,13 @@
         "ecmaVersion": 2015
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "eslint-plugin-tsdoc"
     ],
     "ignorePatterns": [".build/*"],
     "rules": {
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "tsdoc/syntax": "warn"
     }
 }

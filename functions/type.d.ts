@@ -1,3 +1,4 @@
+import * as SW from "./index";
 
 export declare type Any = any;
 /**
@@ -23,6 +24,16 @@ export interface multiMiddlewareType {
     middleware: Array<FunctionVoid> | FunctionVoid,
     methods?: Array<string> | string
 }
+/**
+ *
+ */
+export type resolvePromiseScheme = (scheme: SW.scheme) => void;
+/**
+ *
+ */
+export type FuncResolvePromiseScheme = (
+    resolve: resolvePromiseScheme
+) => void;
 /**
  * middlewaresType
  */

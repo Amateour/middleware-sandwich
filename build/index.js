@@ -27,6 +27,18 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
+const contextHttp = (() => {
+    class contextHttp {
+        constructor() {
+            this.request = undefined;
+            this.response = undefined;
+        }
+    }
+    return new contextHttp();
+})();
+const requestGet = () => contextHttp.request;
+const responseGet = () => contextHttp.response;
+
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 function createCommonjsModule(fn, module) {
@@ -17818,20 +17830,28 @@ class Types {
 class Validators extends Types {
     /**
      * Creates an instance of Sandwiches.
-     *
-     * @param valueOf - Determines how validated arguments and parameters are extracted.
-     * @defaultValue value_of=true
-     * @param schemes - List of validation schemes.
-     * @defaultValue schemes={}
      */
-    constructor(valueOf = true, schemes = {}) {
+    constructor(schemes) {
         super();
         /**
          *
          */
         this.values = undefined;
-        this.schemes = schemes;
-        this.valueOf = valueOf;
+        /**
+         * Object type property. List of validation schemes.
+         * @defaultValue schemes={}
+         */
+        this.schemes = {};
+        /**
+         * Boolean type property. Determines how validated arguments and parameters are extracted.
+         * @defaultValue value_of=true
+         */
+        this.valueOf = true;
+        this.schemes = schemes !== null && schemes !== void 0 ? schemes : this.schemes;
+        this.callBacksProperty = [];
+        this.updateProperty = (callBack) => {
+            this.callBacksProperty.push(callBack);
+        };
     }
     /**
      * parse and validate request body data
@@ -17840,8 +17860,113 @@ class Validators extends Types {
      * @return ParserSchemesResponse
      */
     parserSchemes(values) {
-        var _a;
-        return parserSchemes(this.valueOf, this.schemes, (_a = this.values) !== null && _a !== void 0 ? _a : values);
+        return new Promise((resolve) => {
+            for (let i = 0; i < this.callBacksProperty.length; i++) {
+                const func = this.callBacksProperty[i];
+                new Promise((resolve) => {
+                    func(resolve);
+                }).then(({ values, valueOf, schemes }) => {
+                    this.values = values !== null && values !== void 0 ? values : this.values;
+                    this.valueOf = valueOf !== null && valueOf !== void 0 ? valueOf : this.valueOf;
+                    this.schemes = schemes !== null && schemes !== void 0 ? schemes : this.schemes;
+                });
+                if (this.callBacksProperty.length - 1 === i) {
+                    resolve(true);
+                }
+            }
+            if (this.callBacksProperty.length == 0)
+                resolve(true);
+        }).then(() => {
+            var _a;
+            return parserSchemes(this.valueOf, this.schemes, (_a = this.values) !== null && _a !== void 0 ? _a : values);
+        });
+    }
+    reset() {
+        this.valueOf = true;
+        this.schemes = {};
+        this.values = undefined;
+    }
+}
+const validator = new Validators();
+validator.updateProperty((update) => {
+    const request = requestGet();
+    update({ values: Object.assign(Object.assign(Object.assign({}, request.body), request.params), request.query) });
+});
+const addSchemes = (schemes) => {
+    validator.schemes = Object.assign(validator.schemes, schemes);
+};
+/**
+ *
+ * @param callBack -
+ */
+const handlerAddScheme = (callBack) => {
+    new Promise((resolve) => {
+        callBack(resolve);
+    }).then((schemes) => {
+        addSchemes(schemes);
+    });
+};
+/**
+ *
+ * @param schemesEntries -
+ */
+const addPropertySchemesValidator = (schemesEntries) => {
+    return new Promise((resolve) => {
+        resolve(Object.fromEntries(schemesEntries));
+    }).then((schemeData) => {
+        validator.schemes = Object.assign(validator.schemes, schemeData);
+    });
+};
+class ParserSchemes {
+    /**
+     *
+     */
+    constructor() {
+        validator.reset();
+    }
+    /**
+     *
+     */
+    parserSchemes() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield addPropertySchemesValidator(Object.entries(this))
+                .then(() => validator.parserSchemes());
+        });
+    }
+    /**
+     *
+     * @param schemes -
+     */
+    addSchemes(schemes) {
+        addSchemes(schemes);
+    }
+    /**
+     * The addScheme property must be represented in the child class as a function
+     * within this function the schemas are loaded for the validation of the arguments
+     *
+     * @example
+     *
+     * addScheme({type: Sandwich.String, required: true, strict: true}, ['email'])
+     *
+     * @param scheme -
+     * @param arg -
+     */
+    addScheme(scheme, arg) {
+        handlerAddScheme((add) => {
+            if (typeof arg == 'string') {
+                add({
+                    [arg]: scheme
+                });
+            }
+            else {
+                let sh = {};
+                for (let i = 1; i <= arg.length; i++) {
+                    sh = Object.assign({ [arg[i - 1]]: scheme }, sh);
+                    if (i == arg.length)
+                        add(sh);
+                }
+            }
+        });
     }
 }
 
@@ -18059,9 +18184,14 @@ const transform = (options) => {
  */
 const Handler = (classRequest, middlewares) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        const $classRequest = new classRequest(req, res);
-        if ($classRequest.addArgs instanceof Function) {
-            $classRequest.addArgs();
+        var _a;
+        contextHttp.response = res;
+        contextHttp.request = req;
+        const $classRequest = new classRequest();
+        if (typeof req === 'object') {
+            const valueBody = req.body ? Object.assign((_a = $classRequest.values) !== null && _a !== void 0 ? _a : {}, req.body) : {};
+            const ValueParams = req.params ? Object.assign(valueBody, req.params) : valueBody;
+            $classRequest.values = req.query ? Object.assign(ValueParams, req.query) : ValueParams;
         }
         /**
          * selected methods
@@ -18119,47 +18249,6 @@ const Handler = (classRequest, middlewares) => {
  */
 class Resource extends Validators {
     /**
-     * Creates an instance of Resource.
-     *
-     * @param req - http request functions
-     */
-    constructor(req) {
-        super(true, {});
-        /**
-         * The addArgs property must be represented in the child class as a function
-         * within this function the schemas are loaded for the validation of the arguments
-         *
-         * @example
-         *
-         * async addArgs(){
-         *     await this.parser({type: Sandwich.String, required: true, strict: true}, ['email'])
-         * }
-         *
-         */
-        this.addArgs = undefined;
-        this.values = Object.assign(Object.assign(Object.assign({}, req.body), req.query), req.params);
-    }
-    /**
-     *
-     * @param schemes -
-     * @param arg -
-     */
-    parser(schemes, arg) {
-        return new Promise(resolve => {
-            if (typeof arg == 'string') {
-                this.schemes = Object.assign({ [arg]: schemes }, this.schemes);
-                resolve(true);
-            }
-            else {
-                for (let i = 1; i <= arg.length; i++) {
-                    this.schemes = Object.assign({ [arg[i - 1]]: schemes }, this.schemes);
-                    if (i == arg.length)
-                        resolve(true);
-                }
-            }
-        });
-    }
-    /**
      * Returns an anonymous extended class of Resource, which loads the resources. Also, after loading the necessary
      * resources for routing work, load initial configuration for validation of the
      * arguments and parameters.
@@ -18184,10 +18273,9 @@ class Resource extends Validators {
      */
     static args(schemes) {
         return class extends Resource {
-            constructor(req) {
-                super(req);
+            constructor() {
+                super();
                 this.schemes = schemes;
-                this.addArgs = undefined;
             }
         };
     }
@@ -18215,7 +18303,11 @@ class Sandwich extends Validators {
 }
 var Sandwich$1 = new Sandwich();
 
+exports.ParserSchemes = ParserSchemes;
 exports.Resource = Resource;
 exports.Validators = Validators;
+exports.contextHttp = contextHttp;
 exports["default"] = Sandwich$1;
+exports.requestGet = requestGet;
+exports.responseGet = responseGet;
 //# sourceMappingURL=index.js.map

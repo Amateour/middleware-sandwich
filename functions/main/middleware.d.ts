@@ -1,23 +1,19 @@
 import {routerProps, middlewares, schemes, ReqType, ResType, Next} from "../type";
 import {Types} from "../validators/types";
 
-/**
- *
- * @param options -
- * @return `Promise<{
-  f: () => void,
-  success: boolean,
-  method: string,
-  schemes: unknown,
-  req_body: string | null | undefined,
-}>`
- */
-export type HandlerExec = (options: routerProps) => Promise<{
-    f: () => void,
+type HandleExecResponse = {
+    train: () => void,
     success: boolean,
     method: string,
     req_body: string | null | undefined,
-}>
+}
+
+/**
+ *
+ * @param options -
+ * @returns Promise<HandleExecResponse>
+ */
+export type HandlerExec = (options: routerProps) => Promise<HandleExecResponse>
 
 /**
  *
@@ -26,7 +22,7 @@ export type HandlerExec = (options: routerProps) => Promise<{
 export type HandlerTransform = (options: routerProps) => Promise<any>;
 
 
-type valuesArgs = {[index: string | number]};
+type valuesArgs = {[index: string | number]} | undefined;
 type valueOf = boolean | true;
 
 /**
@@ -46,58 +42,58 @@ export type HandlerParserSchemes = (
     valueOf?: valueOf,
     schemes?: schemes | null,
     values?: valuesArgs
-) => Promise<ParserSchemesResponse>
+) => Promise<ParserSchemesResponse>;
 
-/**
- *
- */
-export interface Resource {
-    readonly schemes: schemes;
-    train: unknown;
-    request: any;
-    addArgs: any;
-}
-
-/**
- * Constructor of the Resource class
- */
-export interface HandlerResource {
-    new (req: any, res: any): Resource,
-}
-
-/**
- *
- *
- * @param classRequest -
- * @param middlewares -
- * @return `{(
- *       req: ReqType, res: ResType, next?: Next
- *     ) => unknown}`
- */
-type Handler = (classRequest: any, middlewares?: middlewares) => (
+type HandlerResponse = (
     req: ReqType, res: ResType, next?: Next
 ) => unknown;
 /**
  *
  *
- * @param schemes -
- * @return
+ * @param classRequest -
+ * @param middlewares -
+ * @returns HandlerResponse
  */
-type ResourceClass = (schemes?: schemes) => HandlerResource
+type Handler = (classRequest: any, middlewares?: middlewares) => HandlerResponse;
+/**
+ *
+ *
+ * @param schemes -
+ * @returns
+ */
+type ResourceClass = (schemes?: schemes) => HandlerResource;
+export type ValidatorCallback = (resolve: any) => void ;
 /**
  * class Sandwiches
  *
  */
 export interface ValidatorsClass extends Types {
     readonly schemes: schemes;
+    /**
+     *
+     */
     valueOf: boolean;
     /**
      *
-     * @param body -
-     * @return Promise<ParserSchemesResponse>
      */
-    parserSchemes(body: valuesArgs): Promise<ParserSchemesResponse>
+    values: valuesArgs;
+    /**
+     *
+     * @param body -
+     * @returns Promise<ParserSchemesResponse>
+     */
+    parserSchemes(body?: valuesArgs): Promise<ParserSchemesResponse>;
 }
+
+export interface ParserSchemesClass {
+    /**
+     *
+     * @param schemes -
+     * @param args -
+     */
+    addScheme(schemes: schemes, args: string | string[]): void;
+}
+
 /**
  *
  */
@@ -106,4 +102,19 @@ export interface SandwichClass extends ValidatorsClass {
      *
      */
     handler: Handler,
+}
+
+/**
+ *
+ */
+export interface Resource {
+    train: unknown;
+    request: any;
+}
+
+/**
+ * Constructor of the Resource class
+ */
+export interface HandlerResource {
+    new (): Resource,
 }

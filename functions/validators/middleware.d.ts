@@ -1,11 +1,11 @@
-import {middlewaresType, ReqType, ResType} from "../type";
+import {middlewareType, ReqType, resolvePromiseScheme, ResType} from "../type";
 
 /**
- * @type FuncMiddleware The middleware function runs in the middleware_next function
+ * The middleware function runs in the middleware_next function
  * @returns void
  */
 export declare type FuncMiddleware = (
-    req: ReqType, res: ResType, resolve: Promise, train: any
+    req: ReqType, res: ResType, resolve: resolvePromiseScheme, train: any
 ) => void;
 
 /**
@@ -35,5 +35,5 @@ export type exec_list_func = (middlewares: FuncMiddleware[], req: ReqType, res: 
  * @param method - {string} method request
  */
 export type middleware = (
-    req: ReqType, res: ResType, middlewares?: middlewaresType, method?: string
+    req: ReqType, res: ResType, middlewares?: middlewareType, method?: string
 ) => Promise<any>

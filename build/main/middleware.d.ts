@@ -32,30 +32,6 @@ export declare class Resource extends Validators implements SW.Resource {
      */
     request: SW.Any;
     /**
-     * The addArgs property must be represented in the child class as a function
-     * within this function the schemas are loaded for the validation of the arguments
-     *
-     * @example
-     *
-     * async addArgs(){
-     *     await this.parser({type: Sandwich.String, required: true, strict: true}, ['email'])
-     * }
-     *
-     */
-    addArgs: any;
-    /**
-     * Creates an instance of Resource.
-     *
-     * @param req - http request functions
-     */
-    constructor(req: any);
-    /**
-     *
-     * @param schemes -
-     * @param arg -
-     */
-    parser(schemes: SW.schemes, arg: string | string[]): Promise<unknown>;
-    /**
      * Returns an anonymous extended class of Resource, which loads the resources. Also, after loading the necessary
      * resources for routing work, load initial configuration for validation of the
      * arguments and parameters.

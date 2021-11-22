@@ -1,27 +1,34 @@
 #!/usr/bin/env node
-import Sandwich, {Resource} from './bin';
+import Sandwich, {Resource, ParserSchemes, Validators, Type} from './bin';
+
 import bodyParser from 'body-parser';
 import debuggers from 'debug';
 import http from 'http';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const express = require('express');
+
+class UsersSchemesValidator extends ParserSchemes {
+    email = {type: Type.String, required: true, strict: true};
+    password = {type: Type.String, required: true, strict: true, min: 8};
+    confirmPassword = {type: Type.String, required: true, strict: true, min: 8};
+}
 
 class Users extends Resource {
 
-    addArgs: any = async () => {
-        await this.parser({type: Sandwich.String, required: true, strict: true}, ['email'])
-        await this.parser({type: Sandwich.String, required: true, strict: true, min: 8}, [
-            'password',
-            'confirmPassword'
-        ])
-    }
+    static parsers = new UsersSchemesValidator();
+
+    static validator = new Validators({
+        email: {type: Type.String, required: true, strict: true},
+        password: {type: Type.String, required: true, strict: true, min: 8},
+        confirmPassword: {type: Type.String, required: true, strict: true, min: 8}
+    })
 
     async get(req: any, res: any) {
         try {
-            const data: any = await this.parserSchemes();
+
+            const data: any = await Users.parsers.parserSchemes();
 
             res.status(200).json({
                 params: req.params,
@@ -31,14 +38,20 @@ class Users extends Resource {
         } catch (e: any) {
             res.status(e.statusCode ?? 500).json({
                 message: e.message ?? 'internal_server',
-                errors: e.errors
+                errors: e.errors,
+                stack: e.stack,
             });
         }
     }
 
     async post(req: any, res: any) {
         try {
-            const data = await this.parserSchemes();
+            const data = await Users.validator.parserSchemes({
+                ...req.query,
+                ...req.params,
+                ...req.body
+            });
+
             res.status(200).json({
                 params: req.params,
                 query: req.query,

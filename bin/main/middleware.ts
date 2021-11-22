@@ -2,6 +2,7 @@ import * as SW from '../../functions';
 import {push_against, toUpper} from '../utils/help';
 import {middleware, method} from '../validator';
 import {Message} from '../utils/message';
+import {contextHttp} from '../utils/contextHttp';
 import Routers from './routers';
 import Validators from "./validators";
 import _ from 'lodash';
@@ -10,7 +11,7 @@ import _ from 'lodash';
  * Execute validation functions (method, middleware)
  *
  * @param options - Configuration object for validation process
- * @return Promise<object>
+ * @returns Promise<object>
  */
 const exec: SW.HandlerExec = async (options) => {
     let req_method = undefined;
@@ -33,7 +34,7 @@ const exec: SW.HandlerExec = async (options) => {
             );
 
         return {
-            f: middleware_resp,
+            train: middleware_resp,
             success: true,
             method: method,
             req_body: req_body,
@@ -68,15 +69,14 @@ const transform: SW.HandlerTransform = (options) => {
  *
  * @param classRequest - Class that will serve as a pillow for routing.
  * @param middlewares - Middleware functions that run before the final function or final middleware
- * @return
+ * @returns
  */
 const Handler = (classRequest: SW.HandlerResource, middlewares?: SW.middlewares) => {
     return async (req: SW.Any, res: SW.Any, next?: SW.Next) => {
+        contextHttp.response = res;
+        contextHttp.request = req;
+        const $classRequest = new classRequest();
 
-        const $classRequest = new classRequest(req, res);
-        if($classRequest.addArgs instanceof Function) {
-            $classRequest.addArgs()
-        }
         /**
          * selected methods
          *
@@ -102,7 +102,7 @@ const Handler = (classRequest: SW.HandlerResource, middlewares?: SW.middlewares)
         }
 
         const errors: SW.Any = await transform(data_transform).then((resp) => {
-            $classRequest.train = resp.f;
+            $classRequest.train = resp.train;
             $classRequest.request = {
                 success: resp.success,
                 method: resp.method
@@ -127,7 +127,7 @@ const Handler = (classRequest: SW.HandlerResource, middlewares?: SW.middlewares)
  * The configuration of the arguments and parameters will be executed through the
  * parser_schemes function, which is a property of the Resource class.
  *
- * @examples
+ * @example
  * examples of schemes:
  * ```json
  * {
@@ -136,7 +136,7 @@ const Handler = (classRequest: SW.HandlerResource, middlewares?: SW.middlewares)
  * }
  * ```
  */
-export class Resource extends Validators implements SW.Resource {
+export class Resource implements SW.Resource {
     /**
      * Loads the data returned by the middleware, in case the promise is fulfilled.
      *
@@ -147,83 +147,7 @@ export class Resource extends Validators implements SW.Resource {
      *
      */
     request: SW.Any;
-    /**
-     * The addArgs property must be represented in the child class as a function
-     * within this function the schemas are loaded for the validation of the arguments
-     *
-     * @example
-     *
-     * async addArgs(){
-     *     await this.parser({type: Sandwich.String, required: true, strict: true}, ['email'])
-     * }
-     *
-     */
-    addArgs: any = undefined;
-    /**
-     * Creates an instance of Resource.
-     *
-     * @param req - http request functions
-     */
-    constructor(req: any) {
-        super(true, {})
-        this.values = {...req.body, ...req.query, ...req.params}
-    }
-    /**
-     *
-     * @param schemes -
-     * @param arg -
-     */
-    parser(schemes: SW.schemes, arg: string | string[]) {
-        return new Promise(resolve => {
-            if(typeof arg == 'string') {
-                this.schemes = {
-                    [arg]: schemes,
-                    ...this.schemes
-                };
-                resolve(true);
-            } else {
-                for (let i = 1; i <= arg.length; i++) {
-                    this.schemes = {
-                        [arg[i - 1]]: schemes,
-                        ...this.schemes
-                    }
-                    if(i == arg.length) resolve(true);
-                }
-            }
-        });
-    }
-    /**
-     * Returns an anonymous extended class of Resource, which loads the resources. Also, after loading the necessary
-     * resources for routing work, load initial configuration for validation of the
-     * arguments and parameters.
-     *
-     *
-     * @remarks
-     * The configuration of the arguments and parameters will be executed through the
-     * parser_schemes function, which is a property of the Resource class.
-     *
-     * @param schemes - The validation schemes are passed to the this.schemes property of the Resource class
-     *
-     * @examples
-     * examples of schemes:
-     * ```json
-     * {
-     *   email: {type: Sandwich.String, required: true, strict: true,
-     *   password: {type: Sandwich.String, required: true, strict: true, min: 8,
-     * }
-     * ```
-     *
-     * @returns Class Args extends Resource
-     */
-    static args(schemes: SW.schemes): SW.HandlerResource {
-        return class extends Resource {
-            constructor(req: any) {
-                super(req);
-                this.schemes = schemes;
-                this.addArgs = undefined;
-            }
-        }
-    }
+
 }
 
 /**
@@ -236,13 +160,9 @@ class Sandwich extends Validators implements SW.SandwichClass {
     handler = Handler;
     /**
      *
-     * @param app
+     * @param app -
      */
     routers = (app: SW.Routers.router) => new Routers(app);
-    /**
-     *
-     */
-    args = Resource.args;
 }
 
 export default new Sandwich();
