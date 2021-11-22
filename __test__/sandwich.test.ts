@@ -37,7 +37,9 @@ test('validation success', async () => {
 
 
 test('HTTP POST request is not allowed', async () => {
-  class Users extends Resource.args(UserScheme) {}
+  class Users extends Resource {
+    static parser = new Validators(UserScheme);
+  }
   const handler = Sandwich.handler(Users);
   const handler_request_post = async () => {
     return await handler({
@@ -56,9 +58,10 @@ test('HTTP POST request is not allowed', async () => {
 
 test('HTTP POST request is allowed', (done) => {
   class Users extends Resource {
-    async post() {
+    static parser = new Validators(UserScheme);
+    async post(req: any) {
       try {
-        const resp: ParserSchemesResponse = await this.parserSchemes();
+        const resp: ParserSchemesResponse = await Users.parser.parserSchemes(req.body);
         expect(resp.message).toBe("args_validation_successful");
         done();
       } catch (error) {

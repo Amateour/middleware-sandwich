@@ -17776,9 +17776,16 @@ const verifyErrors = (errors) => __awaiter(void 0, void 0, void 0, function* () 
 });
 
 /**
+ * Analyze the values provided according to your schema.
  *
  * @param valueOf - Determines how validated arguments and parameters are extracted.
  * @param schemes - schemes
+ * ```json
+ * {
+ *     email: {type: Sandwich.String, required: true, strict: true},
+ *     password: {type: Sandwich.String, required: true, strict: true, min: 8}
+ * }
+ * ```
  * @param values - data body request.
  * @returns
  */
@@ -17786,7 +17793,7 @@ const parserSchemes = (valueOf, schemes, values) => __awaiter(void 0, void 0, vo
     const 
     /**
      *
-     * @param result_argument result argument
+     * @param result_argument - result argument
      */
     result_argument = yield argument(valueOf !== null && valueOf !== void 0 ? valueOf : true, values !== null && values !== void 0 ? values : {}, schemes), 
     /**
@@ -17805,27 +17812,18 @@ const parserSchemes = (valueOf, schemes, values) => __awaiter(void 0, void 0, vo
 /**
  * Types of validations
  */
-const Type = {
-    String: String,
-    Number: Number,
-    Array: Array,
-    Boolean: Boolean,
-    Object: Object,
-};
-/**
- * Types of validations
- */
 class Types {
     constructor() {
-        this.String = Type.String;
-        this.Number = Type.Number;
-        this.Array = Type.Array;
-        this.Boolean = Type.Boolean;
-        this.Object = Type.Object;
+        this.String = String;
+        this.Number = Number;
+        this.Array = Array;
+        this.Boolean = Boolean;
+        this.Object = Object;
     }
 }
+const Type = new Types();
 /**
- * @alpha
+ * @beta
  */
 class Validators extends Types {
     /**
@@ -17839,7 +17837,7 @@ class Validators extends Types {
         this.values = undefined;
         /**
          * Object type property. List of validation schemes.
-         * @defaultValue schemes={}
+         * @defaultValue object
          */
         this.schemes = {};
         /**
@@ -17848,38 +17846,26 @@ class Validators extends Types {
          */
         this.valueOf = true;
         this.schemes = schemes !== null && schemes !== void 0 ? schemes : this.schemes;
-        this.callBacksProperty = [];
-        this.updateProperty = (callBack) => {
-            this.callBacksProperty.push(callBack);
+        this.updateProperty = (funUpdate) => {
+            return new Promise((resolve) => {
+                funUpdate(resolve);
+            }).then(({ values, valueOf, schemes }) => {
+                var _a, _b;
+                this.values = Object.assign(values, (_a = this.values) !== null && _a !== void 0 ? _a : {});
+                this.schemes = Object.assign(schemes !== null && schemes !== void 0 ? schemes : {}, (_b = this.schemes) !== null && _b !== void 0 ? _b : {});
+                this.valueOf = valueOf !== null && valueOf !== void 0 ? valueOf : this.valueOf;
+            });
         };
     }
     /**
      * parse and validate request body data
      *
      * @param values - Data subject to validation
-     * @return ParserSchemesResponse
+     * @returns ParserSchemesResponse
      */
     parserSchemes(values) {
-        return new Promise((resolve) => {
-            for (let i = 0; i < this.callBacksProperty.length; i++) {
-                const func = this.callBacksProperty[i];
-                new Promise((resolve) => {
-                    func(resolve);
-                }).then(({ values, valueOf, schemes }) => {
-                    this.values = values !== null && values !== void 0 ? values : this.values;
-                    this.valueOf = valueOf !== null && valueOf !== void 0 ? valueOf : this.valueOf;
-                    this.schemes = schemes !== null && schemes !== void 0 ? schemes : this.schemes;
-                });
-                if (this.callBacksProperty.length - 1 === i) {
-                    resolve(true);
-                }
-            }
-            if (this.callBacksProperty.length == 0)
-                resolve(true);
-        }).then(() => {
-            var _a;
-            return parserSchemes(this.valueOf, this.schemes, (_a = this.values) !== null && _a !== void 0 ? _a : values);
-        });
+        var _a;
+        return parserSchemes(this.valueOf, this.schemes, (_a = this.values) !== null && _a !== void 0 ? _a : values);
     }
     reset() {
         this.valueOf = true;
@@ -17888,10 +17874,6 @@ class Validators extends Types {
     }
 }
 const validator = new Validators();
-validator.updateProperty((update) => {
-    const request = requestGet();
-    update({ values: Object.assign(Object.assign(Object.assign({}, request.body), request.params), request.query) });
-});
 const addSchemes = (schemes) => {
     validator.schemes = Object.assign(validator.schemes, schemes);
 };
@@ -17928,10 +17910,11 @@ class ParserSchemes {
      *
      */
     parserSchemes() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield addPropertySchemesValidator(Object.entries(this))
-                .then(() => validator.parserSchemes());
-        });
+        return addPropertySchemesValidator(Object.entries(this))
+            .then(() => validator.updateProperty((update) => {
+            const request = requestGet();
+            update({ values: Object.assign(Object.assign(Object.assign({}, request.body), request.params), request.query) });
+        })).then(() => validator.parserSchemes());
     }
     /**
      *
@@ -17945,9 +17928,9 @@ class ParserSchemes {
      * within this function the schemas are loaded for the validation of the arguments
      *
      * @example
-     *
+     *```ts
      * addScheme({type: Sandwich.String, required: true, strict: true}, ['email'])
-     *
+     *```
      * @param scheme -
      * @param arg -
      */
@@ -18130,7 +18113,7 @@ class Routers {
  * Execute validation functions (method, middleware)
  *
  * @param options - Configuration object for validation process
- * @return Promise<object>
+ * @returns Promise<object>
  */
 const exec = (options) => __awaiter(void 0, void 0, void 0, function* () {
     let req_method = undefined;
@@ -18147,7 +18130,7 @@ const exec = (options) => __awaiter(void 0, void 0, void 0, function* () {
          */
         middleware_resp = yield middleware(options.req, options.res, options.middleware, method);
         return {
-            f: middleware_resp,
+            train: middleware_resp,
             success: true,
             method: method,
             req_body: req_body,
@@ -18180,19 +18163,13 @@ const transform = (options) => {
  *
  * @param classRequest - Class that will serve as a pillow for routing.
  * @param middlewares - Middleware functions that run before the final function or final middleware
- * @return
+ * @returns
  */
 const Handler = (classRequest, middlewares) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a;
         contextHttp.response = res;
         contextHttp.request = req;
         const $classRequest = new classRequest();
-        if (typeof req === 'object') {
-            const valueBody = req.body ? Object.assign((_a = $classRequest.values) !== null && _a !== void 0 ? _a : {}, req.body) : {};
-            const ValueParams = req.params ? Object.assign(valueBody, req.params) : valueBody;
-            $classRequest.values = req.query ? Object.assign(ValueParams, req.query) : ValueParams;
-        }
         /**
          * selected methods
          *
@@ -18216,7 +18193,7 @@ const Handler = (classRequest, middlewares) => {
             res: res
         };
         const errors = yield transform(data_transform).then((resp) => {
-            $classRequest.train = resp.f;
+            $classRequest.train = resp.train;
             $classRequest.request = {
                 success: resp.success,
                 method: resp.method
@@ -18238,7 +18215,7 @@ const Handler = (classRequest, middlewares) => {
  * The configuration of the arguments and parameters will be executed through the
  * parser_schemes function, which is a property of the Resource class.
  *
- * @examples
+ * @example
  * examples of schemes:
  * ```json
  * {
@@ -18247,38 +18224,7 @@ const Handler = (classRequest, middlewares) => {
  * }
  * ```
  */
-class Resource extends Validators {
-    /**
-     * Returns an anonymous extended class of Resource, which loads the resources. Also, after loading the necessary
-     * resources for routing work, load initial configuration for validation of the
-     * arguments and parameters.
-     *
-     *
-     * @remarks
-     * The configuration of the arguments and parameters will be executed through the
-     * parser_schemes function, which is a property of the Resource class.
-     *
-     * @param schemes - The validation schemes are passed to the this.schemes property of the Resource class
-     *
-     * @examples
-     * examples of schemes:
-     * ```json
-     * {
-     *   email: {type: Sandwich.String, required: true, strict: true,
-     *   password: {type: Sandwich.String, required: true, strict: true, min: 8,
-     * }
-     * ```
-     *
-     * @returns Class Args extends Resource
-     */
-    static args(schemes) {
-        return class extends Resource {
-            constructor() {
-                super();
-                this.schemes = schemes;
-            }
-        };
-    }
+class Resource {
 }
 /**
  *
@@ -18292,19 +18238,16 @@ class Sandwich extends Validators {
         this.handler = Handler;
         /**
          *
-         * @param app
+         * @param app -
          */
         this.routers = (app) => new Routers(app);
-        /**
-         *
-         */
-        this.args = Resource.args;
     }
 }
 var Sandwich$1 = new Sandwich();
 
 exports.ParserSchemes = ParserSchemes;
 exports.Resource = Resource;
+exports.Type = Type;
 exports.Validators = Validators;
 exports.contextHttp = contextHttp;
 exports["default"] = Sandwich$1;

@@ -1,8 +1,15 @@
 import * as SW from "../../functions";
 /**
+ * Analyze the values provided according to your schema.
  *
  * @param valueOf - Determines how validated arguments and parameters are extracted.
  * @param schemes - schemes
+ * ```json
+ * {
+ *     email: {type: Sandwich.String, required: true, strict: true},
+ *     password: {type: Sandwich.String, required: true, strict: true, min: 8}
+ * }
+ * ```
  * @param values - data body request.
  * @returns
  */
@@ -10,38 +17,29 @@ export declare const parserSchemes: SW.HandlerParserSchemes;
 /**
  * Types of validations
  */
-export declare const Type: SW.Type;
-/**
- * Types of validations
- */
 export declare class Types implements SW.Types {
-    String: SW.FunctionVoid | undefined;
-    Number: SW.FunctionVoid | undefined;
-    Array: SW.FunctionVoid | undefined;
-    Boolean: SW.FunctionVoid | undefined;
-    Object: SW.FunctionVoid | undefined;
+    String: StringConstructor;
+    Number: NumberConstructor;
+    Array: ArrayConstructor;
+    Boolean: BooleanConstructor;
+    Object: ObjectConstructor;
 }
-declare type ValidatorCallback = (resolve: any) => void;
+export declare const Type: Types;
 /**
- * @alpha
+ * @beta
  */
 declare class Validators extends Types implements SW.ValidatorsClass {
     /**
-     *
+     * @readonly
      */
-    readonly updateProperty: (fun: ValidatorCallback) => void;
-    /**
-     *
-     * @private
-     */
-    private readonly callBacksProperty;
+    readonly updateProperty: (funUpdate: SW.ValidatorCallback) => void;
     /**
      *
      */
     values: SW.valuesArgs;
     /**
      * Object type property. List of validation schemes.
-     * @defaultValue schemes={}
+     * @defaultValue object
      */
     schemes: SW.schemes;
     /**
@@ -57,7 +55,7 @@ declare class Validators extends Types implements SW.ValidatorsClass {
      * parse and validate request body data
      *
      * @param values - Data subject to validation
-     * @return ParserSchemesResponse
+     * @returns ParserSchemesResponse
      */
     parserSchemes(values?: SW.valuesArgs): Promise<SW.ParserSchemesResponse>;
     reset(): void;
@@ -82,9 +80,9 @@ export declare class ParserSchemes implements SW.ParserSchemesClass {
      * within this function the schemas are loaded for the validation of the arguments
      *
      * @example
-     *
+     *```ts
      * addScheme({type: Sandwich.String, required: true, strict: true}, ['email'])
-     *
+     *```
      * @param scheme -
      * @param arg -
      */
