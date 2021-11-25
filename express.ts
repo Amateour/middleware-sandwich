@@ -10,7 +10,10 @@ const require = createRequire(import.meta.url);
 const express = require('express');
 
 class UsersSchemesValidator extends ParserSchemes {
-    email = {type: Type.String, required: true, strict: true};
+    email = {type: Type.String, required: true, strict: true, validation: (value: string) => {
+
+            return value === 'ds'
+        }};
     password = {type: Type.String, required: true, strict: true, min: 8};
     confirmPassword = {type: Type.String, required: true, strict: true, min: 8};
 }

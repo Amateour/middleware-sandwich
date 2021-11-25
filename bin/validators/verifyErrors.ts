@@ -2,15 +2,16 @@ import * as SW from '../../functions';
 import {isBrowser} from '../utils/help'
 import {Exception} from "../utils/message";
 import _ from 'lodash';
+import {ResponseVerifyErrors} from "../../functions";
 
 /**
  * validate errors and send message
  *
  * @param errors -
  */
-export const verifyErrors: SW.verify_errors = async (
-    errors
-) => {
+export async function verifyErrors(
+    errors: object
+): Promise<ResponseVerifyErrors | any> {
 
     const response: SW.Any = {
         errors: [],

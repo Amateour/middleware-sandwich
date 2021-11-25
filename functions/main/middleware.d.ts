@@ -1,5 +1,4 @@
-import {routerProps, middlewares, schemes, ReqType, ResType, Next} from "../type";
-import {Types} from "../validators/types";
+import {routerProps, middlewares, schemes, ReqType, ResType, Next, TypeValid} from "../utils/typeUtil";
 
 type HandleExecResponse = {
     train: () => void,
@@ -7,13 +6,6 @@ type HandleExecResponse = {
     method: string,
     req_body: string | null | undefined,
 }
-
-/**
- *
- * @param options -
- * @returns Promise<HandleExecResponse>
- */
-export type HandlerExec = (options: routerProps) => Promise<HandleExecResponse>
 
 /**
  *
@@ -35,14 +27,16 @@ export type ParserSchemesResponse = {
     message: string,
 }
 
+export type ParserSchemeFunction = Promise<ParserSchemesResponse>;
+
 /**
  *
  */
 export type HandlerParserSchemes = (
     valueOf?: valueOf,
-    schemes?: schemes | null,
+    schemes?: schemes,
     values?: valuesArgs
-) => Promise<ParserSchemesResponse>;
+) => ParserSchemeFunction;
 
 type HandlerResponse = (
     req: ReqType, res: ResType, next?: Next
@@ -56,18 +50,14 @@ type HandlerResponse = (
  */
 type Handler = (classRequest: any, middlewares?: middlewares) => HandlerResponse;
 /**
- *
- *
- * @param schemes -
- * @returns
+ * ValidatorCallback
  */
-type ResourceClass = (schemes?: schemes) => HandlerResource;
 export type ValidatorCallback = (resolve: any) => void ;
 /**
  * class Sandwiches
  *
  */
-export interface ValidatorsClass extends Types {
+export interface ValidatorsClass extends TypeValid {
     readonly schemes: schemes;
     /**
      *
@@ -80,9 +70,9 @@ export interface ValidatorsClass extends Types {
     /**
      *
      * @param body -
-     * @returns Promise<ParserSchemesResponse>
+     * @returns ParserSchemeFunction
      */
-    parserSchemes(body?: valuesArgs): Promise<ParserSchemesResponse>;
+    parserSchemes(body?: valuesArgs): ParserSchemeFunction;
 }
 
 export interface ParserSchemesClass {

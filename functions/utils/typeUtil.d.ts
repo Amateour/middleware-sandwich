@@ -1,33 +1,28 @@
-import * as SW from "./index";
+export type Any = any;
 
-export declare type Any = any;
-/**
- * AnyArray
- */
-export declare type AnyArray = any[];
 /**
  * Next
  */
-export declare type Next = any;
+export type Next = any;
 /**
  * FunctionVoid 
  */
-export declare type FunctionVoid = () => void;
+export type FunctionVoid = () => void;
 /**
  * methodType
  */
-export declare type methodType = Array<string> | string;
+export type methodType = string[] | string;
 /**
  * multiMiddlewareType
  */
 export interface multiMiddlewareType {
-    middleware: Array<FunctionVoid> | FunctionVoid,
-    methods?: Array<string> | string
+    middleware: FunctionVoid[] | FunctionVoid,
+    methods?: string[] | string
 }
 /**
  *
  */
-export type resolvePromiseScheme = (scheme: SW.scheme) => void;
+export type resolvePromiseScheme = (scheme: scheme) => void;
 /**
  *
  */
@@ -37,39 +32,39 @@ export type FuncResolvePromiseScheme = (
 /**
  * middlewaresType
  */
-export declare type middlewares = FunctionVoid[] | FunctionVoid | multiMiddlewareType | multiMiddlewareType[];
+export type middlewares = FunctionVoid[] | FunctionVoid | multiMiddlewareType | multiMiddlewareType[];
 /**
  * middlewareType
  */
-export declare type middlewareType = FunctionVoid[] | FunctionVoid;
+export type middlewareType = FunctionVoid[] | FunctionVoid;
 /**
  * ResType
  */
-export declare type ResType = any;
+export type ResType = any;
 /**
  * ReqType
  */
-export declare type ReqType = any;
+export type ReqType = any;
 /**
  * argumentType
  */
-export declare type argumentType = object;
+export type argumentType = object;
 /**
  * valueType
  */
-export declare type valueType = any;
+export type valueType = any;
 /**
  * keyType
  */
-export declare type keyType = number | string;
+export type keyType = number | string;
 /**
  * messageType
  */
-export declare type messageType = object | string | null
+export type messageType = object | string | null
 /**
  * respType
  */
-export declare type respType = string;
+export type respType = string;
 /**
  * argumentProps
  */
@@ -82,7 +77,7 @@ export interface argumentProps {
  */
 export interface routerProps {
     method: methodType,
-    middleware?: middlewaresType,
+    middleware?: middlewares,
     argument?: argumentType,
     res: ResType,
     req: ReqType,
@@ -104,34 +99,25 @@ export interface TypeValid {
     Boolean?: FunctionVoid,
     Object?: FunctionVoid,
 }
+
+export type validationFun = (value: any) => any;
+
 /**
- *  compareType
- */
-export interface compareType {
-    type?: FunctionVoid | string,
-    required?: boolean,
-    min?: number,
-    max?: number,
-    value?: any,
-    strict?: boolean,
-    validation?: FunctionVoid
-}
-/**
- *  compareType
+ *  scheme validation
  */
 export interface scheme {
-    type?: FunctionVoid | string,
+    type?: FunctionVoid | string ,
     required?: boolean,
     min?: number,
     max?: number,
     value?: any,
     strict?: boolean,
-    validation?: FunctionVoid
+    validation?: validationFun
 }
 /**
  * schemes
  */
-export declare type schemes = Record<scheme>;
+export type schemes = {[index: string]: scheme};
 /**
  * compareProps
  */
@@ -139,7 +125,7 @@ export interface compareProps {
     value: valueType,
     key: keyType,
     message: messageType,
-    scheme: schemes,
+    scheme: scheme,
 }
 /**
  * argValid
@@ -164,7 +150,7 @@ export interface argMessProps {
 /**
  * messValid
  */
-export declare type messValid = {
+export type messValid = {
     message: string;
     value?: string | number;
 }
@@ -178,36 +164,4 @@ export interface MessageArgument {
     strict: (props: argMessProps) => messValid | respType,
     validation: (props: argMessProps) => messValid | respType,
 }
-/**
- * 
- */
-export declare namespace ErrorsRequest {
-    /**
-     * message
-     */
-    export type message = object | string;
-    /**
-     * errors
-     */
-    export type errors = any[] | string;
-    /**
-     * RespAny
-     */
-    export type RespAny = any;
-    /**
-     * Data 
-     */
-    export interface Data {
-        message: message,
-        errors?: errors,
-        statusCode?: number
-    }
-    /**
-     * Response errors
-     */
-    export interface RespError {
-        message: message,
-        errors?: errors,
-        statusCode: number
-    }
-}
+

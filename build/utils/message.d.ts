@@ -7,19 +7,19 @@ export declare class ClassException implements SW.ClassException {
      * Server error Generate
      *
      */
-    error: (data: SW.ErrorsRequest.Data) => never;
+    error: (data: SW.DataError) => void;
     /**
      * Server error Generate
      *
      * @param data -
      */
-    server_error: (data: SW.ErrorsRequest.Data) => void;
+    server_error: (data: SW.DataError) => void;
     /**
      * Bad request Generate
      *
      * @param data -
      */
-    bad_request: (data: SW.ErrorsRequest.Data) => void;
+    bad_request: (data: SW.DataError) => void;
 }
 export declare const Exception: ClassException;
 /**

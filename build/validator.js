@@ -17239,28 +17239,36 @@ const isNode = () => typeof global !== "undefined"
  * @param elm - element validation
  * @returns boolean
  */
-const isArray = (elm) => elm instanceof Array && typeof elm === 'object';
+function isArray(elm) {
+    return elm instanceof Array && typeof elm === 'object';
+}
 /**
  * validate if it is an objet
  *
  * @param elm - element validation
  * @returns boolean
  */
-const isObject = (elm) => elm instanceof Object;
+function isObject(elm) {
+    return elm instanceof Object;
+}
 /**
  * validate if it is an string
  *
  * @param elm - element validation
  * @returns boolean
  */
-const isString = (elm) => typeof elm === "string";
+function isString(elm) {
+    return typeof elm === "string";
+}
 /**
  * validate if it is an number
  *
  * @param elm - element validation
  * @returns boolean
  */
-const isNumber = (elm) => typeof elm === "number";
+function isNumber(elm) {
+    return typeof elm === "number";
+}
 /**
  * Functions validations (isArray, isString)
  *
@@ -17304,42 +17312,44 @@ const validate = {
  * @param middlewares - list middlewares
  * @param method - method request (post, get)
  */
-const get_middlewares = (middlewares, method) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        let flatten = false;
-        if (!(typeof middlewares === 'object'))
-            return middlewares;
-        const resp_middlewares = yield lodash(middlewares)
-            .filter((middleware) => {
-            const middleware_is_function = typeof middleware === 'function';
-            if (middleware_is_function)
-                return true;
-            if (!middleware.methods)
-                return true;
-            const methods_is_string = typeof middleware.methods === 'string';
-            const methods_is_array = middleware.methods instanceof Array;
-            if (!methods_is_string && !methods_is_array)
-                throw "methods: An Array or String data type is expected";
-            if (middleware.middleware instanceof Array)
-                flatten = true;
-            const methods = typeof middleware.methods === 'string'
-                ? [middleware.methods] : middleware.methods;
-            return toUpper(methods).includes(method.toUpperCase());
-        }).map((middleware) => { var _a; return (_a = middleware.middleware) !== null && _a !== void 0 ? _a : middleware; });
-        return flatten ? yield lodash.flatten(resp_middlewares).valueOf() : resp_middlewares.valueOf();
-    }
-    catch (e) {
-        console.error(e);
-    }
-});
+function get_middlewares(middlewares, method) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            let flatten = false;
+            if (!(typeof middlewares === 'object'))
+                return middlewares;
+            const resp_middlewares = yield lodash(middlewares)
+                .filter((middleware) => {
+                const middleware_is_function = typeof middleware === 'function';
+                if (middleware_is_function)
+                    return true;
+                if (!middleware.methods)
+                    return true;
+                const methods_is_string = typeof middleware.methods === 'string';
+                const methods_is_array = middleware.methods instanceof Array;
+                if (!methods_is_string && !methods_is_array)
+                    throw "methods: An Array or String data type is expected";
+                if (middleware.middleware instanceof Array)
+                    flatten = true;
+                const methods = typeof middleware.methods === 'string'
+                    ? [middleware.methods] : middleware.methods;
+                return toUpper(methods).includes(method.toUpperCase());
+            }).map((middleware) => { var _a; return (_a = middleware.middleware) !== null && _a !== void 0 ? _a : middleware; });
+            return flatten ? yield lodash.flatten(resp_middlewares).valueOf() : resp_middlewares.valueOf();
+        }
+        catch (e) {
+            console.error(e);
+        }
+    });
+}
 /**
  *
  * @param arr -
- * @returns string[]
+ * @returns any[]
  */
-const toUpper = (arr) => {
+function toUpper(arr) {
     return lodash(arr).filter((val) => val).map(lodash.toUpper).valueOf();
-};
+}
 
 /**
  * middleware_next execution of each declared FuncMiddleware
@@ -17349,28 +17359,30 @@ const toUpper = (arr) => {
  * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
  * @param train -
  */
-const middleware_next = (funcMiddleware, req, res, train) => {
+function middleware_next(funcMiddleware, req, res, train) {
     return new Promise((resolve) => {
         funcMiddleware(req, res, resolve, train);
     });
-};
+}
 /**
  * exec_list_func controls the execution of each declared FuncMiddleware
  *
- * @param middlewares
+ * @param middlewares -
  * @param req - Http Request
  * @param res - Http Response
  */
-const exec_list_func = (middlewares, req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let train = {};
-    for (const middleware of middlewares) {
-        const result = yield middleware_next(middleware, req, res, train);
-        train = result ? Object.assign(Object.assign({}, train), result) : train;
-        if (!result)
-            break;
-    }
-    return train;
-});
+function exec_list_func(middlewares, req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let train = {};
+        for (const middleware of middlewares) {
+            const result = yield middleware_next(middleware, req, res, train);
+            train = result ? Object.assign(Object.assign({}, train), result) : train;
+            if (!result)
+                break;
+        }
+        return train;
+    });
+}
 /**
  * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function
  *
@@ -17390,25 +17402,30 @@ const exec_list_func = (middlewares, req, res) => __awaiter(void 0, void 0, void
  * @param middlewares - array functions or function
  * @param method - `{string}` method request
  */
-const middleware = (req, res, middlewares, method) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!middlewares)
-        return true;
-    const functions = yield get_middlewares(middlewares, method !== null && method !== void 0 ? method : '');
-    return yield exec_list_func(functions instanceof Array ? functions : [functions], req, res)
-        .then((resp) => resp);
-});
+function middleware(req, res, middlewares, method) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!middlewares)
+            return true;
+        const functions = yield get_middlewares(middlewares, method !== null && method !== void 0 ? method : '');
+        return yield exec_list_func(functions instanceof Array ? functions : [functions], req, res)
+            .then((resp) => resp);
+    });
+}
 
 /**
  * get data error
  *
- * @param data - `{
+ * @param data -
+ * ```json
+ * {
  *     message: message of error "bad request",
  *     errors: data errors
- * }`
+ * }
+ * ```
  */
-const get_data_errors = (data) => {
+function get_data_errors(data) {
     return data;
-};
+}
 /**
  * Server error Generate
  *
@@ -17454,8 +17471,8 @@ const Exception = new ClassException();
  * Response messages due to validation failure
  */
 const messageArgument = {
-    validation: (props) => ({
-        message: `${props.key}_${props.key_validation}`
+    validation: () => ({
+        message: `validation_custom`
     }),
     required: () => ({
         message: "required_field"
@@ -17481,6 +17498,21 @@ const messageArgument = {
  * @param func_arguments -
  */
 const func_arguments = {
+    /**
+     *  * custom validation, for the data type specified in the argument
+     *
+     * @example
+     * ```json
+     * {
+     *    email: {
+     *    type: Sandwich.String, validation: (value: string) => typeof value == 'string'
+     *  }
+     * }
+     * ```
+     * @param valid_value -
+     * @param value -
+     */
+    validation: ({ valid_value, value }) => valid_value(value),
     /**
      * Validate value max
      *
@@ -17545,7 +17577,7 @@ const func_arguments = {
      *
      * @param strict - true to validate or false not to validate strict mode
      * @param type - Array
-     * @param key - data {occupation}
+     * @param key - data (occupation)
      * @param value - `Developer`
      */
     valid_strict: (strict, type, key, value) => {
@@ -17564,82 +17596,69 @@ const func_arguments = {
  * Validate a data type
  *
  * @param value - value to validate "Developer"
- * @param key - value key {occupation}
- * @param scheme - scheme validation {type: String}
- */
-const valid_type = ({ value, key, scheme }) => {
-    const type = lodash.get(scheme, 'type');
-    const strict = lodash.get(scheme, 'strict');
-    const required = lodash.get(scheme, 'required');
-    if (type) {
-        required && value ? func_arguments.valid_strict(strict, type.name, key, value) : null;
-        if (value === null || value === undefined)
-            return value;
-        return func_arguments.type(value, type, scheme);
-    }
-    else {
-        Exception.server_error({ message: `${key} => ${value} no data type` });
-    }
-};
-/**
- * custom validation, for the data type specified in the argument
- *
- * @example
+ * @param key - value key (occupation)
+ * @param scheme - scheme validation
  * ```json
- * {
- *    email: {
- *    type: Sandwich.String, validation: (value: string) => typeof value == 'string'
- *  }
- * }
+ * {type: String}
  * ```
- *
- * @param value -
- * @param key -
- * @param scheme -
  */
-const validation_custom = ({ value, key, scheme }) => __awaiter(void 0, void 0, void 0, function* () {
-    const { validation } = scheme;
-    return lodash(validation).map((func, key_validation) => {
-        const messDefault = lodash.get(messageArgument, 'validation');
-        return func(value) ? messDefault({ key, key_validation }) : false;
-    }).filter((value) => value).valueOf();
-});
+function valid_type({ value, key, scheme }) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const type = lodash.get(scheme, 'type');
+        const strict = lodash.get(scheme, 'strict');
+        const required = lodash.get(scheme, 'required');
+        if (type) {
+            const name = lodash.get(type, 'type');
+            required && value ? func_arguments.valid_strict(strict, name, key, value) : null;
+            if (value === null || value === undefined)
+                return value;
+            return func_arguments.type(value, type, scheme);
+        }
+        else {
+            Exception.server_error({ message: `${key} => ${value} no data type` });
+        }
+    });
+}
 /**
  * Extract data types to validate in the function valid_extract_argument
  * omitting those validated in the function valid_type
  *
  * @param scheme - data: `{type: Sandwich.String, strict: true, value: '100'}`
  */
-const omit_argument = (scheme) => {
-    return lodash.omit(scheme, ['type', 'strict', 'message', 'value', 'validation']);
-};
+function omit_argument(scheme) {
+    return lodash.omit(scheme, ['type', 'strict', 'message', 'value']);
+}
 /**
  * Validate a schema against a value
  *
+ * @param messages -
  * @param scheme - data validation schema
  * @param value - value to be validated example "Brayan Salgado"
  * @param type - data type to validate example String
- * @param messages -
  * @param key_main - key main
  */
-const valid_extract_argument = (messages, scheme, value, type, key_main) => __awaiter(void 0, void 0, void 0, function* () {
-    return lodash(scheme)
-        .map((valid_value, key) => {
-        const func_valid = lodash.get(func_arguments, key);
-        const message = lodash.get(messages, key);
-        const messDefault = lodash.get(messageArgument, key);
-        return !func_valid({ valid_value, value, type, scheme }) &&
-            (message !== null && message !== void 0 ? message : messDefault({ valid_value, value, type, key, key_main }));
-    }).filter((value) => value).valueOf();
-});
+function valid_extract_argument(messages, scheme, value, type, key_main) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return lodash(scheme)
+            .map((valid_value, key) => {
+            const func_valid = lodash.get(func_arguments, key);
+            const message = lodash.get(messages, key);
+            const messDefault = lodash.get(messageArgument, key);
+            return !func_valid({ valid_value, value, type, scheme }) &&
+                (message !== null && message !== void 0 ? message : messDefault({ valid_value, value, type, key, key_main }));
+        }).filter((value) => value).valueOf();
+    });
+}
 /**
  * validate Message
  *
  * @param errors -
  */
-const valid_resp_argument = (errors) => __awaiter(void 0, void 0, void 0, function* () {
-    return !errors.length;
-});
+function valid_resp_argument(errors) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return !errors.length;
+    });
+}
 /**
  * Validate an argument schema
  *
@@ -17654,56 +17673,65 @@ const valid_resp_argument = (errors) => __awaiter(void 0, void 0, void 0, functi
  * }
  * ```
  */
-const valid_argument = (props) => __awaiter(void 0, void 0, void 0, function* () {
-    const { value, scheme, message, key } = props;
-    const type = yield valid_type(props);
-    const valid_errors = yield validation_custom(props);
-    const extract_scheme = yield omit_argument(scheme);
-    const errors = yield valid_extract_argument(message, extract_scheme, value, type, key);
-    const success = yield valid_resp_argument(errors);
-    return { errors: valid_errors.concat(errors), success, value: type };
-});
+function valid_argument(props) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { value, scheme, message, key } = props;
+        const type = yield valid_type(props);
+        const extract_scheme = yield omit_argument(scheme);
+        const errors = yield valid_extract_argument(message, extract_scheme, value, type, key);
+        const success = yield valid_resp_argument(errors);
+        return { errors: errors, success, value: type };
+    });
+}
 /**
  * Extract the defined value from the req or in the schema
  * (any value passed by req will be replaced by the value is defined in the schema)
  *
  * @param req_body - data body
- * @param schemes -
+ * @param scheme -
  * @param key - field key to validate
  */
-const get_value = (req_body, schemes, key) => {
-    const has_value = lodash.has(schemes, 'value');
-    const defined_value = has_value ? lodash.get(schemes, 'value') : lodash.get(req_body, key);
+function get_value(req_body, scheme, key) {
+    const has_value = lodash.has(scheme, 'value');
+    const defined_value = has_value ? lodash.get(scheme, 'value') : lodash.get(req_body, key);
     return defined_value instanceof Function ? defined_value() : defined_value;
-};
+}
 /**
  * This function validates all body data specified in the arguments
  *
  * @param value_of - true stops returning the data to its primitive value of its instance
- * @param req_body - request body {email: "example@sandwich.com"}
+ * @param req_body - request body
+ * ```json
+ * {email: "example@sandwich.com"}
+ * ```
  * @param schemes - schemes of validation `{ email: {type: Sandwich.String, strict: true} }`
  */
-const argument = (value_of, req_body, schemes) => __awaiter(void 0, void 0, void 0, function* () {
-    let resp = {};
-    let body = {};
-    for (const key in schemes) {
-        const scheme = lodash.has(schemes, key) ? lodash.get(schemes, key) : null;
-        resp = lodash.assign({
-            [key]: yield valid_argument({
-                value: get_value(req_body, scheme, key),
-                key: key,
-                message: lodash.get(scheme, 'message'),
-                scheme: scheme
-            })
-        }, resp);
-        const value = lodash.get(resp, key).value;
-        body = lodash.assign({ [key]: value_of || !value ? value : value.valueOf() }, body);
-    }
-    return {
-        argument: resp,
-        body: body
-    };
-});
+function argument(value_of, req_body, schemes) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let resp = {};
+        let body = {};
+        if (!schemes)
+            Exception.server_error({ message: `schemes is ${schemes}` });
+        for (const key in schemes) {
+            const scheme = lodash.has(schemes, key) ? lodash.get(schemes, key) : null;
+            if (scheme)
+                resp = lodash.assign({
+                    [key]: yield valid_argument({
+                        value: get_value(req_body, scheme, key),
+                        key: key,
+                        message: lodash.get(scheme, 'message'),
+                        scheme: scheme
+                    })
+                }, resp);
+            const value = lodash.get(resp, key).value;
+            body = lodash.assign({ [key]: value_of || !value ? value : value.valueOf() }, body);
+        }
+        return {
+            argument: resp,
+            body: body
+        };
+    });
+}
 
 /**
  * Validate the request method
@@ -17711,41 +17739,45 @@ const argument = (value_of, req_body, schemes) => __awaiter(void 0, void 0, void
  * @param api_method - method allowed ["POST", "GET"] or "POST"
  * @param req_method - request method "POST"
  */
-const method = (api_method, req_method) => __awaiter(void 0, void 0, void 0, function* () {
-    const apiMethod = api_method instanceof Array ? api_method : [api_method];
-    if (!apiMethod.includes(req_method)) {
-        Exception.bad_request({
-            message: `HTTP ${req_method} request is not allowed`
-        });
-    }
-    return req_method;
-});
+function method(api_method, req_method) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const apiMethod = api_method instanceof Array ? api_method : [api_method];
+        if (!apiMethod.includes(req_method)) {
+            Exception.bad_request({
+                message: `HTTP ${req_method} request is not allowed`
+            });
+        }
+        return req_method;
+    });
+}
 
 /**
  * validate errors and send message
  *
  * @param errors -
  */
-const verifyErrors = (errors) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = {
-        errors: [],
-        message: 'args_validation_successful'
-    };
-    const resp_err = lodash(errors)
-        .map((value, key) => {
-        return new Object({ [key]: value.errors });
-    })
-        .filter((value) => lodash.find(value, (err) => err.length))
-        .valueOf();
-    if (resp_err.length) {
-        response.errors = resp_err;
-        response.message = 'args_validation_errors';
-        isBrowser() ? Exception.error(response) : Exception.bad_request(response);
-    }
-    else {
-        return response;
-    }
-});
+function verifyErrors(errors) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = {
+            errors: [],
+            message: 'args_validation_successful'
+        };
+        const resp_err = lodash(errors)
+            .map((value, key) => {
+            return new Object({ [key]: value.errors });
+        })
+            .filter((value) => lodash.find(value, (err) => err.length))
+            .valueOf();
+        if (resp_err.length) {
+            response.errors = resp_err;
+            response.message = 'args_validation_errors';
+            isBrowser() ? Exception.error(response) : Exception.bad_request(response);
+        }
+        else {
+            return response;
+        }
+    });
+}
 
 exports.argument = argument;
 exports.method = method;

@@ -1,4 +1,5 @@
 import * as SW from "../../functions";
+import { ParserSchemeFunction } from "../../functions";
 /**
  * Analyze the values provided according to your schema.
  *
@@ -17,7 +18,7 @@ export declare const parserSchemes: SW.HandlerParserSchemes;
 /**
  * Types of validations
  */
-export declare class Types implements SW.Types {
+export declare class Types implements SW.TypeValid {
     String: StringConstructor;
     Number: NumberConstructor;
     Array: ArrayConstructor;
@@ -57,7 +58,7 @@ declare class Validators extends Types implements SW.ValidatorsClass {
      * @param values - Data subject to validation
      * @returns ParserSchemesResponse
      */
-    parserSchemes(values?: SW.valuesArgs): Promise<SW.ParserSchemesResponse>;
+    parserSchemes(values?: SW.valuesArgs): ParserSchemeFunction;
     reset(): void;
 }
 export default Validators;
@@ -69,7 +70,7 @@ export declare class ParserSchemes implements SW.ParserSchemesClass {
     /**
      *
      */
-    parserSchemes(): Promise<SW.ParserSchemesResponse>;
+    parserSchemes(): ParserSchemeFunction;
     /**
      *
      * @param schemes -

@@ -1,15 +1,21 @@
-import {ErrorsRequest} from "../type";
+/**
+ * Data
+ */
+export interface DataError {
+    message: object | string,
+    errors?: any[] | string,
+    statusCode?: number
+}
 
 /**
- * get data error
- *
- * @param data - {object} `{
- *     message: message of error "bad request",
- *     errors: data errors
- * }`
- * 
+ * RespAny
  */
- export type get_data_errors = (data: ErrorsRequest.Data) => ErrorsRequest.Data
+export type RespError = any;
+//   export interface RespError {
+//       message: message,
+//       errors?: errors,
+//       statusCode: number
+//   }
 
  /**
  * 
@@ -20,23 +26,23 @@ export interface ClassException {
     /**
      * Bad request Generate error
      *
-     * @param server_error - {object}
+     * @param server_error - object
      */
-    error: (data: ErrorsRequest.Data) => ErrorsRequest.RespAny;
+    error: (data: DataError) => RespError;
 
     /**
      * Bad request Generate error
      *
-     * @param server_error - {object}
+     * @param server_error - object
      */
-    server_error: (data: ErrorsRequest.Data) => void
+    server_error: (data: DataError) => void
 
     /**
      * Bad request Generate error
      *
-     * @param bad_request - {object}
+     * @param bad_request - object
      */
-    bad_request : (data: ErrorsRequest.Data) => void
+    bad_request : (data: DataError) => void
 }
 
 /**

@@ -7,9 +7,9 @@ import {validate} from "../utils/help";
  *
  * Response messages due to validation failure
  */
-const messageArgument: SW.messageArgument = {
-    validation: (props) => ({
-        message: `${props.key}_${props.key_validation}`
+const messageArgument: SW.MessageArgument = {
+    validation: () => ({
+        message: `validation_custom`
     }),
     required: () => ({
         message: "required_field"
@@ -36,6 +36,21 @@ const messageArgument: SW.messageArgument = {
  * @param func_arguments -
  */
 const func_arguments: SW.func_arguments = {
+    /**
+     *  * custom validation, for the data type specified in the argument
+     *
+     * @example
+     * ```json
+     * {
+     *    email: {
+     *    type: Sandwich.String, validation: (value: string) => typeof value == 'string'
+     *  }
+     * }
+     * ```
+     * @param valid_value -
+     * @param value -
+     */
+    validation: ({valid_value, value}) => valid_value(value),
     /**
      * Validate value max
      *
@@ -98,7 +113,7 @@ const func_arguments: SW.func_arguments = {
      *
      * @param strict - true to validate or false not to validate strict mode
      * @param type - Array
-     * @param key - data {occupation}
+     * @param key - data (occupation)
      * @param value - `Developer`
      */
     valid_strict: (strict, type, key, value) => {
@@ -119,16 +134,20 @@ const func_arguments: SW.func_arguments = {
  * Validate a data type
  *
  * @param value - value to validate "Developer"
- * @param key - value key {occupation}
- * @param scheme - scheme validation {type: String}
+ * @param key - value key (occupation)
+ * @param scheme - scheme validation
+ * ```json
+ * {type: String}
+ * ```
  */
-const valid_type: SW.valid_type = ({value, key, scheme}) => {
+async function valid_type ({value, key, scheme}: SW.compareProps): Promise<any> {
     const type = _.get(scheme, 'type');
     const strict = _.get(scheme, 'strict');
     const required = _.get(scheme, 'required');
 
     if (type) {
-        required && value ? func_arguments.valid_strict(strict, type.name, key, value): null;
+        const name: string = _.get(type, 'type');
+        required && value ? func_arguments.valid_strict(strict, name, key, value): null;
         if (value === null || value === undefined) return value;
         return func_arguments.type(value, type, scheme);
     } else {
@@ -137,51 +156,27 @@ const valid_type: SW.valid_type = ({value, key, scheme}) => {
 }
 
 /**
- * custom validation, for the data type specified in the argument
- * 
- * @example 
- * ```json
- * {
- *    email: {
- *    type: Sandwich.String, validation: (value: string) => typeof value == 'string'
- *  }
- * }
- * ```
- *
- * @param value -
- * @param key -
- * @param scheme -
- */
-const validation_custom: SW.validation_custom = async ({value, key, scheme}) => {
-    const {validation} = scheme;
-    return _(validation).map((func: (value: any) => any, key_validation: string | number) => {
-        const messDefault = _.get(messageArgument, 'validation')
-       return func(value) ? messDefault({key, key_validation}) : false;
-    }).filter((value: any) => value).valueOf();
-}
-
-/**
  * Extract data types to validate in the function valid_extract_argument
  * omitting those validated in the function valid_type
  *
  * @param scheme - data: `{type: Sandwich.String, strict: true, value: '100'}`
  */
-const omit_argument: SW.omit_argument = (scheme) => {
-    return _.omit(scheme, ['type', 'strict', 'message', 'value', 'validation']);
+function omit_argument(scheme: SW.scheme): any {
+    return _.omit(scheme, ['type', 'strict', 'message', 'value']);
 }
 
 /**
  * Validate a schema against a value
  *
+ * @param messages -
  * @param scheme - data validation schema
  * @param value - value to be validated example "Brayan Salgado"
  * @param type - data type to validate example String
- * @param messages -
  * @param key_main - key main
  */
-const valid_extract_argument: SW.valid_extract_argument = async (
-    messages, scheme, value, type, key_main
-) => {
+async function valid_extract_argument (
+    messages: SW.messageType, scheme: SW.scheme, value: SW.valueType, type: any, key_main: SW.keyType
+): Promise<SW.argValid[]> {
     return _(scheme)
         .map((valid_value, key) => {
         const func_valid = _.get(func_arguments, key);
@@ -197,7 +192,7 @@ const valid_extract_argument: SW.valid_extract_argument = async (
  *
  * @param errors -
  */
-const valid_resp_argument: SW.valid_resp_argument = async (errors) => {
+async function valid_resp_argument (errors: object[]): Promise<boolean> {
     return !errors.length;
 }
 
@@ -215,16 +210,15 @@ const valid_resp_argument: SW.valid_resp_argument = async (errors) => {
  * }
  * ```
  */
-const valid_argument: SW.valid_argument = async (props) => {
+async function valid_argument (props: SW.compareProps): Promise<SW.validArgumentResp> {
     const {value, scheme, message, key} = props;
 
     const type =  await valid_type(props);
-    const valid_errors = await validation_custom(props);
     const extract_scheme = await omit_argument(scheme);
     const errors = await valid_extract_argument(message, extract_scheme, value, type, key);
-    const success = await valid_resp_argument(errors)
+    const success = await valid_resp_argument(errors);
 
-    return {errors: valid_errors.concat(errors), success, value: type}
+    return {errors: errors, success, value: type}
 }
 
 /**
@@ -232,12 +226,12 @@ const valid_argument: SW.valid_argument = async (props) => {
  * (any value passed by req will be replaced by the value is defined in the schema)
  *
  * @param req_body - data body
- * @param schemes -
+ * @param scheme -
  * @param key - field key to validate
  */
-const get_value: SW.get_value = (req_body, schemes, key) => {
-    const has_value = _.has(schemes, 'value');
-    const defined_value = has_value ? _.get(schemes, 'value') : _.get(req_body, key);
+function get_value(req_body: object, scheme: SW.scheme, key: string | number): any {
+    const has_value = _.has(scheme, 'value');
+    const defined_value = has_value ? _.get(scheme, 'value') : _.get(req_body, key);
     return defined_value instanceof Function ? defined_value() : defined_value;
 }
 
@@ -245,25 +239,33 @@ const get_value: SW.get_value = (req_body, schemes, key) => {
  * This function validates all body data specified in the arguments
  *
  * @param value_of - true stops returning the data to its primitive value of its instance
- * @param req_body - request body {email: "example@sandwich.com"}
+ * @param req_body - request body
+ * ```json
+ * {email: "example@sandwich.com"}
+ * ```
  * @param schemes - schemes of validation `{ email: {type: Sandwich.String, strict: true} }`
  */
-export const argument: SW.argument = async (value_of, req_body, schemes) => {
+export async function argument(
+    value_of: boolean, req_body: object, schemes?: SW.schemes
+): Promise<SW.argumentProps> {
     let resp = {};
     let body = {};
 
+    if(!schemes) Exception.server_error({message: `schemes is ${schemes}`})
+
     for (const key in schemes) {
         const scheme = _.has(schemes, key) ? _.get(schemes, key): null;
-        resp = _.assign({
-            [key]: await valid_argument({
-                value: get_value(req_body, scheme, key),
-                key: key,
-                message: _.get(scheme, 'message'),
-                scheme: scheme
-            })
-        }, resp);
-        const value = _.get(resp, key).value;
-        body = _.assign({[key]: value_of || !value ? value : value.valueOf()}, body);
+        if(scheme)
+            resp = _.assign({
+                [key]: await valid_argument({
+                    value: get_value(req_body, scheme, key),
+                    key: key,
+                    message: _.get(scheme, 'message'),
+                    scheme: scheme
+                })
+            }, resp);
+            const value = _.get(resp, key).value;
+            body = _.assign({[key]: value_of || !value ? value : value.valueOf()}, body);
     }
 
     return {

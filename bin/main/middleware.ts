@@ -13,7 +13,7 @@ import _ from 'lodash';
  * @param options - Configuration object for validation process
  * @returns Promise<object>
  */
-const exec: SW.HandlerExec = async (options) => {
+async function exec(options: SW.routerProps): Promise<SW.HandleExecResponse> {
     let req_method = undefined;
 
     if (typeof options.req.method == 'string') {
@@ -49,7 +49,7 @@ const exec: SW.HandlerExec = async (options) => {
  * @param options - Configuration object for validation process.
  * @returns Promise<any>
  */
-const transform: SW.HandlerTransform = (options) => {
+function transform(options: SW.routerProps): Promise<any>{
     return new Promise((resolve, reject) => {
         exec(options)
             .then((resp) => resolve(resp) )
@@ -71,7 +71,7 @@ const transform: SW.HandlerTransform = (options) => {
  * @param middlewares - Middleware functions that run before the final function or final middleware
  * @returns
  */
-const Handler = (classRequest: SW.HandlerResource, middlewares?: SW.middlewares) => {
+function Handler(classRequest: SW.HandlerResource, middlewares?: SW.middlewares): SW.HandlerResponse {
     return async (req: SW.Any, res: SW.Any, next?: SW.Next) => {
         contextHttp.response = res;
         contextHttp.request = req;
@@ -81,7 +81,7 @@ const Handler = (classRequest: SW.HandlerResource, middlewares?: SW.middlewares)
          * selected methods
          *
          */
-        const methods_list: SW.AnyArray = _.map([
+        const methods_list: any[] = _.map([
             'post',
             'get',
             'put',

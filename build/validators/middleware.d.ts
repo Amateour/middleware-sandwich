@@ -1,4 +1,5 @@
 import * as SW from '../../functions';
+import { FuncMiddleware, middlewareNextReturn, ReqType, ResType } from "../../functions";
 /**
  * middleware_next execution of each declared FuncMiddleware
  *
@@ -7,7 +8,7 @@ import * as SW from '../../functions';
  * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
  * @param train -
  */
-export declare const middleware_next: SW.middleware_next;
+export declare function middleware_next(funcMiddleware: FuncMiddleware, req: ReqType, res: ResType, train: any): Promise<middlewareNextReturn>;
 /**
  * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function
  *
@@ -27,4 +28,4 @@ export declare const middleware_next: SW.middleware_next;
  * @param middlewares - array functions or function
  * @param method - `{string}` method request
  */
-export declare const middleware: SW.middleware;
+export declare function middleware(req: SW.ReqType, res: SW.ResType, middlewares: SW.middlewares | undefined, method: string): Promise<SW.middlewareReturn>;

@@ -13,28 +13,28 @@ export declare const isNode: () => boolean;
  * @param elm - element validation
  * @returns boolean
  */
-export declare const isArray: SW.isArray;
+export declare function isArray(elm: any): boolean;
 /**
  * validate if it is an objet
  *
  * @param elm - element validation
  * @returns boolean
  */
-export declare const isObject: SW.isObject;
+export declare function isObject(elm: any): boolean;
 /**
  * validate if it is an string
  *
  * @param elm - element validation
  * @returns boolean
  */
-export declare const isString: SW.isString;
+export declare function isString(elm: any): boolean;
 /**
  * validate if it is an number
  *
  * @param elm - element validation
  * @returns boolean
  */
-export declare const isNumber: SW.isNumber;
+export declare function isNumber(elm: any): boolean;
 /**
  * Functions validations (isArray, isString)
  *
@@ -71,13 +71,13 @@ export declare const validate: SW.validate;
  * @param middlewares - list middlewares
  * @param method - method request (post, get)
  */
-export declare const get_middlewares: SW.get_middlewares;
+export declare function get_middlewares(middlewares: SW.middlewares, method: string): Promise<any>;
 /**
  *
  * @param arr -
- * @returns string[]
+ * @returns any[]
  */
-export declare const toUpper: SW.toUpper;
+export declare function toUpper(arr: any[]): any[];
 /**
  * Execute the function according to its specified method
  *
@@ -86,4 +86,4 @@ export declare const toUpper: SW.toUpper;
  * @param res -
  * @param next - Next function
  */
-export declare const push_against: SW.push_against;
+export declare function push_against(push: any, req: any, res: any, next: SW.Next): Promise<any>;

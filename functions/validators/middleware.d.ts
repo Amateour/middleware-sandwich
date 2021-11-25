@@ -1,4 +1,4 @@
-import {middlewareType, ReqType, resolvePromiseScheme, ResType} from "../type";
+import {ReqType, resolvePromiseScheme, ResType} from "../utils/typeUtil";
 
 /**
  * The middleware function runs in the middleware_next function
@@ -8,32 +8,8 @@ export declare type FuncMiddleware = (
     req: ReqType, res: ResType, resolve: resolvePromiseScheme, train: any
 ) => void;
 
-/**
- * @param req -
- * @param res -
- * @param funcMiddleware -
- * @param train -
- */
-export type middleware_next = (
-    funcMiddleware: FuncMiddleware, req: ReqType, res: ResType, train: any
-    ) => Promise<object>
+type middlewareNextReturn = any
 
-/**
- *
- * @param middlewares -
- * @param req -
- * @param res -
- */
-export type exec_list_func = (middlewares: FuncMiddleware[], req: ReqType, res: resType) => Promise<any>
+type execListFuncReturn = any;
 
-/**
- * middleware
- *
- * @param res -
- * @param req -
- * @param middlewares - array functions or function
- * @param method - {string} method request
- */
-export type middleware = (
-    req: ReqType, res: ResType, middlewares?: middlewareType, method?: string
-) => Promise<any>
+type middlewareReturn = any

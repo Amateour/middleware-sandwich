@@ -19,28 +19,36 @@ export const isNode: () => boolean = () => typeof global !== "undefined"
  * @param elm - element validation
  * @returns boolean
  */
-export const isArray: SW.isArray = (elm) => elm instanceof Array && typeof elm === 'object';
+export function isArray(elm: any): boolean {
+    return elm instanceof Array && typeof elm === 'object';
+}
 /**
  * validate if it is an objet
  * 
  * @param elm - element validation
  * @returns boolean
  */
-export const isObject: SW.isObject = (elm) => elm instanceof Object;
+export function isObject(elm: any): boolean {
+    return elm instanceof Object;
+}
 /**
  * validate if it is an string
  * 
  * @param elm - element validation
  * @returns boolean
  */
-export const isString: SW.isString = (elm) => typeof elm === "string";
+export function isString(elm: any): boolean {
+    return typeof elm === "string";
+}
 /**
  * validate if it is an number
  * 
  * @param elm - element validation
  * @returns boolean
  */
-export const isNumber: SW.isNumber = (elm) => typeof elm === "number";
+export function isNumber(elm: any): boolean {
+    return typeof elm === "number";
+}
 
 /**
  * Functions validations (isArray, isString)
@@ -86,7 +94,7 @@ export const validate: SW.validate = {
  * @param middlewares - list middlewares
  * @param method - method request (post, get)
  */
-export const get_middlewares: SW.get_middlewares = async (middlewares, method) => {
+export async function get_middlewares(middlewares: SW.middlewares, method: string) {
     try {
         let flatten = false;
          if (!(typeof middlewares === 'object')) return middlewares;
@@ -118,9 +126,9 @@ export const get_middlewares: SW.get_middlewares = async (middlewares, method) =
 /**
  * 
  * @param arr -
- * @returns string[]
+ * @returns any[]
  */
-export const toUpper: SW.toUpper = (arr) => {
+export function toUpper(arr: any[]): any[] {
     return _(arr).filter((val) => val).map(_.toUpper).valueOf();
 }
 
@@ -132,7 +140,7 @@ export const toUpper: SW.toUpper = (arr) => {
  * @param res -
  * @param next - Next function
  */
-export const push_against: SW.push_against = async (push, req, res, next) => {
+export async function push_against(push: any, req: any, res: any, next: SW.Next): Promise<any> {
     const method = push.request.method;
     switch (method) {
         case 'POST': await push.post(req, res, next)

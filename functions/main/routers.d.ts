@@ -1,4 +1,4 @@
-import {middlewares as Middlewares} from "../type";
+import {middlewares as Middlewares} from "../utils/typeUtil";
 import {HandlerResource as handlerResource} from './middleware';
 
 declare namespace Routers {

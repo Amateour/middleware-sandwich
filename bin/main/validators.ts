@@ -2,7 +2,7 @@ import * as SW from "../../functions";
 import {requestGet} from '../utils/contextHttp';
 import {argument} from "../validators/argument";
 import {verifyErrors} from "../validators/verifyErrors";
-import {ValidatorCallback} from "../../functions";
+import {ParserSchemeFunction, ValidatorCallback} from "../../functions";
 
 /**
  * Analyze the values provided according to your schema.
@@ -45,7 +45,7 @@ export const parserSchemes: SW.HandlerParserSchemes = async (
 /**
  * Types of validations
  */
-export class Types implements SW.Types {
+export class Types implements SW.TypeValid {
     String = String
     Number = Number
     Array = Array
@@ -87,8 +87,8 @@ class Validators extends Types implements SW.ValidatorsClass {
             return new Promise((resolve) => {
                 funUpdate(resolve);
             }).then(({values, valueOf, schemes}: any) => {
-                this.values = Object.assign(values, this.values ?? {});
-                this.schemes = Object.assign(schemes ?? {}, this.schemes ?? {});
+                this.values = Object.assign(this.values ?? {}, values ?? {});
+                this.schemes = Object.assign(this.schemes ?? {}, schemes ?? {});
                 this.valueOf = valueOf ??  this.valueOf;
             });
         };
@@ -100,7 +100,7 @@ class Validators extends Types implements SW.ValidatorsClass {
      * @param values - Data subject to validation
      * @returns ParserSchemesResponse
      */
-    parserSchemes(values?: SW.valuesArgs): Promise<SW.ParserSchemesResponse>
+    parserSchemes(values?: SW.valuesArgs): ParserSchemeFunction
     {
         return parserSchemes(
             this.valueOf, this.schemes, this.values ?? values
@@ -118,7 +118,7 @@ export default Validators;
 
 const validator = new Validators();
 
-const addSchemes = (schemes: SW.scheme) => {
+const addSchemes = (schemes: unknown) => {
     validator.schemes = Object.assign(validator.schemes, schemes);
 }
 
@@ -129,7 +129,7 @@ const addSchemes = (schemes: SW.scheme) => {
 const handlerAddScheme = (callBack: SW.FuncResolvePromiseScheme) => {
     new Promise((resolve) => {
         callBack(resolve);
-    }).then((schemes: SW.schemes) => {
+    }).then((schemes: unknown) => {
         addSchemes(schemes);
     });
 }
@@ -158,7 +158,7 @@ export class ParserSchemes implements SW.ParserSchemesClass{
     /**
      *
      */
-    parserSchemes() {
+    parserSchemes(): ParserSchemeFunction {
         return addPropertySchemesValidator(Object.entries(this))
             .then(()=> validator.updateProperty((update) => {
                 const request = requestGet();

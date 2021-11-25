@@ -2,12 +2,15 @@ import * as SW from '../../functions';
 /**
  * get data error
  *
- * @param data - `{
+ * @param data -
+ * ```json
+ * {
  *     message: message of error "bad request",
  *     errors: data errors
- * }`
+ * }
+ * ```
  */
-const get_data_errors: SW.get_data_errors = (data) => {
+function get_data_errors(data: SW.DataError): SW.DataError {
     return data
 }
 
@@ -16,7 +19,7 @@ const get_data_errors: SW.get_data_errors = (data) => {
  *
  * @param data -
  */
-const error = (data: SW.ErrorsRequest.Data) => {
+const error = (data: SW.DataError): void => {
     throw data
 }
 
@@ -36,7 +39,7 @@ export class ClassException implements SW.ClassException {
      *
      * @param data - 
      */
-    server_error = (data: SW.ErrorsRequest.Data) => {
+    server_error = (data: SW.DataError): void => {
         const {message, errors} = get_data_errors(data);
         error({"statusCode": 500, "message": message, errors});
     }
@@ -46,7 +49,7 @@ export class ClassException implements SW.ClassException {
      *
      * @param data - 
      */
-    bad_request = (data: SW.ErrorsRequest.Data) => {
+    bad_request = (data: SW.DataError) => {
         const {message, errors} = get_data_errors(data);
         error({"statusCode": 400, "message": message, errors});
     }
