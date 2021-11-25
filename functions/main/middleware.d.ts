@@ -1,4 +1,4 @@
-import {routerProps, middlewares, schemes, ReqType, ResType, Next, TypeValid} from "../utils/typeUtil";
+import {middlewares, schemes, ReqType, ResType, Next, TypeValid} from "../utils/typeUtil";
 
 type HandleExecResponse = {
     train: () => void,
@@ -6,13 +6,6 @@ type HandleExecResponse = {
     method: string,
     req_body: string | null | undefined,
 }
-
-/**
- *
- * @param options -
- */
-export type HandlerTransform = (options: routerProps) => Promise<any>;
-
 
 type valuesArgs = {[index: string | number]} | undefined;
 type valueOf = boolean | true;
