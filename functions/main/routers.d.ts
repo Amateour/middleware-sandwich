@@ -26,7 +26,7 @@ declare namespace Routers {
     /**
      *
      */
-    class ResourceClass {
+    interface ResourceClass {
         get(req: any, res: any): void;
         post(req: any, res: any): void;
         put(req: any, res: any): void;

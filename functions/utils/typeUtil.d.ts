@@ -11,7 +11,7 @@ export type FunctionVoid = () => void;
 /**
  * methodType
  */
-export type methodType = string[] | string;
+export type methodType = string;
 /**
  * multiMiddlewareType
  */
@@ -72,16 +72,7 @@ export interface argumentProps {
     argument: any,
     body: any
 }
-/**
- * routerProps
- */
-export interface routerProps {
-    method: methodType,
-    middleware?: middlewares,
-    argument?: argumentType,
-    res: ResType,
-    req: ReqType,
-}
+
 /**
  * typeProps
  */

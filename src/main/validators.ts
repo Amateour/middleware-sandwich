@@ -86,10 +86,10 @@ class Validators extends Types implements SW.ValidatorsClass {
         this.updateProperty = (funUpdate: ValidatorCallback) => {
             return new Promise((resolve) => {
                 funUpdate(resolve);
-            }).then(({values, valueOf, schemes}: any) => {
+            }).then(({values, schemes}: any) => {
                 this.values = Object.assign(this.values ?? {}, values ?? {});
                 this.schemes = Object.assign(this.schemes ?? {}, schemes ?? {});
-                this.valueOf = valueOf ??  this.valueOf;
+                //this.valueOf = valueOf ??  this.valueOf;
             });
         };
     }
@@ -151,8 +151,9 @@ export class ParserSchemes implements SW.ParserSchemesClass{
     /**
      *
      */
-    constructor() {
+    constructor(valueOf?: boolean) {
         validator.reset();
+        validator.valueOf = valueOf ?? true;
     }
 
     /**

@@ -7,7 +7,7 @@ import pkg from './package.json'
 
 export default [
   {
-    input: './bin/index.ts',
+    input: './src/index.ts',
     output: [
       {
         file: pkg.main,
@@ -36,7 +36,7 @@ export default [
     ]
   },
   {
-    input: ['./bin/validator.ts'],
+    input: ['./src/validator.ts'],
     output: [
       {
         file: pkg.libCustom.validator.main,

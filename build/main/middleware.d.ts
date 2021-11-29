@@ -1,21 +1,7 @@
 import * as SW from '../../functions';
 import Routers from './routers';
 import Validators from "./validators";
-/**
- * Prepare the class to be used by routing
- *
- * @example
- * Controller function usage example
- *
- * ```ts
- * Sandwich.handler(Users, [isAuthenticated()])
- * ```
- *
- * @param classRequest - Class that will serve as a pillow for routing.
- * @param middlewares - Middleware functions that run before the final function or final middleware
- * @returns
- */
-declare function Handler(classRequest: SW.HandlerResource, middlewares?: SW.middlewares): SW.HandlerResponse;
+import Handler from './handler';
 /**
  * Returns a class called Resource, which loads the resources. Also, after loading the necessary
  * resources for the routing job, it loads the initial configuration for the validation of the

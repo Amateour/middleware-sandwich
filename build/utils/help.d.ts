@@ -78,12 +78,3 @@ export declare function get_middlewares(middlewares: SW.middlewares, method: str
  * @returns any[]
  */
 export declare function toUpper(arr: any[]): any[];
-/**
- * Execute the function according to its specified method
- *
- * @param push -
- * @param req -
- * @param res -
- * @param next - Next function
- */
-export declare function push_against(push: any, req: any, res: any, next: SW.Next): Promise<any>;

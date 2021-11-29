@@ -66,7 +66,7 @@ export declare class ParserSchemes implements SW.ParserSchemesClass {
     /**
      *
      */
-    constructor();
+    constructor(valueOf?: boolean);
     /**
      *
      */

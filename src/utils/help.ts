@@ -132,24 +132,3 @@ export function toUpper(arr: any[]): any[] {
     return _(arr).filter((val) => val).map(_.toUpper).valueOf();
 }
 
-/**
- * Execute the function according to its specified method
- * 
- * @param push - 
- * @param req -
- * @param res -
- * @param next - Next function
- */
-export async function push_against(push: any, req: any, res: any, next: SW.Next): Promise<any> {
-    const method = push.request.method;
-    switch (method) {
-        case 'POST': await push.post(req, res, next)
-            break;
-        case 'GET': await push.get(req, res, next)
-            break;
-        case 'PUT': await push.put(req, res, next)
-            break;
-        case 'DELETE': await push.delete(req, res, next)
-            break;
-    }
-}

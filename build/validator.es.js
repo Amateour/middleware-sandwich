@@ -17730,24 +17730,6 @@ function argument(value_of, req_body, schemes) {
 }
 
 /**
- * Validate the request method
- *
- * @param api_method - method allowed ["POST", "GET"] or "POST"
- * @param req_method - request method "POST"
- */
-function method(api_method, req_method) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const apiMethod = api_method instanceof Array ? api_method : [api_method];
-        if (!apiMethod.includes(req_method)) {
-            Exception.bad_request({
-                message: `HTTP ${req_method} request is not allowed`
-            });
-        }
-        return req_method;
-    });
-}
-
-/**
  * validate errors and send message
  *
  * @param errors -
@@ -17775,5 +17757,5 @@ function verifyErrors(errors) {
     });
 }
 
-export { argument, method, middleware, middleware_next, verifyErrors };
+export { argument, middleware, middleware_next, verifyErrors };
 //# sourceMappingURL=validator.es.js.map

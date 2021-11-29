@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import Sandwich, {Resource, ParserSchemes, Validators, Type} from './bin';
+import Sandwich, {Resource, ParserSchemes, Validators, Type} from './src';
 
 import bodyParser from 'body-parser';
 import debuggers from 'debug';
@@ -10,10 +10,11 @@ const require = createRequire(import.meta.url);
 const express = require('express');
 
 class UsersSchemesValidator extends ParserSchemes {
-    email = {type: Type.String, required: true, strict: true, validation: (value: string) => {
+    constructor(){
+        super(false)
+    }
 
-            return value === 'ds'
-        }};
+    email = {type: Type.String, required: true, strict: true};
     password = {type: Type.String, required: true, strict: true, min: 8};
     confirmPassword = {type: Type.String, required: true, strict: true, min: 8};
 }

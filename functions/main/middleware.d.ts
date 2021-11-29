@@ -4,11 +4,11 @@ type HandleExecResponse = {
     train: () => void,
     success: boolean,
     method: string,
-    req_body: string | null | undefined,
+    //reqBody: string | null | undefined,
 }
 
 type valuesArgs = {[index: string | number]} | undefined;
-type valueOf = boolean | true;
+type valueOf = boolean;
 
 /**
  *

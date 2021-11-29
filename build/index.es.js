@@ -17476,33 +17476,6 @@ function get_middlewares(middlewares, method) {
 function toUpper(arr) {
     return lodash(arr).filter((val) => val).map(lodash.toUpper).valueOf();
 }
-/**
- * Execute the function according to its specified method
- *
- * @param push -
- * @param req -
- * @param res -
- * @param next - Next function
- */
-function push_against(push, req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const method = push.request.method;
-        switch (method) {
-            case 'POST':
-                yield push.post(req, res, next);
-                break;
-            case 'GET':
-                yield push.get(req, res, next);
-                break;
-            case 'PUT':
-                yield push.put(req, res, next);
-                break;
-            case 'DELETE':
-                yield push.delete(req, res, next);
-                break;
-        }
-    });
-}
 
 /**
  *
@@ -17873,11 +17846,11 @@ class Validators extends Types {
         this.updateProperty = (funUpdate) => {
             return new Promise((resolve) => {
                 funUpdate(resolve);
-            }).then(({ values, valueOf, schemes }) => {
+            }).then(({ values, schemes }) => {
                 var _a, _b;
                 this.values = Object.assign((_a = this.values) !== null && _a !== void 0 ? _a : {}, values !== null && values !== void 0 ? values : {});
                 this.schemes = Object.assign((_b = this.schemes) !== null && _b !== void 0 ? _b : {}, schemes !== null && schemes !== void 0 ? schemes : {});
-                this.valueOf = valueOf !== null && valueOf !== void 0 ? valueOf : this.valueOf;
+                //this.valueOf = valueOf ??  this.valueOf;
             });
         };
     }
@@ -17927,8 +17900,9 @@ class ParserSchemes {
     /**
      *
      */
-    constructor() {
+    constructor(valueOf) {
         validator.reset();
+        validator.valueOf = valueOf !== null && valueOf !== void 0 ? valueOf : true;
     }
     /**
      *
@@ -17975,85 +17949,6 @@ class ParserSchemes {
             }
         });
     }
-}
-
-/**
- * middleware_next execution of each declared FuncMiddleware
- *
- * @param req - Http Request
- * @param res - Http Response
- * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
- * @param train -
- */
-function middleware_next(funcMiddleware, req, res, train) {
-    return new Promise((resolve) => {
-        funcMiddleware(req, res, resolve, train);
-    });
-}
-/**
- * exec_list_func controls the execution of each declared FuncMiddleware
- *
- * @param middlewares -
- * @param req - Http Request
- * @param res - Http Response
- */
-function exec_list_func(middlewares, req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let train = {};
-        for (const middleware of middlewares) {
-            const result = yield middleware_next(middleware, req, res, train);
-            train = result ? Object.assign(Object.assign({}, train), result) : train;
-            if (!result)
-                break;
-        }
-        return train;
-    });
-}
-/**
- * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function
- *
- * @example
- * ```ts
- * Sandwich.handler (Users, [{
- * methods: ['POST'],
- * middleware: [isAuth]
- *}])
- *```
- *
- * @remarks
- * The get_middlewares function takes care of the extraction
- *
- * @param req - Http Request
- * @param res - Http Response
- * @param middlewares - array functions or function
- * @param method - `{string}` method request
- */
-function middleware(req, res, middlewares, method) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!middlewares)
-            return true;
-        const functions = yield get_middlewares(middlewares, method !== null && method !== void 0 ? method : '');
-        return yield exec_list_func(functions instanceof Array ? functions : [functions], req, res)
-            .then((resp) => resp);
-    });
-}
-
-/**
- * Validate the request method
- *
- * @param api_method - method allowed ["POST", "GET"] or "POST"
- * @param req_method - request method "POST"
- */
-function method(api_method, req_method) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const apiMethod = api_method instanceof Array ? api_method : [api_method];
-        if (!apiMethod.includes(req_method)) {
-            Exception.bad_request({
-                message: `HTTP ${req_method} request is not allowed`
-            });
-        }
-        return req_method;
-    });
 }
 
 /*
@@ -18140,49 +18035,86 @@ class Routers {
 }
 
 /**
- * Execute validation functions (method, middleware)
+ * middleware_next execution of each declared FuncMiddleware
  *
- * @param options - Configuration object for validation process
- * @returns Promise<object>
+ * @param req - Http Request
+ * @param res - Http Response
+ * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
+ * @param train -
  */
-function exec(options) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let req_method = undefined;
-        if (typeof options.req.method == 'string') {
-            req_method = options.req.method;
-        }
-        return yield method(options.method, req_method).then((result_method) => __awaiter(this, void 0, void 0, function* () {
-            const method = result_method;
-            const req_body = options.req.body;
-            const 
-            /**
-             *
-             * @param middleware_resp - middleware
-             */
-            middleware_resp = yield middleware(options.req, options.res, options.middleware, method);
-            return {
-                train: middleware_resp,
-                success: true,
-                method: method,
-                req_body: req_body,
-            };
-        }));
+function middleware_next(funcMiddleware, req, res, train) {
+    return new Promise((resolve) => {
+        funcMiddleware(req, res, resolve, train);
     });
 }
 /**
- * @privateRemarks
- * Run all validation functions, and catch all errors
+ * exec_list_func controls the execution of each declared FuncMiddleware
  *
- * @param options - Configuration object for validation process.
- * @returns Promise<any>
+ * @param middlewares -
+ * @param req - Http Request
+ * @param res - Http Response
  */
-function transform(options) {
-    return new Promise((resolve, reject) => {
-        exec(options)
-            .then((resp) => resolve(resp))
-            .catch(err => reject(err));
+function exec_list_func(middlewares, req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let train = {};
+        for (const middleware of middlewares) {
+            const result = yield middleware_next(middleware, req, res, train);
+            train = result ? Object.assign(Object.assign({}, train), result) : train;
+            if (!result)
+                break;
+        }
+        return train;
     });
 }
+/**
+ * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function
+ *
+ * @example
+ * ```ts
+ * Sandwich.handler (Users, [{
+ * methods: ['POST'],
+ * middleware: [isAuth]
+ *}])
+ *```
+ *
+ * @remarks
+ * The get_middlewares function takes care of the extraction
+ *
+ * @param req - Http Request
+ * @param res - Http Response
+ * @param middlewares - array functions or function
+ * @param method - `{string}` method request
+ */
+function middleware(req, res, middlewares, method) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!middlewares)
+            return true;
+        const functions = yield get_middlewares(middlewares, method !== null && method !== void 0 ? method : '');
+        return yield exec_list_func(functions instanceof Array ? functions : [functions], req, res)
+            .then((resp) => resp);
+    });
+}
+
+class Tomatos {
+    constructor(peel) {
+        this.peel = new Object(peel);
+    }
+    get(elm, notInherited) {
+        if (notInherited)
+            return this.peel[elm];
+        if (Object.prototype.hasOwnProperty.call(Object.keys(this.peel), elm)) {
+            return this.peel[elm];
+        }
+    }
+    hasOwn(elm, notInherited) {
+        if (notInherited)
+            return !!this.peel[elm];
+        return Object.prototype.hasOwnProperty.call(Object.keys(this.peel), elm);
+    }
+}
+const inst = (classTomato, peel) => new classTomato(peel);
+const tomato = (peel) => inst(Tomatos, peel);
+
 /**
  * Prepare the class to be used by routing
  *
@@ -18190,7 +18122,7 @@ function transform(options) {
  * Controller function usage example
  *
  * ```ts
- * Sandwich.handler(Users, [isAuthenticated()])
+ * Sandwich.handler(Users, [isAuthenticated])
  * ```
  *
  * @param classRequest - Class that will serve as a pillow for routing.
@@ -18199,44 +18131,27 @@ function transform(options) {
  */
 function Handler(classRequest, middlewares) {
     return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-        contextHttp.response = res;
-        contextHttp.request = req;
-        const $classRequest = new classRequest();
-        /**
-         * selected methods
-         *
-         */
-        const methods_list = lodash.map([
-            'post',
-            'get',
-            'put',
-            'delete',
-            'patch'
-        ], (val) => lodash.get($classRequest, val) ? val : undefined);
-        /**
-         * selected methods
-         *
-         */
-        const methods = toUpper(methods_list);
-        const data_transform = {
-            middleware: middlewares,
-            method: methods,
-            req: req,
-            res: res
-        };
-        const errors = yield transform(data_transform).then((resp) => {
-            $classRequest.train = resp.train;
-            $classRequest.request = {
-                success: resp.success,
-                method: resp.method
-            };
-            push_against($classRequest, req, res, next)
-                .catch((err) => err);
-        }).catch((err) => err);
-        if (errors)
-            Message.response(res, errors.statusCode, errors);
+        var _a;
+        try {
+            const reqMethod = req.method;
+            contextHttp.response = res;
+            contextHttp.request = req;
+            const $classRequest = new classRequest();
+            const angain = (tomato($classRequest)
+                .get(reqMethod.toLowerCase(), true));
+            if (!angain)
+                return Exception.bad_request({
+                    message: `HTTP ${reqMethod} request is not allowed`
+                });
+            $classRequest.train = yield middleware(req, res, middlewares, reqMethod);
+            yield angain(req, res, next);
+        }
+        catch (error) {
+            Message.response(res, (_a = error.statusCode) !== null && _a !== void 0 ? _a : 500, error);
+        }
     });
 }
+
 /**
  * Returns a class called Resource, which loads the resources. Also, after loading the necessary
  * resources for the routing job, it loads the initial configuration for the validation of the
