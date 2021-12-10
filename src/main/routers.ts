@@ -25,6 +25,7 @@ const handlerResource = (classResource: Route.HandlerResource, middleware: Route
         return {classResource, middleware}
     }
 }
+
 /**
  *
  * @param resource -
@@ -43,10 +44,12 @@ const getParams = <P>(...resource:Route.ResourceArgs<P>): Route.MiddlewareResour
  * @beta
  */
 export class Routers implements Route {
+
     /**
      *
      */
     readonly app: Route.router;
+
     /**
      *
      * @param app -
@@ -54,17 +57,14 @@ export class Routers implements Route {
     constructor(app: Route.router) {
         this.app = app;
     }
+
     /**
      *
      * @param resource -
      */
     resource<P>(...resource: Route.ResourceArgs<P>) {
-        const length = resource.length;
-        const middleware: any = length === 3 ? resource[0]: undefined;
-        const paths: any = length === 3 ? resource[1]: resource[0];
-        const classes: any = length === 3 ? resource[2]: resource[1];
-
-        this.router(middleware, paths, classes);
+        const [middleware, paths, classResource] = getParams<P>(...resource);
+        this.router(middleware, paths, classResource);
     }
 
     /**

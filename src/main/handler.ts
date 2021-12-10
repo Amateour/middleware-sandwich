@@ -2,7 +2,7 @@ import * as SW from '../../functions';
 import {middleware} from '../validator';
 import {Message, Exception} from '../utils/message';
 import {contextHttp} from '../utils/contextHttp';
-import tomato from '../utils/tomato';
+import tomato from '../lib/tomatos';
 
 /**
  * Prepare the class to be used by routing
@@ -28,12 +28,12 @@ function Handler(classRequest: SW.HandlerResource, middlewares?: SW.middlewares)
 
             const $classRequest = new classRequest();
 
-            const angain = (
+            const again = (
                 tomato($classRequest)
                 .get(reqMethod.toLowerCase(), true)
             );
 
-            if (!angain) return Exception.bad_request({
+            if (!again) return Exception.bad_request({
                 message: `HTTP ${reqMethod} request is not allowed`
             });
 
@@ -41,7 +41,7 @@ function Handler(classRequest: SW.HandlerResource, middlewares?: SW.middlewares)
                 req, res, middlewares, reqMethod
             )
 
-            await angain(req, res, next);
+            await again(req, res, next);
 
         } catch (error: any) {
             Message.response(res, error.statusCode ?? 500, error)

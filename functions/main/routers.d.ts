@@ -42,11 +42,11 @@ declare namespace Routers {
     /**
      *
      */
-    type PathsResource = [paths: paths, resourceClass: HandlerResource];
+    export type PathsResource = [paths: paths, resourceClass: HandlerResource];
     /**
      *
      */
-    type MiddlewareResource = [middleware: middlewares, paths: paths, resourceClass: HandlerResource];
+    export type MiddlewareResource = [middleware: middlewares, paths: paths, resourceClass: HandlerResource];
     /**
      *
      */

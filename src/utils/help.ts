@@ -20,7 +20,7 @@ export const isNode: () => boolean = () => typeof global !== "undefined"
  * @returns boolean
  */
 export function isArray(elm: any): boolean {
-    return elm instanceof Array && typeof elm === 'object';
+    return Array.isArray(elm);
 }
 /**
  * validate if it is an objet
