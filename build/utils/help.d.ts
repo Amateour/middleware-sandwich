@@ -71,10 +71,10 @@ export declare const validate: SW.validate;
  * @param middlewares - list middlewares
  * @param method - method request (post, get)
  */
-export declare function get_middlewares(middlewares: SW.middlewares, method: string): Promise<any>;
+export declare function getMiddlewares(middlewares: SW.middlewares, method: string): Promise<any>;
 /**
  *
  * @param arr -
  * @returns any[]
  */
-export declare function toUpper(arr: any[]): any[];
+export declare function toUpper(arr: string[]): string[];

@@ -55,7 +55,7 @@ declare namespace Routers {
      *
      */
     type ResourceArgs<Param> = Param extends optionsParam ?
-        Param: Params<Param>;
+        Param : Params<Param>;
     /**
      *
      */

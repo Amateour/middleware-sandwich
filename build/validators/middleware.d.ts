@@ -8,7 +8,7 @@ import { FuncMiddleware, middlewareNextReturn, ReqType, ResType } from "../../fu
  * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
  * @param train -
  */
-export declare function middleware_next(funcMiddleware: FuncMiddleware, req: ReqType, res: ResType, train: any): Promise<middlewareNextReturn>;
+export declare function middlewareNext(funcMiddleware: FuncMiddleware, req: ReqType, res: ResType, train: any): Promise<middlewareNextReturn>;
 /**
  * Main function: extract the middleware declared in the Sandwich.handler (Class, middleware) function
  *

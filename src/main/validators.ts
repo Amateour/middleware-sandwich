@@ -2,7 +2,7 @@ import * as SW from "../../functions";
 import {requestGet} from '../utils/contextHttp';
 import {argument} from "../validators/argument";
 import {verifyErrors} from "../validators/verifyErrors";
-import {ParserSchemeFunction, ValidatorCallback} from "../../functions";
+import {ParserSchemeFunction} from "../../functions";
 
 /**
  * Analyze the values provided according to your schema.
@@ -27,12 +27,13 @@ export const parserSchemes: SW.HandlerParserSchemes = async (
          * @param result_argument - result argument
          */
         result_argument = await argument(valueOf ?? true, values ?? {}, schemes),
+
         /**
          * check for errors in arguments
          *
          * @param responseError - bug check response
          */
-        responseError = await verifyErrors(result_argument.argument);
+        responseError = await verifyErrors(result_argument.errors);
 
     return {
         schemes: result_argument.argument,
@@ -60,10 +61,6 @@ export const Type = new Types();
  */
 class Validators extends Types implements SW.ValidatorsClass {
     /**
-     * @readonly
-     */
-    readonly updateProperty: (funUpdate: SW.ValidatorCallback) => void;
-    /**
      *
      */
     values: SW.valuesArgs = undefined;
@@ -83,15 +80,6 @@ class Validators extends Types implements SW.ValidatorsClass {
     constructor(schemes?: SW.schemes) {
         super();
         this.schemes = schemes ?? this.schemes;
-        this.updateProperty = (funUpdate: ValidatorCallback) => {
-            return new Promise((resolve) => {
-                funUpdate(resolve);
-            }).then(({values, schemes}: any) => {
-                this.values = Object.assign(this.values ?? {}, values ?? {});
-                this.schemes = Object.assign(this.schemes ?? {}, schemes ?? {});
-                //this.valueOf = valueOf ??  this.valueOf;
-            });
-        };
     }
 
     /**
@@ -161,10 +149,14 @@ export class ParserSchemes implements SW.ParserSchemesClass{
      */
     parserSchemes(): ParserSchemeFunction {
         return addPropertySchemesValidator(Object.entries(this))
-            .then(()=> validator.updateProperty((update) => {
+            .then(()=> {
                 const request = requestGet();
-                update({values: {...request.body, ...request.params, ...request.query }});
-            })).then(() => validator.parserSchemes());
+                return validator.parserSchemes({
+                    ...request.body,
+                    ...request.params,
+                    ...request.query
+                })
+            });
     }
 
     /**

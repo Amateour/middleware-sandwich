@@ -1,0 +1,21 @@
+declare type callbackMap = (value: any, index: string | number, data: any) => any;
+declare type admixturesType = {
+    map: any;
+    size: any;
+    filter: (callback: callbackMap) => Promise<any[]>;
+    get: any;
+    has: any;
+    valueOf: any;
+    omit: any;
+    find: any;
+    flatten: (level: number) => Promise<any[]>;
+};
+export declare const admixtures: admixturesType;
+export declare const filter: (value: any, callback: callbackMap) => Promise<any[]>;
+export declare const map: (value: any, callback: any) => any;
+export declare const flatten: (value: any, level?: number) => Promise<any[]>;
+export declare const get: (value: any, key: string | number, notInherited?: boolean | undefined) => any;
+export declare const has: (value: any, key: string, notInherited?: boolean | undefined) => any;
+export declare const omit: (value: any, arrayKeys: string[]) => any;
+export declare const find: (value: any, callback: any) => any;
+export {};

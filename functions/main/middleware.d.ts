@@ -1,10 +1,18 @@
 import {middlewares, schemes, ReqType, ResType, Next, TypeValid} from "../utils/typeUtil";
 
-type HandleExecResponse = {
-    train: () => void,
-    success: boolean,
-    method: string,
-    //reqBody: string | null | undefined,
+/**
+ *
+ */
+export interface Resource {
+    train: unknown;
+    request: any;
+}
+
+/**
+ * Constructor of the Resource class
+ */
+export interface HandlerResource {
+    new (): Resource,
 }
 
 type valuesArgs = {[index: string | number]} | undefined;
@@ -42,10 +50,12 @@ type HandlerResponse = (
  * @returns HandlerResponse
  */
 type Handler = (classRequest: any, middlewares?: middlewares) => HandlerResponse;
+
 /**
  * ValidatorCallback
  */
 export type ValidatorCallback = (resolve: any) => void ;
+
 /**
  * class Sandwiches
  *
@@ -85,19 +95,4 @@ export interface SandwichClass extends ValidatorsClass {
      *
      */
     handler: Handler,
-}
-
-/**
- *
- */
-export interface Resource {
-    train: unknown;
-    request: any;
-}
-
-/**
- * Constructor of the Resource class
- */
-export interface HandlerResource {
-    new (): Resource,
 }

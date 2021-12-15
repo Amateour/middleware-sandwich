@@ -1,5 +1,5 @@
 import * as SW from '../../functions';
-import {get_middlewares} from "../utils/help";
+import {getMiddlewares} from "../utils/help";
 import {FuncMiddleware, middlewareNextReturn, ReqType, ResType} from "../../functions";
 
 /**
@@ -10,11 +10,11 @@ import {FuncMiddleware, middlewareNextReturn, ReqType, ResType} from "../../func
  * @param funcMiddleware - FuncMiddleware The middleware function runs in the middleware_next function
  * @param train -
  */
-export function middleware_next(
+export function middlewareNext(
     funcMiddleware: FuncMiddleware, req: ReqType, res: ResType, train: any
 ): Promise<middlewareNextReturn> {
-   return new Promise((resolve) => {
-        funcMiddleware(req, res, resolve, train);
+   return new Promise((next) => {
+        funcMiddleware({req, res, next, train});
     });
 }
 
@@ -25,13 +25,13 @@ export function middleware_next(
  * @param req - Http Request
  * @param res - Http Response
  */
-async function exec_list_func(
+async function execListFunc(
     middlewares: SW.FuncMiddleware[], req: SW.ReqType, res: SW.ResType
 ): Promise<SW.execListFuncReturn> {
     let train = {};
     for (const middleware of middlewares) {
-        const result = await middleware_next(middleware, req, res, train);
-        train =  result ? {...train, ...result} : train;
+        const result = await middlewareNext(middleware, req, res, train);
+        train = Object.assign(train, result ?? {});
         if (!result) break;
     }
     return train;
@@ -60,8 +60,8 @@ export async function middleware (
     req: SW.ReqType, res: SW.ResType, middlewares: SW.middlewares | undefined, method: string
 ): Promise<SW.middlewareReturn> {
     if (!middlewares) return true;
-    const functions = await get_middlewares(middlewares, method ?? '');
-    return await exec_list_func(
+    const functions = await getMiddlewares(middlewares, method ?? '');
+    return await execListFunc(
         functions instanceof  Array ? functions : [functions]
         , req, res)
         .then((resp: any) => resp);

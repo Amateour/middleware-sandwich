@@ -2,7 +2,7 @@ import * as SW from '../../functions';
 import {middleware} from '../validator';
 import {Message, Exception} from '../utils/message';
 import {contextHttp} from '../utils/contextHttp';
-import tomato from '../lib/tomatos';
+import {get} from '../utils/admixtures';
 
 /**
  * Prepare the class to be used by routing
@@ -29,8 +29,7 @@ function Handler(classRequest: SW.HandlerResource, middlewares?: SW.middlewares)
             const $classRequest = new classRequest();
 
             const again = (
-                tomato($classRequest)
-                .get(reqMethod.toLowerCase(), true)
+                get($classRequest, reqMethod.toLowerCase(), true)
             );
 
             if (!again) return Exception.bad_request({

@@ -10,7 +10,7 @@ import {
 /**
  *  list of validation functions
  */
-export interface func_arguments {
+export interface funcArguments {
     validation: ({type, valid_value, value}: argValid) => boolean,
     /**
      * Validate value max
@@ -54,7 +54,7 @@ export interface func_arguments {
      * {(strict: boolean, type: string, key: keyType, value: valueType)}
      * ```
      */
-    valid_strict: (strict: boolean | undefined, name: string, key: keyType, value: valueType) => any
+    validStrict: (strict: boolean | undefined, name: string, key: keyType, value: valueType) => any
 }
 
 /**

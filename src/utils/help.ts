@@ -1,5 +1,5 @@
 import * as SW from '../../functions';
-import _ from 'lodash';
+import {filter, flatten} from './admixtures'
 
 /**
  * Identify if it is running in a browser
@@ -94,12 +94,11 @@ export const validate: SW.validate = {
  * @param middlewares - list middlewares
  * @param method - method request (post, get)
  */
-export async function get_middlewares(middlewares: SW.middlewares, method: string) {
+export async function getMiddlewares(middlewares: SW.middlewares, method: string) {
     try {
-        let flatten = false;
+        let isFlatten = false;
          if (!(typeof middlewares === 'object')) return middlewares;
-         const resp_middlewares: any = await _(middlewares)
-         .filter((middleware: SW.multiMiddlewareType)=> {
+         const resp_middlewares: any = await filter(middlewares,(middleware: SW.multiMiddlewareType) => {
             const middleware_is_function = typeof middleware === 'function';
             if(middleware_is_function) return true;
 
@@ -111,13 +110,17 @@ export async function get_middlewares(middlewares: SW.middlewares, method: strin
                 throw "methods: An Array or String data type is expected";
 
             if(middleware.middleware instanceof Array)
-                flatten = true;
+                isFlatten = true;
 
             const methods =  typeof middleware.methods  === 'string'
             ? [middleware.methods]: middleware.methods;
             return toUpper(methods).includes(method.toUpperCase());
-        }).map((middleware: SW.multiMiddlewareType) => middleware.middleware ?? middleware);
-        return flatten ? await _.flatten(resp_middlewares).valueOf() : resp_middlewares.valueOf();
+        }).then((resp: any) =>  resp.map((middleware: SW.multiMiddlewareType) => {
+             return middleware.middleware ?? middleware
+         }));
+        return isFlatten ?
+            await flatten(resp_middlewares).then(val => val.valueOf()) :
+            resp_middlewares.valueOf();
     }catch (e) {
         console.error(e);
     }
@@ -128,7 +131,7 @@ export async function get_middlewares(middlewares: SW.middlewares, method: strin
  * @param arr -
  * @returns any[]
  */
-export function toUpper(arr: any[]): any[] {
-    return _(arr).filter((val) => val).map(_.toUpper).valueOf();
+export function toUpper(arr: string[]): string[] {
+    return arr.filter((val) => val).map((val: string) => val.toUpperCase());
 }
 

@@ -1,7 +1,7 @@
-import { ResponseVerifyErrors } from "../../functions";
+import { ResponseVerifyErrors, ErrorStatus } from "../../functions";
 /**
  * validate errors and send message
  *
  * @param errors -
  */
-export declare function verifyErrors(errors: object): Promise<ResponseVerifyErrors | any>;
+export declare function verifyErrors(errors: ErrorStatus[]): Promise<ResponseVerifyErrors | any>;

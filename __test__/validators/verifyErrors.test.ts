@@ -21,13 +21,11 @@ test('args validation errors', async () => {
 
 test('args verify errors', async () => {
     try {
-        await verifyErrors({
-            password: {
-                errors: [ { message: 'minimum_characters', value: 8 } ],
-                success: false,
-                value: '123'
+        await verifyErrors([
+            {
+                password: [ { message: 'minimum_characters', value: 8 } ]
             }
-        });
+        ]);
     } catch (error) {
         const {message} : any = error;
         expect(message).toBe('args_validation_errors');

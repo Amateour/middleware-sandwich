@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import Sandwich, {Resource, ParserSchemes, Validators, Type} from './src';
-import tomato from './src/lib/tomatos';
 
 import bodyParser from 'body-parser';
 import debuggers from 'debug';
@@ -34,16 +33,11 @@ class Users extends Resource {
         try {
 
             const data: any = await Users.parsers.parserSchemes();
-            const mix = tomato(1234)
-            const to = tomato.map(data.args, ((v: any) => v))
 
             res.status(200).json({
                 params: req.params,
                 query: req.query,
-                body: {
-                    to,
-                    mix
-                }
+                body: data.args
             });
         } catch (e: any) {
             res.status(e.statusCode ?? 500).json({
@@ -90,11 +84,18 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-userRouter.all('/users', Sandwich.handler(Users));
+const IsConfig = async ({next}: any): Promise<any> => {
+    return next()
+}
+
+userRouter.all('/users', Sandwich.handler(Users, [{
+    methods: ['GET'],
+    middleware: [IsConfig]
+}]));
 
 router.resource( {
     methods:[],
-    middleware:[]
+    middleware:[IsConfig]
 }, '/client', Users);
 
 app.use('/', userRouter);

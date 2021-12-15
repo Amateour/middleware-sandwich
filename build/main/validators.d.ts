@@ -31,10 +31,6 @@ export declare const Type: Types;
  */
 declare class Validators extends Types implements SW.ValidatorsClass {
     /**
-     * @readonly
-     */
-    readonly updateProperty: (funUpdate: SW.ValidatorCallback) => void;
-    /**
      *
      */
     values: SW.valuesArgs;

@@ -1,3 +1,5 @@
+import {ErrorStatus} from '../validators/verify_errors';
+
 export type Any = any;
 
 /**
@@ -7,7 +9,7 @@ export type Next = any;
 /**
  * FunctionVoid 
  */
-export type FunctionVoid = () => void;
+export type FunctionVoid = (props: any) => void;
 /**
  * methodType
  */
@@ -29,10 +31,21 @@ export type resolvePromiseScheme = (scheme: scheme) => void;
 export type FuncResolvePromiseScheme = (
     resolve: resolvePromiseScheme
 ) => void;
+
+/**
+ *
+ */
+type FuncMiddlewares = FunctionVoid[] | FunctionVoid;
+
+/**
+ *
+ */
+type FuncMultiMiddlewares = multiMiddlewareType | multiMiddlewareType[];
+
 /**
  * middlewaresType
  */
-export type middlewares = FunctionVoid[] | FunctionVoid | multiMiddlewareType | multiMiddlewareType[];
+export type middlewares = FuncMiddlewares | FuncMultiMiddlewares;
 /**
  * middlewareType
  */
@@ -45,10 +58,6 @@ export type ResType = any;
  * ReqType
  */
 export type ReqType = any;
-/**
- * argumentType
- */
-export type argumentType = object;
 /**
  * valueType
  */
@@ -70,7 +79,8 @@ export type respType = string;
  */
 export interface argumentProps {
     argument: any,
-    body: any
+    body: any,
+    errors: ErrorStatus[]
 }
 
 /**
@@ -103,27 +113,29 @@ export interface scheme {
     max?: number,
     value?: any,
     strict?: boolean,
-    validation?: validationFun
+    validation?: validationFun,
 }
 /**
  * schemes
  */
 export type schemes = {[index: string]: scheme};
+
 /**
  * compareProps
  */
 export interface compareProps {
-    value: valueType,
-    key: keyType,
+    value: valueType, // value to be validated example "Brayan Salgado"
+    key: keyType, // key main
     message: messageType,
-    scheme: scheme,
+    scheme: scheme, // data validation schema
 }
+
 /**
  * argValid
  */
 export interface argValid {
     value: any,
-    valid_value: any,
+    validValue: any,
     type: valueType,
     key: keyType,
     scheme?: schemes
@@ -133,7 +145,7 @@ export interface argValid {
  */
 export interface argMessProps {
     value?: any,
-    valid_value?: any,
+    validValue?: any,
     type?: valueType,
     key?: any,
     key_validation?: string | number

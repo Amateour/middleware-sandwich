@@ -1,8 +1,6 @@
-import * as SW from '../../functions';
 import {isBrowser} from '../utils/help'
 import {Exception} from "../utils/message";
-import _ from 'lodash';
-import {ResponseVerifyErrors} from "../../functions";
+import {ResponseVerifyErrors, ErrorStatus} from "../../functions";
 
 /**
  * validate errors and send message
@@ -10,23 +8,16 @@ import {ResponseVerifyErrors} from "../../functions";
  * @param errors -
  */
 export async function verifyErrors(
-    errors: object
+    errors: ErrorStatus[]
 ): Promise<ResponseVerifyErrors | any> {
 
-    const response: SW.Any = {
+    const response: ResponseVerifyErrors = {
         errors: [],
         message: 'args_validation_successful'
     }
 
-    const resp_err = _(errors)
-        .map((value: any, key) => {
-            return new Object({[key]: value.errors})
-        })
-        .filter((value: any) => _.find(value, (err) => err.length))
-        .valueOf();
-
-    if (resp_err.length) {
-        response.errors = resp_err;
+    if (errors.length) {
+        response.errors = errors;
         response.message = 'args_validation_errors';
         isBrowser() ? Exception.error(response) : Exception.bad_request(response);
     } else {

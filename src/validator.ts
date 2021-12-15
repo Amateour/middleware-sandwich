@@ -1,9 +1,9 @@
-import {middleware_next, middleware} from "./validators/middleware";
+import {middlewareNext, middleware} from "./validators/middleware";
 import {argument} from "./validators/argument";
 import {verifyErrors} from "./validators/verifyErrors";
 
 export {
-    middleware_next,
+    middlewareNext,
     middleware,
     argument,
     verifyErrors
