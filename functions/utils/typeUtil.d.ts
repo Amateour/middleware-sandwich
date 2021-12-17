@@ -118,7 +118,7 @@ export interface scheme {
 /**
  * schemes
  */
-export type schemes = {[index: string]: scheme};
+export type schemes = {[index: string]: scheme} | null;
 
 /**
  * compareProps

@@ -1,8 +1,18 @@
-import * as SW from "../../functions";
-import {requestGet} from '../utils/contextHttp';
 import {argument} from "../validators/argument";
 import {verifyErrors} from "../validators/verifyErrors";
-import {ParserSchemeFunction} from "../../functions";
+import {
+    ParserSchemeFunction,
+    ParserSchemesClass,
+    HandlerParserSchemes,
+    TypeValid,
+    ValidatorsClass,
+    valuesArgs,
+    schemes,
+    scheme,
+    valueOf,
+    FuncResolvePromiseScheme,
+    resolvePromiseScheme
+} from "../../functions";
 
 /**
  * Analyze the values provided according to your schema.
@@ -16,13 +26,14 @@ import {ParserSchemeFunction} from "../../functions";
  * }
  * ```
  * @param values - data body request.
- * @returns
+ * @returns HandlerParserSchemes
  */
-export const parserSchemes: SW.HandlerParserSchemes = async (
+export const parserSchemes: HandlerParserSchemes = async (
     valueOf, schemes, values
 ) => {
     const
         /**
+         *  validate data
          *
          * @param result_argument - result argument
          */
@@ -46,7 +57,7 @@ export const parserSchemes: SW.HandlerParserSchemes = async (
 /**
  * Types of validations
  */
-export class Types implements SW.TypeValid {
+export class Types implements TypeValid {
     String = String
     Number = Number
     Array = Array
@@ -54,32 +65,49 @@ export class Types implements SW.TypeValid {
     Object = Object
 }
 
+/**
+ * Instance Types
+ */
 export const Type = new Types();
 
 /**
+ * A Validators class, with functions that allow rigorously validating
+ * data, according to a specific pattern (a schema).
+ *
+ * @remarks
+ * A schema determines the validation pattern of a value, and if it
+ * does not meet the conditions of the pattern, an exception is
+ * thrown with the return of an array of the errors found.
+ *
  * @beta
  */
-class Validators extends Types implements SW.ValidatorsClass {
+class Validators extends Types implements ValidatorsClass {
+
     /**
-     *
+     * values to be validated
+     * @defaultValue undefined
      */
-    values: SW.valuesArgs = undefined;
+    values: valuesArgs = undefined;
+
     /**
      * Object type property. List of validation schemes.
      * @defaultValue object
      */
-    schemes: SW.schemes = {};
+    schemes: schemes;
+
     /**
-     * Boolean type property. Determines how validated arguments and parameters are extracted.
-     * @defaultValue value_of=true
+     * Boolean type property. Determines how validated arguments
+     * and parameters are extracted.
+     * @defaultValue true
      */
-    valueOf: SW.valueOf = true;
+    valueOf: valueOf = true;
+
     /**
      * Creates an instance of Sandwiches.
      */
-    constructor(schemes?: SW.schemes) {
+    constructor(schemes?: schemes) {
         super();
-        this.schemes = schemes ?? this.schemes;
+        this.schemes = schemes ?? null;
     }
 
     /**
@@ -88,16 +116,24 @@ class Validators extends Types implements SW.ValidatorsClass {
      * @param values - Data subject to validation
      * @returns ParserSchemesResponse
      */
-    parserSchemes(values?: SW.valuesArgs): ParserSchemeFunction
+    parserSchemes(values?: valuesArgs): ParserSchemeFunction
     {
         return parserSchemes(
             this.valueOf, this.schemes, this.values ?? values
         )
     }
 
+    /**
+     * Reset data:
+     * ```ts
+     *  this.valueOf = true;
+     *  this.schemes = {};
+     *  this.values = undefined;
+     * ```
+     */
     reset() {
         this.valueOf = true;
-        this.schemes = {};
+        this.schemes = null;
         this.values = undefined;
     }
 }
@@ -106,15 +142,27 @@ export default Validators;
 
 const validator = new Validators();
 
+/**
+ * addSchemes add schemes
+ *
+ * @privateRemarks
+ * addSchemes function serving the ParserSchemes class for
+ * adding validation schemes
+ *
+ * @param schemes - Validation schemes
+ */
 const addSchemes = (schemes: unknown) => {
-    validator.schemes = Object.assign(validator.schemes, schemes);
+    validator.schemes = Object.assign(validator.schemes ?? {}, schemes);
 }
 
 /**
+ * handle the function addScheme, which belongs to the class ParserSchemes
  *
- * @param callBack -
+ * @param callBack - receives as argument the resolution function of
+ * new Promise, and the value processed in the callback is passed to
+ * it, this value is the validation scheme of an element
  */
-const handlerAddScheme = (callBack: SW.FuncResolvePromiseScheme) => {
+const handlerAddScheme = (callBack: FuncResolvePromiseScheme) => {
     new Promise((resolve) => {
         callBack(resolve);
     }).then((schemes: unknown) => {
@@ -123,8 +171,19 @@ const handlerAddScheme = (callBack: SW.FuncResolvePromiseScheme) => {
 }
 
 /**
+ * Processes and assigns to validator.schemes the validation
+ * schemes declared as property in a class.
  *
- * @param schemesEntries -
+ * @param schemesEntries - Matrix of schemes
+ *
+ * @example
+ * Matrix schemes:
+ * ```json
+ * [
+ *  ['name' {type: Type.String, required: true, strict: true}],
+ *  ['email' {type: Type.String, required: true, strict: true}]
+ * ]
+ * ```
  */
 const addPropertySchemesValidator = <T>(schemesEntries: [keyof T, T[keyof T]][]): Promise<void> => {
     return new Promise((resolve) => {
@@ -134,10 +193,10 @@ const addPropertySchemesValidator = <T>(schemesEntries: [keyof T, T[keyof T]][])
     })
 }
 
-export class ParserSchemes implements SW.ParserSchemesClass{
+export class ParserSchemes implements ParserSchemesClass {
 
     /**
-     *
+     * instance ParserSchemes
      */
     constructor(valueOf?: boolean) {
         validator.reset();
@@ -145,25 +204,19 @@ export class ParserSchemes implements SW.ParserSchemesClass{
     }
 
     /**
-     *
+     * Activating the schema validation functions
      */
-    parserSchemes(): ParserSchemeFunction {
+    parserSchemes(values?: valuesArgs): ParserSchemeFunction {
         return addPropertySchemesValidator(Object.entries(this))
-            .then(()=> {
-                const request = requestGet();
-                return validator.parserSchemes({
-                    ...request.body,
-                    ...request.params,
-                    ...request.query
-                })
-            });
+            .then(()=> validator.parserSchemes(values));
     }
 
     /**
+     * add schemes
      *
-     * @param schemes -
+     * @param schemes - Validations schemes
      */
-    addSchemes(schemes: SW.schemes) {
+    addSchemes(schemes: schemes) {
         addSchemes(schemes);
     }
 
@@ -175,11 +228,18 @@ export class ParserSchemes implements SW.ParserSchemesClass{
      *```ts
      * addScheme({type: Sandwich.String, required: true, strict: true}, ['email'])
      *```
-     * @param scheme -
-     * @param arg -
+     * @param scheme - Validations scheme
+     * @param arg - Name of the argument to validate, can be a string or an array of strings.
+     *
+     * @example
+     * example param arg:
+     * ```ts
+     * 'password' or ['password', 'passwordConfirm']
+     * ```
+     *
      */
-    addScheme(scheme: SW.scheme, arg: string | string[]) {
-        handlerAddScheme((add: SW.resolvePromiseScheme): void => {
+    addScheme(scheme: scheme, arg: string | string[]) {
+        handlerAddScheme((add: resolvePromiseScheme): void => {
             if(typeof arg == 'string') {
                 add({
                     [arg]: scheme

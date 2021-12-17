@@ -11,12 +11,17 @@ const express = require('express');
 
 class UsersSchemesValidator extends ParserSchemes {
     constructor(){
-        super(false)
+        super(false);
+        this.addScheme({type: Type.String, required: true, strict: true}, 'email')
+        this.addScheme({type: Type.String, required: true, strict: true, min: 8}, [
+            'password',
+            'confirmPassword'
+        ]);
+        this.addSchemes({
+            firstName: {type: Type.String, required: true, strict: true}
+        })
     }
-
-    email = {type: Type.String, required: true, strict: true};
-    password = {type: Type.String, required: true, strict: true, min: 8};
-    confirmPassword = {type: Type.String, required: true, strict: true, min: 8};
+    name = {type: Type.String, required: true, strict: true};
 }
 
 class Users extends Resource {
@@ -32,7 +37,11 @@ class Users extends Resource {
     async get(req: any, res: any) {
         try {
 
-            const data: any = await Users.parsers.parserSchemes();
+            const data: any = await Users.parsers.parserSchemes({
+                ...req.query,
+                ...req.params,
+                ...req.body
+            });
 
             res.status(200).json({
                 params: req.params,

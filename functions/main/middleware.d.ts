@@ -1,4 +1,4 @@
-import {middlewares, schemes, ReqType, ResType, Next, TypeValid} from "../utils/typeUtil";
+import {middlewares, schemes, scheme, ReqType, ResType, Next, TypeValid} from "../utils/typeUtil";
 
 /**
  *
@@ -52,11 +52,6 @@ type HandlerResponse = (
 type Handler = (classRequest: any, middlewares?: middlewares) => HandlerResponse;
 
 /**
- * ValidatorCallback
- */
-export type ValidatorCallback = (resolve: any) => void ;
-
-/**
  * class Sandwiches
  *
  */
@@ -79,12 +74,19 @@ export interface ValidatorsClass extends TypeValid {
 }
 
 export interface ParserSchemesClass {
+    parserSchemes(values?: valuesArgs): ParserSchemeFunction;
     /**
      *
      * @param schemes -
      * @param args -
      */
-    addScheme(schemes: schemes, args: string | string[]): void;
+    addSchemes(schemes: schemes, args: string | string[]): void;
+    /**
+     *
+     * @param schemes -
+     * @param args -
+     */
+    addScheme(schemes: scheme, args: string | string[]): void;
 }
 
 /**

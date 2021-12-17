@@ -267,7 +267,7 @@ function execListFunc(middlewares, req, res) {
         let train = {};
         for (const middleware of middlewares) {
             const result = yield middlewareNext(middleware, req, res, train);
-            train = result ? Object.assign(Object.assign({}, train), result) : train;
+            train = Object.assign(train, result !== null && result !== void 0 ? result : {});
             if (!result)
                 break;
         }
