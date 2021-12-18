@@ -24,11 +24,13 @@ import Handler from './handler';
  * ```
  */
 export class Resource implements SW.Resource {
+
     /**
      * Loads the data returned by the middleware, in case the promise is fulfilled.
      *
      */
     train: SW.Any;
+
     /**
      * http request functions
      *

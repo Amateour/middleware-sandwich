@@ -1,4 +1,4 @@
-export * from './validators/validator';
+export * from './validators';
 export * from './utils/help';
 export * from './utils/message';
 export * from './utils/typeUtil';

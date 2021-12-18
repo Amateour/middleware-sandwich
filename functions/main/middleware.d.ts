@@ -1,4 +1,13 @@
-import {middlewares, schemes, scheme, ReqType, ResType, Next, TypeValid} from "../utils/typeUtil";
+import {
+    middlewares,
+    schemes,
+    scheme,
+    ReqType,
+    ResType,
+    Next,
+    TypeValid,
+    resolvePromiseScheme
+} from "../utils/typeUtil";
 
 /**
  *
@@ -15,30 +24,6 @@ export interface HandlerResource {
     new (): Resource,
 }
 
-type valuesArgs = {[index: string | number]} | undefined;
-type valueOf = boolean;
-
-/**
- *
- */
-export type ParserSchemesResponse = {
-    schemes: any,
-    args: {[index: string | number]},
-    errors: any[],
-    message: string,
-}
-
-export type ParserSchemeFunction = Promise<ParserSchemesResponse>;
-
-/**
- *
- */
-export type HandlerParserSchemes = (
-    valueOf?: valueOf,
-    schemes?: schemes,
-    values?: valuesArgs
-) => ParserSchemeFunction;
-
 type HandlerResponse = (
     req: ReqType, res: ResType, next?: Next
 ) => unknown;
@@ -51,43 +36,7 @@ type HandlerResponse = (
  */
 type Handler = (classRequest: any, middlewares?: middlewares) => HandlerResponse;
 
-/**
- * class Sandwiches
- *
- */
-export interface ValidatorsClass extends TypeValid {
-    readonly schemes: schemes;
-    /**
-     *
-     */
-    valueOf: boolean;
-    /**
-     *
-     */
-    values: valuesArgs;
-    /**
-     *
-     * @param body -
-     * @returns ParserSchemeFunction
-     */
-    parserSchemes(body?: valuesArgs): ParserSchemeFunction;
-}
 
-export interface ParserSchemesClass {
-    parserSchemes(values?: valuesArgs): ParserSchemeFunction;
-    /**
-     *
-     * @param schemes -
-     * @param args -
-     */
-    addSchemes(schemes: schemes, args: string | string[]): void;
-    /**
-     *
-     * @param schemes -
-     * @param args -
-     */
-    addScheme(schemes: scheme, args: string | string[]): void;
-}
 
 /**
  *
@@ -98,3 +47,24 @@ export interface SandwichClass extends ValidatorsClass {
      */
     handler: Handler,
 }
+
+type PropsMiddleware = {
+    req?: ReqType,
+    res?: ResType,
+    next: resolvePromiseScheme,
+    train: any
+}
+
+/**
+ * The middleware function runs in the middleware_next function
+ * @returns void
+ */
+export declare type FuncMiddleware = (
+    props: PropsMiddleware
+) => void;
+
+type middlewareNextReturn = any
+
+type execListFuncReturn = any;
+
+type middlewareReturn = any

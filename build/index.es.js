@@ -23,18 +23,6 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-const contextHttp = (() => {
-    class contextHttp {
-        constructor() {
-            this.request = undefined;
-            this.response = undefined;
-        }
-    }
-    return new contextHttp();
-})();
-const requestGet = () => contextHttp.request;
-const responseGet = () => contextHttp.response;
-
 /**
  * get data error
  *
@@ -46,7 +34,7 @@ const responseGet = () => contextHttp.response;
  * }
  * ```
  */
-function get_data_errors(data) {
+function getDataErrors(data) {
     return data;
 }
 /**
@@ -73,7 +61,7 @@ class ClassException {
          * @param data -
          */
         this.server_error = (data) => {
-            const { message, errors } = get_data_errors(data);
+            const { message, errors } = getDataErrors(data);
             error({ "statusCode": 500, "message": message, errors });
         };
         /**
@@ -82,7 +70,7 @@ class ClassException {
          * @param data -
          */
         this.bad_request = (data) => {
-            const { message, errors } = get_data_errors(data);
+            const { message, errors } = getDataErrors(data);
             error({ "statusCode": 400, "message": message, errors });
         };
     }
@@ -729,11 +717,12 @@ function verifyErrors(errors) {
  * }
  * ```
  * @param values - data body request.
- * @returns
+ * @returns HandlerParserSchemes
  */
 const parserSchemes = (valueOf, schemes, values) => __awaiter(void 0, void 0, void 0, function* () {
     const 
     /**
+     *  validate data
      *
      * @param result_argument - result argument
      */
@@ -763,8 +752,19 @@ class Types {
         this.Object = Object;
     }
 }
+/**
+ * Instance Types
+ */
 const Type = new Types();
 /**
+ * A Validators class, with functions that allow rigorously validating
+ * data, according to a specific pattern (a schema).
+ *
+ * @remarks
+ * A schema determines the validation pattern of a value, and if it
+ * does not meet the conditions of the pattern, an exception is
+ * thrown with the return of an array of the errors found.
+ *
  * @beta
  */
 class Validators extends Types {
@@ -774,20 +774,17 @@ class Validators extends Types {
     constructor(schemes) {
         super();
         /**
-         *
+         * values to be validated
+         * @defaultValue undefined
          */
         this.values = undefined;
         /**
-         * Object type property. List of validation schemes.
-         * @defaultValue object
-         */
-        this.schemes = {};
-        /**
-         * Boolean type property. Determines how validated arguments and parameters are extracted.
-         * @defaultValue value_of=true
+         * Boolean type property. Determines how validated arguments
+         * and parameters are extracted.
+         * @defaultValue true
          */
         this.valueOf = true;
-        this.schemes = schemes !== null && schemes !== void 0 ? schemes : this.schemes;
+        this.schemes = schemes !== null && schemes !== void 0 ? schemes : null;
     }
     /**
      * parse and validate request body data
@@ -799,19 +796,40 @@ class Validators extends Types {
         var _a;
         return parserSchemes(this.valueOf, this.schemes, (_a = this.values) !== null && _a !== void 0 ? _a : values);
     }
+    /**
+     * Reset data:
+     * ```ts
+     *  this.valueOf = true;
+     *  this.schemes = {};
+     *  this.values = undefined;
+     * ```
+     */
     reset() {
         this.valueOf = true;
-        this.schemes = {};
+        this.schemes = null;
         this.values = undefined;
     }
 }
 const validator = new Validators();
+/**
+ * addSchemes add schemes
+ *
+ * @privateRemarks
+ * addSchemes function serving the ParserSchemes class for
+ * adding validation schemes
+ *
+ * @param schemes - Validation schemes
+ */
 const addSchemes = (schemes) => {
-    validator.schemes = Object.assign(validator.schemes, schemes);
+    var _a;
+    validator.schemes = Object.assign((_a = validator.schemes) !== null && _a !== void 0 ? _a : {}, schemes);
 };
 /**
+ * handle the function addScheme, which belongs to the class ParserSchemes
  *
- * @param callBack -
+ * @param callBack - receives as argument the resolution function of
+ * new Promise, and the value processed in the callback is passed to
+ * it, this value is the validation scheme of an element
  */
 const handlerAddScheme = (callBack) => {
     new Promise((resolve) => {
@@ -821,8 +839,19 @@ const handlerAddScheme = (callBack) => {
     });
 };
 /**
+ * Processes and assigns to validator.schemes the validation
+ * schemes declared as property in a class.
  *
- * @param schemesEntries -
+ * @param schemesEntries - Matrix of schemes
+ *
+ * @example
+ * Matrix schemes:
+ * ```json
+ * [
+ *  ['name' {type: Type.String, required: true, strict: true}],
+ *  ['email' {type: Type.String, required: true, strict: true}]
+ * ]
+ * ```
  */
 const addPropertySchemesValidator = (schemesEntries) => {
     return new Promise((resolve) => {
@@ -833,25 +862,23 @@ const addPropertySchemesValidator = (schemesEntries) => {
 };
 class ParserSchemes {
     /**
-     *
+     * instance ParserSchemes
      */
     constructor(valueOf) {
         validator.reset();
         validator.valueOf = valueOf !== null && valueOf !== void 0 ? valueOf : true;
     }
     /**
-     *
+     * Activating the schema validation functions
      */
-    parserSchemes() {
+    parserSchemes(values) {
         return addPropertySchemesValidator(Object.entries(this))
-            .then(() => {
-            const request = requestGet();
-            return validator.parserSchemes(Object.assign(Object.assign(Object.assign({}, request.body), request.params), request.query));
-        });
+            .then(() => validator.parserSchemes(values));
     }
     /**
+     * add schemes
      *
-     * @param schemes -
+     * @param schemes - Validations schemes
      */
     addSchemes(schemes) {
         addSchemes(schemes);
@@ -864,8 +891,15 @@ class ParserSchemes {
      *```ts
      * addScheme({type: Sandwich.String, required: true, strict: true}, ['email'])
      *```
-     * @param scheme -
-     * @param arg -
+     * @param scheme - Validations scheme
+     * @param arg - Name of the argument to validate, can be a string or an array of strings.
+     *
+     * @example
+     * example param arg:
+     * ```ts
+     * 'password' or ['password', 'passwordConfirm']
+     * ```
+     *
      */
     addScheme(scheme, arg) {
         handlerAddScheme((add) => {
@@ -885,6 +919,18 @@ class ParserSchemes {
         });
     }
 }
+
+const contextHttp = (() => {
+    class contextHttp {
+        constructor() {
+            this.request = undefined;
+            this.response = undefined;
+        }
+    }
+    return new contextHttp();
+})();
+const requestGet = () => contextHttp.request;
+const responseGet = () => contextHttp.response;
 
 /*
 const METHODS_PARAMS = {
@@ -1026,7 +1072,6 @@ function middleware(req, res, middlewares, method) {
             .then((resp) => resp);
     });
 }
-
 /**
  * Prepare the class to be used by routing
  *

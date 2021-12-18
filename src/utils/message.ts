@@ -1,4 +1,5 @@
 import * as SW from '../../functions';
+
 /**
  * get data error
  *
@@ -10,7 +11,7 @@ import * as SW from '../../functions';
  * }
  * ```
  */
-function get_data_errors(data: SW.DataError): SW.DataError {
+function getDataErrors(data: SW.DataError): SW.DataError {
     return data
 }
 
@@ -40,7 +41,7 @@ export class ClassException implements SW.ClassException {
      * @param data - 
      */
     server_error = (data: SW.DataError): void => {
-        const {message, errors} = get_data_errors(data);
+        const {message, errors} = getDataErrors(data);
         error({"statusCode": 500, "message": message, errors});
     }
 
@@ -50,7 +51,7 @@ export class ClassException implements SW.ClassException {
      * @param data - 
      */
     bad_request = (data: SW.DataError) => {
-        const {message, errors} = get_data_errors(data);
+        const {message, errors} = getDataErrors(data);
         error({"statusCode": 400, "message": message, errors});
     }
 

@@ -1,5 +1,4 @@
-import * as SW from '../../functions';
-import { FuncMiddleware, middlewareNextReturn, ReqType, ResType } from "../../functions";
+import { FuncMiddleware, middlewareReturn, middlewares, middlewareNextReturn, ReqType, ResType } from "../../functions";
 /**
  * middleware_next execution of each declared FuncMiddleware
  *
@@ -28,4 +27,4 @@ export declare function middlewareNext(funcMiddleware: FuncMiddleware, req: ReqT
  * @param middlewares - array functions or function
  * @param method - `{string}` method request
  */
-export declare function middleware(req: SW.ReqType, res: SW.ResType, middlewares: SW.middlewares | undefined, method: string): Promise<SW.middlewareReturn>;
+export declare function middleware(req: ReqType, res: ResType, middlewares: middlewares | undefined, method: string): Promise<middlewareReturn>;

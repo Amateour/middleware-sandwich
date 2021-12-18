@@ -1,4 +1,4 @@
-import {ErrorStatus} from '../validators/verify_errors';
+import {ErrorStatus} from '../validators';
 
 export type Any = any;
 
@@ -21,16 +21,6 @@ export interface multiMiddlewareType {
     middleware: FunctionVoid[] | FunctionVoid,
     methods?: string[] | string
 }
-/**
- *
- */
-export type resolvePromiseScheme = (scheme: scheme) => void;
-/**
- *
- */
-export type FuncResolvePromiseScheme = (
-    resolve: resolvePromiseScheme
-) => void;
 
 /**
  *
@@ -90,35 +80,9 @@ export interface typeProps {
     String: string,
     Number: number,
 }
-/**
- * TypeValid
- */
-export interface TypeValid {
-    String?: FunctionVoid,
-    Number?: FunctionVoid,
-    Array?: FunctionVoid,
-    Boolean?: FunctionVoid,
-    Object?: FunctionVoid,
-}
+
 
 export type validationFun = (value: any) => any;
-
-/**
- *  scheme validation
- */
-export interface scheme {
-    type?: FunctionVoid | string ,
-    required?: boolean,
-    min?: number,
-    max?: number,
-    value?: any,
-    strict?: boolean,
-    validation?: validationFun,
-}
-/**
- * schemes
- */
-export type schemes = {[index: string]: scheme} | null;
 
 /**
  * compareProps
