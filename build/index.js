@@ -1030,7 +1030,7 @@ function middlewareNext(funcMiddleware, req, res, train) {
     });
 }
 /**
- * exec_list_func controls the execution of each declared FuncMiddleware
+ * execListFunc controls the execution of each declared FuncMiddleware
  *
  * @param middlewares -
  * @param req - Http Request
