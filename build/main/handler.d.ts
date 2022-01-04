@@ -1,6 +1,44 @@
 import * as SW from '../../functions';
 import { FuncMiddleware, middlewareReturn, middlewares, middlewareNextReturn, ReqType, ResType } from "../../functions";
 /**
+ *
+ * @param arr -
+ * @returns any[]
+ */
+export declare function toUpper(arr: string[]): string[];
+/**
+ * get_middlewares Middleware extraction, can be an array of function objects or an object
+ *
+ * @example
+ * Array functions
+ * Sandwich.handler(Users, [isAuth])
+ *
+ * Array objects
+ * ```ts
+ * Sandwich.handler(Users, [
+ * {
+ *   methods: ['POST'],
+ *   middleware: [isAuth]
+ * }
+ *])
+ *```
+ *
+ *```ts
+ * objects
+ * Sandwich.handler(Users, {
+ *   methods: ['POST'],
+ *   middleware: [isAuth]
+ * })
+ * ```
+ *
+ * @remarks
+ * The extraction of each middleware is selected according to the method of the http request
+ *
+ * @param middlewares - list middlewares
+ * @param method - method request (post, get)
+ */
+export declare function getMiddlewares(middlewares: SW.middlewares, method: string): Promise<any>;
+/**
  * middleware_next execution of each declared FuncMiddleware
  *
  * @param req - Http Request

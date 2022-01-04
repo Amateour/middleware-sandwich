@@ -145,96 +145,6 @@ class ClassMessage {
 }
 const Message = new ClassMessage();
 
-const admixtures = {
-    get(key, notInherited) {
-        if (notInherited)
-            return this[key];
-        if (Object.prototype.hasOwnProperty.call(this, key)) {
-            return this[key];
-        }
-    },
-    has(key, notInherited) {
-        if (notInherited)
-            return !!this[key];
-        return Object.prototype.hasOwnProperty.call(this, key);
-    },
-    size() {
-        return Array.isArray(this) ? this.length : Object.keys(this).length;
-    },
-    map(callback) {
-        return new Promise((resolve) => {
-            const length = Array.isArray(this) ? this.length : Object.keys(this).length, data = new Array(length);
-            let index = -1;
-            for (const key in this) {
-                ++index;
-                const element = this[key];
-                data[index] = callback(element, key, this);
-                if (index === length - 1) {
-                    resolve(data);
-                }
-            }
-        });
-    },
-    filter(callback) {
-        return new Promise((resolve) => {
-            const length = Array.isArray(this) ?
-                this.length : Object.keys(this).length, data = [];
-            let index = -1;
-            for (const key in this) {
-                ++index;
-                const element = this[key];
-                if (callback(element, key, this)) {
-                    data.push(element);
-                }
-                if (index === length - 1) {
-                    resolve(data);
-                }
-            }
-        });
-    },
-    omit(arrayKeys) {
-        return new Promise((resolve) => {
-            const length = arrayKeys.length;
-            for (let i = 0; i < length; i++) {
-                delete this[arrayKeys[i]];
-                if (i === length)
-                    resolve(this);
-            }
-        });
-    },
-    find(callback) {
-        return new Promise((resolve) => {
-            for (const key in this) {
-                const element = this[key];
-                if (callback(element, key, this)) {
-                    resolve(this[key]);
-                }
-            }
-        });
-    },
-    flatten(level = 1) {
-        let levelCount = 1;
-        function flattenDeep(arr1) {
-            return __awaiter(this, void 0, void 0, function* () {
-                return arr1.reduce((acc, val) => Array.isArray(val) && ++levelCount <= level ?
-                    acc.concat(flattenDeep(val)) : acc.concat(val), []);
-            });
-        }
-        return new Promise((resolve) => {
-            resolve(flattenDeep(this));
-        });
-    }
-};
-const filter = (value, callback) => {
-    return admixtures.filter.call(value, callback);
-};
-const flatten = (value, level = 1) => {
-    return admixtures.flatten.call(value, level);
-};
-const get = (value, key, notInherited) => {
-    return admixtures.get.call(value, key, notInherited);
-};
-
 /**
  * Identify if it is running in a browser
  */
@@ -293,79 +203,6 @@ const validate = {
     Browser: isBrowser,
     Node: isNode
 };
-/**
- * get_middlewares Middleware extraction, can be an array of function objects or an object
- *
- * @example
- * Array functions
- * Sandwich.handler(Users, [isAuth])
- *
- * Array objects
- * ```ts
- * Sandwich.handler(Users, [
- * {
- *   methods: ['POST'],
- *   middleware: [isAuth]
- * }
- *])
- *```
- *
- *```ts
- * objects
- * Sandwich.handler(Users, {
- *   methods: ['POST'],
- *   middleware: [isAuth]
- * })
- * ```
- *
- * @remarks
- * The extraction of each middleware is selected according to the method of the http request
- *
- * @param middlewares - list middlewares
- * @param method - method request (post, get)
- */
-function getMiddlewares(middlewares, method) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            let isFlatten = false;
-            if (!(typeof middlewares === 'object'))
-                return middlewares;
-            const resp_middlewares = yield filter(middlewares, (middleware) => {
-                const middleware_is_function = typeof middleware === 'function';
-                if (middleware_is_function)
-                    return true;
-                if (!middleware.methods)
-                    return true;
-                const methods_is_string = typeof middleware.methods === 'string';
-                const methods_is_array = middleware.methods instanceof Array;
-                if (!methods_is_string && !methods_is_array)
-                    throw "methods: An Array or String data type is expected";
-                if (middleware.middleware instanceof Array)
-                    isFlatten = true;
-                const methods = typeof middleware.methods === 'string'
-                    ? [middleware.methods] : middleware.methods;
-                return toUpper(methods).includes(method.toUpperCase());
-            }).then((resp) => resp.map((middleware) => {
-                var _a;
-                return (_a = middleware.middleware) !== null && _a !== void 0 ? _a : middleware;
-            }));
-            return isFlatten ?
-                yield flatten(resp_middlewares).then(val => val.valueOf()) :
-                resp_middlewares.valueOf();
-        }
-        catch (e) {
-            console.error(e);
-        }
-    });
-}
-/**
- *
- * @param arr -
- * @returns any[]
- */
-function toUpper(arr) {
-    return arr.filter((val) => val).map((val) => val.toUpperCase());
-}
 
 /**
  *
@@ -1016,6 +853,169 @@ class Routers {
     }
 }
 
+const admixtures = {
+    get(key, notInherited) {
+        if (notInherited)
+            return this[key];
+        if (Object.prototype.hasOwnProperty.call(this, key)) {
+            return this[key];
+        }
+    },
+    has(key, notInherited) {
+        if (notInherited)
+            return !!this[key];
+        return Object.prototype.hasOwnProperty.call(this, key);
+    },
+    size() {
+        return Array.isArray(this) ? this.length : Object.keys(this).length;
+    },
+    map(callback) {
+        return new Promise((resolve) => {
+            const length = Array.isArray(this) ? this.length : Object.keys(this).length, data = new Array(length);
+            let index = -1;
+            for (const key in this) {
+                ++index;
+                const element = this[key];
+                data[index] = callback(element, key, this);
+                if (index === length - 1) {
+                    resolve(data);
+                }
+            }
+        });
+    },
+    filter(callback) {
+        return new Promise((resolve) => {
+            const length = Array.isArray(this) ?
+                this.length : Object.keys(this).length, data = [];
+            let index = -1;
+            for (const key in this) {
+                ++index;
+                const element = this[key];
+                if (callback(element, key, this)) {
+                    data.push(element);
+                }
+                if (index === length - 1) {
+                    resolve(data);
+                }
+            }
+        });
+    },
+    omit(arrayKeys) {
+        return new Promise((resolve) => {
+            const length = arrayKeys.length;
+            for (let i = 0; i < length; i++) {
+                delete this[arrayKeys[i]];
+                if (i === length)
+                    resolve(this);
+            }
+        });
+    },
+    find(callback) {
+        return new Promise((resolve) => {
+            for (const key in this) {
+                const element = this[key];
+                if (callback(element, key, this)) {
+                    resolve(this[key]);
+                }
+            }
+        });
+    },
+    flatten(level = 1) {
+        let levelCount = 1;
+        function flattenDeep(arr1) {
+            return __awaiter(this, void 0, void 0, function* () {
+                return arr1.reduce((acc, val) => Array.isArray(val) && ++levelCount <= level ?
+                    acc.concat(flattenDeep(val)) : acc.concat(val), []);
+            });
+        }
+        return new Promise((resolve) => {
+            resolve(flattenDeep(this));
+        });
+    }
+};
+const filter = (value, callback) => {
+    return admixtures.filter.call(value, callback);
+};
+const flatten = (value, level = 1) => {
+    return admixtures.flatten.call(value, level);
+};
+const get = (value, key, notInherited) => {
+    return admixtures.get.call(value, key, notInherited);
+};
+
+/**
+ *
+ * @param arr -
+ * @returns any[]
+ */
+function toUpper(arr) {
+    return arr.filter((val) => val).map((val) => val.toUpperCase());
+}
+/**
+ * get_middlewares Middleware extraction, can be an array of function objects or an object
+ *
+ * @example
+ * Array functions
+ * Sandwich.handler(Users, [isAuth])
+ *
+ * Array objects
+ * ```ts
+ * Sandwich.handler(Users, [
+ * {
+ *   methods: ['POST'],
+ *   middleware: [isAuth]
+ * }
+ *])
+ *```
+ *
+ *```ts
+ * objects
+ * Sandwich.handler(Users, {
+ *   methods: ['POST'],
+ *   middleware: [isAuth]
+ * })
+ * ```
+ *
+ * @remarks
+ * The extraction of each middleware is selected according to the method of the http request
+ *
+ * @param middlewares - list middlewares
+ * @param method - method request (post, get)
+ */
+function getMiddlewares(middlewares, method) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            let isFlatten = false;
+            if (!(typeof middlewares === 'object'))
+                return middlewares;
+            const resp_middlewares = yield filter(middlewares, (middleware) => {
+                const middlewareIsFunction = typeof middleware === 'function';
+                if (middlewareIsFunction)
+                    return true;
+                if (!middleware.methods)
+                    return true;
+                const methodsIsString = typeof middleware.methods === 'string';
+                const methodsIsArray = middleware.methods instanceof Array;
+                if (!methodsIsString && !methodsIsArray)
+                    throw "methods: An Array or String data type is expected";
+                if (middleware.middleware instanceof Array)
+                    isFlatten = true;
+                const methods = typeof middleware.methods === 'string'
+                    ? [middleware.methods] : middleware.methods;
+                return toUpper(methods).includes(method.toUpperCase());
+            }).then((resp) => resp.map((middleware) => {
+                var _a;
+                return (_a = middleware.middleware) !== null && _a !== void 0 ? _a : middleware;
+            }));
+            return isFlatten ?
+                yield flatten(resp_middlewares).then(val => val.valueOf()) :
+                resp_middlewares.valueOf();
+        }
+        catch (e) {
+            console.error(e);
+        }
+    });
+}
 /**
  * middleware_next execution of each declared FuncMiddleware
  *
